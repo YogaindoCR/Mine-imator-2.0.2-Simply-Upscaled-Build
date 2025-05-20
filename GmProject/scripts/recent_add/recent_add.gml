@@ -44,7 +44,10 @@ function recent_add()
 			surface_free(surf)
 		}
 	}
+	
+	
 	texture_free(project_thumbnail_image)
+	
 	project_thumbnail_image = texture_create(thumbnailfn)
 	recent_add_wait = 0
 	

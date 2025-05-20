@@ -2,8 +2,6 @@
 
 function render_high_ssao()
 {
-	render_ssao_kernel = render_generate_sample_kernel(12)
-	
 	// Render mask
 	render_surface[2] = surface_require(render_surface[2], render_width, render_height)
 	surface_set_target(render_surface[2])
@@ -29,7 +27,13 @@ function render_high_ssao()
 	{
 		gpu_set_texrepeat(false)
 		draw_clear(c_white)
-		render_shader_obj = shader_map[?shader_high_ssao]
+		if (project_render_engine){
+			render_ssao_kernel = render_generate_sample_kernel(24)
+			render_shader_obj = shader_map[?shader_high_ssao_EX]
+		}else{
+			render_ssao_kernel = render_generate_sample_kernel(12)
+			render_shader_obj = shader_map[?shader_high_ssao]
+		}
 		with (render_shader_obj)
 		{
 			shader_set(shader)

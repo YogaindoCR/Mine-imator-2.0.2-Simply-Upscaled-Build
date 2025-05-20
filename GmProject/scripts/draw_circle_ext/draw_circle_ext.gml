@@ -23,7 +23,7 @@ function draw_circle_ext(xx, yy, rad, outline, detail, color, alpha)
 		draw_vertex(xx, yy)
 	}
 	
-	for (var s = 0; s <= pi * 2; s += (pi * 2) / detail)
+	for (var s = 0; s <= pi * 5; s += (pi * 5) / detail)
 		draw_vertex(xx + cos(s) * rad, yy + sin(s) * rad)
 	
 	draw_primitive_end()

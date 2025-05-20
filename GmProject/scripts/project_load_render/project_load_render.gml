@@ -5,6 +5,7 @@ function project_load_render(map)
 	if (!ds_map_valid(map))
 		return 0
 	
+	project_render_engine = value_get_real(map[?"render_engine"], project_render_engine)
 	project_render_samples = value_get_real(map[?"render_samples"], project_render_samples)
 	project_render_distance = value_get_real(map[?"render_distance"], project_render_distance)
 	
@@ -12,6 +13,7 @@ function project_load_render(map)
 	project_render_ssao_radius = value_get_real(map[?"render_ssao_radius"], project_render_ssao_radius)
 	project_render_ssao_power = value_get_real(map[?"render_ssao_power"], project_render_ssao_power)
 	project_render_ssao_color = value_get_color(map[?"render_ssao_color"], project_render_ssao_color)
+	project_render_ssao_ratio = value_get_real(map[?"render_ssao_ratio"], project_render_ssao_ratio)
 	
 	project_render_shadows = value_get_real(map[?"render_shadows"], project_render_shadows)
 	project_render_shadows_sun_buffer_size = value_get_real(map[?"render_shadows_sun_buffer_size"], project_render_shadows_sun_buffer_size)
@@ -27,6 +29,7 @@ function project_load_render(map)
 	project_render_indirect_blur_radius = value_get_real(map[?"render_indirect_blur_radius"], project_render_indirect_blur_radius)
 	project_render_indirect_precision = value_get_real(map[?"render_indirect_precision"], project_render_indirect_precision)
 	project_render_indirect_strength = value_get_real(map[?"render_indirect_strength"], project_render_indirect_strength)
+	project_render_indirect_raystep = value_get_real(map[?"render_indirect_raystep"], project_render_indirect_raystep)
 	
 	project_render_reflections = value_get_real(map[?"render_reflections"], project_render_reflections)
 	project_render_reflections_precision = value_get_real(map[?"render_reflections_precision"], project_render_reflections_precision)
@@ -42,6 +45,8 @@ function project_load_render(map)
 	
 	project_render_aa = value_get_real(map[?"render_aa"], project_render_aa)
 	project_render_aa_power = value_get_real(map[?"render_aa_power"], project_render_aa_power)
+	
+	project_render_dof_sample = value_get_real(map[?"render_dof_sample"], project_render_dof_sample)
 	
 	project_bend_style = value_get_string(map[?"bend_style"], project_bend_style)
 	project_render_opaque_leaves = value_get_real(map[?"opaque_leaves"], project_render_opaque_leaves)

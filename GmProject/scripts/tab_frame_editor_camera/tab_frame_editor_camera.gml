@@ -92,9 +92,13 @@ function tab_frame_editor_camera()
 			text = text_get("frameeditorcameratonemapperreinhard")
 		else if (tl_edit.value[e_value.CAM_TONEMAPPER] = e_tonemapper.ACES)
 			text = text_get("frameeditorcameratonemapperaces")
+		else if (tl_edit.value[e_value.CAM_TONEMAPPER] = e_tonemapper.FILMIC)
+			text = text_get("frameeditorcameratonemapperfilmic")
+		else if (tl_edit.value[e_value.CAM_TONEMAPPER] = e_tonemapper.ACES_APPROX)
+			text = text_get("frameeditorcameratonemapperacesapprox")
 		else
 			text = text_get("frameeditorcameratonemappernone")
-		
+			
 		tab_control_menu()
 		draw_button_menu("frameeditorcameratonemapper", e_menu.LIST, dx, dy, dw, 24, tl_edit.value[e_value.CAM_TONEMAPPER], text, action_tl_frame_cam_tonemapper)
 		tab_next()

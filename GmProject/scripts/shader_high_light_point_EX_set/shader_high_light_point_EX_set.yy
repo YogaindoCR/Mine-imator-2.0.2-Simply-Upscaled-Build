@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "shader_high_ssao_set",
+  "name": "shader_high_light_point_EX_set",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {

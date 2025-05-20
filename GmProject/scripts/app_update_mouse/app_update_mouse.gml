@@ -44,7 +44,6 @@ function app_update_mouse()
 	
 	window_scroll_focus_prev = window_scroll_focus
 	window_scroll_focus = ""
-	
 	#region Double click
 	
 	if (mouse_still = 0)

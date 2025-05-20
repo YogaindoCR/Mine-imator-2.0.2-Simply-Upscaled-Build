@@ -4,9 +4,9 @@
 function shader_high_ssao_set(mask)
 {
 	texture_set_stage(sampler_map[?"uDepthBuffer"], surface_get_texture(render_surface_depth))
+	texture_set_stage(sampler_map[?"uNoiseBuffer"], surface_get_texture(render_sample_noise_texture))
 	texture_set_stage(sampler_map[?"uNormalBuffer"], surface_get_texture(render_surface_normal))
 	texture_set_stage(sampler_map[?"uEmissiveBuffer"], surface_get_texture(render_surface_emissive))
-	texture_set_stage(sampler_map[?"uNoiseBuffer"], surface_get_texture(render_sample_noise_texture))
 	texture_set_stage(sampler_map[?"uMaskBuffer"], surface_get_texture(mask))
 	gpu_set_texrepeat_ext(sampler_map[?"uDepthBuffer"], false)
 	gpu_set_texrepeat_ext(sampler_map[?"uNormalBuffer"], false)
@@ -25,5 +25,6 @@ function shader_high_ssao_set(mask)
 	render_set_uniform("uKernel", render_ssao_kernel)
 	render_set_uniform("uRadius", app.project_render_ssao_radius)
 	render_set_uniform("uPower", app.project_render_ssao_power)
+	render_set_uniform("uRatio", app.project_render_ssao_ratio)
 	render_set_uniform_color("uColor", app.project_render_ssao_color, 1)
 }

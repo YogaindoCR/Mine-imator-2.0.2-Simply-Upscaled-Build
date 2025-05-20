@@ -1,11 +1,11 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "project_save_render",
+  "name": "action_setting_viewport_optimization",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Save",
-    "path": "folders/Scripts/Project/Save.yy",
+    "name": "Mine-imator",
+    "path": "Mine-imator.yyp",
   },
 }

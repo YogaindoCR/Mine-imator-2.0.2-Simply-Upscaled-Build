@@ -33,6 +33,9 @@ function render_startup()
 	
 	globalvar render_pass_surf;
 	
+	// Extraku
+	globalvar render_low_drawing, render_low_Before;
+	
 	log("Render init")
 	
 	gpu_set_blendenable(true)
@@ -53,6 +56,9 @@ function render_startup()
 	render_height = 1
 	render_ratio = 1
 	render_camera = null
+	
+	render_low_drawing = 0
+	render_low_Before = 0
 	
 	render_light_specular_strength = 0
 	
@@ -219,8 +225,11 @@ function render_startup()
 	render_mode_shader_map[?e_render_mode.HIGH_LIGHT_SPOT_DEPTH] = shader_depth
 	render_mode_shader_map[?e_render_mode.HIGH_LIGHT_POINT_DEPTH] = shader_depth_point
 	render_mode_shader_map[?e_render_mode.HIGH_LIGHT_SUN] = shader_high_light_sun
+	render_mode_shader_map[?e_render_mode.HIGH_LIGHT_SUN_EX] = shader_high_light_sun_EX
 	render_mode_shader_map[?e_render_mode.HIGH_LIGHT_SPOT] = shader_high_light_spot
+	render_mode_shader_map[?e_render_mode.HIGH_LIGHT_SPOT_EX] = shader_high_light_spot_EX
 	render_mode_shader_map[?e_render_mode.HIGH_LIGHT_POINT] = shader_high_light_point
+	render_mode_shader_map[?e_render_mode.HIGH_LIGHT_POINT_EX] = shader_high_light_point_EX
 	render_mode_shader_map[?e_render_mode.HIGH_LIGHT_POINT_SHADOWLESS] = shader_high_light_point_shadowless
 	render_mode_shader_map[?e_render_mode.HIGH_FOG] = shader_high_fog
 	render_mode_shader_map[?e_render_mode.COLOR_GLOW] = shader_color_glow

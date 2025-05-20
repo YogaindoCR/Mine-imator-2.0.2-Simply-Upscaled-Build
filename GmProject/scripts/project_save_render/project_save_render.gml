@@ -4,6 +4,7 @@ function project_save_render()
 {
 	json_save_object_start("render")
 		
+		json_save_var("render_engine", project_render_engine)
 		json_save_var("render_samples", project_render_samples)
 		json_save_var("render_distance", project_render_distance)
 		
@@ -26,6 +27,7 @@ function project_save_render()
 		json_save_var("render_indirect_precision", project_render_indirect_precision)
 		json_save_var("render_indirect_blur_radius", project_render_indirect_blur_radius)
 		json_save_var("render_indirect_strength", project_render_indirect_strength)
+		json_save_var("render_indirect_raystep", project_render_indirect_raystep)
 		
 		json_save_var_bool("render_reflections", project_render_reflections)
 		json_save_var("render_reflections_precision", project_render_reflections_precision)
@@ -41,6 +43,8 @@ function project_save_render()
 		
 		json_save_var_bool("render_aa", project_render_aa)
 		json_save_var("render_aa_power", project_render_aa_power)
+		
+		json_save_var("render_dof_sample", project_render_dof_sample)
 		
 		json_save_var("bend_style", project_bend_style)
 		json_save_var_bool("opaque_leaves", project_render_opaque_leaves)
