@@ -2589,16 +2589,25 @@
 	},
 	"render": "RENDER SETTINGS",
 	"render/": {
+		"engine": "Render Engine",
+		"engine/": {
+			"vanilla": "Vanilla",
+			"ex": "AVE-X"
+		},
+		"enginetip": "Choose between two Rendering Method. AVE-X have Higher quality but Heavy, Vanilla have lower Quality but faster and supported",
 		"samples": "Samples",
 		"distance": "Render distance",
 		"distancetip": "The distance where rendered objects are cut off. Also determines the maximum fog distance.",
 		"ssao": "Ambient occlusion",
+		"hbao": "HBAO Occlusion",
 		"ssaotip": "Darkens areas that are less exposed to light.",
+		"hbaotip": "Darkens areas that are less exposed to light in more accurate way.",
 		"ssao/": {
 			"radius": "Radius",
 			"power": "Strength",
 			"blurpasses": "Blur passes",
-			"color": "Color"
+			"color": "Color",
+			"ratio": "Ratio"
 		},
 		"shadows": "Shadows",
 		"shadows/": {
@@ -2622,14 +2631,18 @@
 			"highlightstrength": "Highlight strength"
 		},
 		"indirect": "Indirect lighting",
+		"indirectgi": "Indirect Global Illumination",
 		"indirecttip": "Bounces light off of bright objects, lighting more of the scene.",
 		"indirect/": {
 			"precision": "Precision",
 			"precisiontip": "The accuracy of raytracing for light bounces, higher precision is slower.",
+			"raysteptip": "The amount of Ray bounce before it stops, Higher more precise and smoother but SLOWER.",
 			"blurradius": "Denoise radius",
-			"strength": "Strength"
+			"strength": "Strength",
+			"raystep" : "Ray Step Blur"
 		},
 		"reflections": "Reflections",
+		"reflectionsfull": "Reflections (Full)",
 		"reflections/": {
 			"precision": "Precision",
 			"precisiontip": "The accuracy of raytracing reflections, higher precision is slower.",
@@ -2655,6 +2668,11 @@
 		"aa": "Anti-aliasing",
 		"aatip": "Smoothen the edges of objects in the final render.",
 		"aapower": "Strength",
+		"extrasettings": "Extra Settings",
+		"extrasettings/": {
+			"dofsample": "DOF Sample",
+			"spotblursample": "Spotlight Blur Sample"
+		},
 		"modelsscenery": "Models and scenery",
 		"bendstyle": "Limb bending style",
 		"bendstylerealistic": "Realistic",
@@ -2681,7 +2699,10 @@
 		"tonemapper/": {
 			"none": "None",
 			"reinhard": "Reinhard",
-			"aces": "Academy (ACES)"
+			"aces": "Academy (ACES)",
+			"filmic": "Filmic",
+			"agx": "AGX",
+			"acesapprox": "Academy Approximation (ACES)"
 		},
 		"exposure": "Exposure",
 		"gamma": "Gamma",
@@ -3552,7 +3573,10 @@
 			"tonemapper/": {
 				"none": "None",
 				"reinhard": "Reinhard",
-				"aces": "Academy (ACES)"
+				"aces": "Academy (ACES)",
+				"filmic": "Filmic",
+				"agx": "AGX",
+				"acesapprox": "Academy Approximation (ACES)"
 			},
 			"exposure": "Exposure",
 			"gamma": "Gamma",
@@ -3739,6 +3763,8 @@
 			"advancedtip": "Access to all available features, recommended for advanced users."
 		},
 		"minecraftversion": "Minecraft version",
+		"camworkpov": "Work camera POV",
+		"gizmossize": "Gizmos size",
 		"backup": "Automatic backups",
 		"backuptime": "Time between backups",
 		"backuptimeminutes": " min",
@@ -3757,6 +3783,7 @@
 		"spawncameras": "Copy work camera into new cameras",
 		"unlimitedvalues": "Allow unlimited values",
 		"sceneryremoveedges": "Remove edges of large scenery",
+		"viewportoptimization": "Viewport optimization",
 		"interface": "INTERFACE",
 		"appearance": "Appearance",
 		"theme": "Theme",

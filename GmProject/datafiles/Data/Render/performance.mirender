@@ -2,6 +2,7 @@
 	"format": 34,
 	"created_in": "2.0",
 	"render": {
+		"render_engine": false,
 		"render_samples": 24,
 		"render_distance": 10000,
 		"render_ssao": false,
@@ -20,6 +21,7 @@
 		"render_indirect_precision": 0,
 		"render_indirect_blur_radius": 1,
 		"render_indirect_strength": 1,
+		"render_indirect_raystep": 4,
 		"render_reflections": false,
 		"render_reflections_precision": -0,
 		"render_reflections_thickness": 1,
