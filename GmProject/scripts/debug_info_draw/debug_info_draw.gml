@@ -15,13 +15,13 @@ function debug_info_draw()
 	
 	if (debug_info == 1)
 	{
-		str += "[F12] | FPS: " + string(fps) + " (" + string(fps_real) + ")"
+		str += "[F12] | FPS: " + string(fps / delta) + " (" + string(fps_real) + ")"
 	}
 	else
 	{
 		str += "Performance: \n"
 		str += "======================================= \n"
-		str += "FPS: " + string(fps) + " \n"
+		str += "FPS: " + string(fps / delta) + " \n"
 		str += "FPS real: " + string(fps_real) + " \n"
 		str += "delta: " + string(delta) + " \n"
 		str += "\n"

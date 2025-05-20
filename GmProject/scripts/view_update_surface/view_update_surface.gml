@@ -4,6 +4,11 @@
 
 function view_update_surface(view, cam)
 {
+	//check to render
+	check_to_render()
+	
+	if (window_scroll_focus_prev = "" || render_low_drawing < 3 || view.quality = e_view_mode.RENDER) 
+	{
 	render_view_current = view
 	
 	// Render
@@ -14,10 +19,15 @@ function view_update_surface(view, cam)
 	render_watermark = (settings.show && settings.program.show && setting_watermark_custom && collapse_map[?"watermark"])
 	render_start(view.surface, cam, content_width, content_height)
 	
-	if (view.quality = e_view_mode.RENDER)
+	if (view.quality = e_view_mode.RENDER) {
 		render_high()
+		render_low_drawing = 4
+	}
 	else
+	{
 		render_low()
+		render_low_drawing++;
+	}
 	
 	if (view.gizmos)
 	{
@@ -72,7 +82,10 @@ function view_update_surface(view, cam)
 					
 					if (vis)
 					{
-						view_control_ratio = 1//max(1, (100 / content_height) * 1.25)
+						if (tl_edit = cam)
+							view_control_ratio = setting_gizmos_size
+						else
+							view_control_ratio = setting_gizmos_size * (setting_cam_work_pov / 45)
 						
 						if (tl_edit.value_type[e_value_type.TRANSFORM_SCA] && (setting_tool_scale || setting_tool_transform))
 							view_control_scale(view)
@@ -116,4 +129,5 @@ function view_update_surface(view, cam)
 	view.surface = render_done()
 	render_lights = true
 	render_particles = true
+	}
 }

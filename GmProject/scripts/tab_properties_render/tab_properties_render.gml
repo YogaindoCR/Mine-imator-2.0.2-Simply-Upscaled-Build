@@ -19,6 +19,13 @@ function tab_properties_render()
 	
 	dy += 8
 	
+	//Render Engine
+	tab_control_togglebutton()
+	togglebutton_add("renderenginevanilla", null, false, !project_render_engine, action_project_render_engine, tab.render.tbx_render_engine)
+	togglebutton_add("renderengineex", null, true, project_render_engine, action_project_render_engine, tab.render.tbx_render_engine)
+	draw_togglebutton("renderengine", dx, dy, true, true)
+	tab_next()
+	
 	// Render distance
 	tab_control_dragger()
 	draw_dragger("renderdistance", dx, dy, dragger_width, project_render_distance, 1, 1000, 100000, 30000, 1, tab.render.tbx_render_distance, action_project_render_distance, null, true, false, "renderdistancetip")
@@ -31,7 +38,15 @@ function tab_properties_render()
 	
 	// SSAO
 	tab_control_switch()
-	draw_button_collapse("ssao", collapse_map[?"ssao"], action_project_render_ssao, project_render_ssao, "renderssao", "renderssaotip")
+	
+	if (project_render_engine)
+		{
+			draw_button_collapse("ssao", collapse_map[?"ssao"], action_project_render_ssao, project_render_ssao, "renderhbao", "renderhbaotip")
+			
+		} else {
+			draw_button_collapse("ssao", collapse_map[?"ssao"], action_project_render_ssao, project_render_ssao, "renderssao", "renderssaotip")
+		}
+
 	tab_next()
 	
 	if (project_render_ssao && collapse_map[?"ssao"])
@@ -49,6 +64,12 @@ function tab_properties_render()
 		tab_control_color()
 		draw_button_color("renderssaocolor", dx, dy, dw, project_render_ssao_color, c_black, false, action_project_render_ssao_color)
 		tab_next()
+		
+		if (project_render_engine) {
+		tab_control_dragger()
+		draw_dragger("renderssaoratio", dx, dy, dragger_width, project_render_ssao_ratio, 0.001, 0.015, 0.900, 0.222, 0, tab.render.tbx_ssao_ratio, action_project_render_ssao_ratio)
+		tab_next()
+		}
 		
 		tab_collapse_end()
 	}
@@ -107,7 +128,11 @@ function tab_properties_render()
 	
 	// Indirect lighting
 	tab_control_switch()
-	draw_button_collapse("indirect", collapse_map[?"indirect"], action_project_render_indirect, project_render_indirect, "renderindirect", "renderindirecttip")
+	if (project_render_engine) {
+			draw_button_collapse("indirect", collapse_map[?"indirect"], action_project_render_indirect, project_render_indirect, "renderindirectgi", "renderindirecttip")
+		} else {
+			draw_button_collapse("indirect", collapse_map[?"indirect"], action_project_render_indirect, project_render_indirect, "renderindirect", "renderindirecttip")
+		}
 	tab_next()
 	
 	if (project_render_indirect && collapse_map[?"indirect"])
@@ -126,12 +151,23 @@ function tab_properties_render()
 		draw_dragger("renderindirectstrength", dx, dy, dragger_width, round(project_render_indirect_strength * 100), .5, 0, no_limit * 100, 100, 1, tab.render.tbx_indirect_strength, action_project_render_indirect_strength) 
 		tab_next()
 		
+		if (project_render_engine)
+		{
+			tab_control_dragger()
+			draw_dragger("renderindirectraystep", dx, dy, dragger_width, project_render_indirect_raystep, 0.3, 1, 80, 12, 1, tab.render.tbx_indirect_raystep, action_project_render_indirect_raystep, null, true, false, "renderindirectraysteptip")
+			tab_next()
+		}
+		
 		tab_collapse_end()
 	}
 	
 	// Reflections
 	tab_control_switch()
-	draw_button_collapse("reflections", collapse_map[?"reflections"], action_project_render_reflections, project_render_reflections, "renderreflections")
+	if (project_render_engine){
+			draw_button_collapse("reflections", collapse_map[?"reflections"], action_project_render_reflections, project_render_reflections, "renderreflectionsfull")
+		} else {
+			draw_button_collapse("reflections", collapse_map[?"reflections"], action_project_render_reflections, project_render_reflections, "renderreflections")
+		}
 	tab_next()
 	
 	if (project_render_reflections && collapse_map[?"reflections"])
@@ -241,12 +277,16 @@ function tab_properties_render()
 		tab_collapse_start()
 		
 		// Tonemapper
-		if (project_render_tonemapper = e_tonemapper.REINHARD)
-			text = text_get("rendertonemapperreinhard")
-		else if (project_render_tonemapper = e_tonemapper.ACES)
-			text = text_get("rendertonemapperaces")
-		else
-			text = text_get("rendertonemappernone")
+		if (project_render_tonemapper == e_tonemapper.REINHARD)  
+		    text = text_get("rendertonemapperreinhard")  
+		else if (project_render_tonemapper == e_tonemapper.ACES)  
+		    text = text_get("rendertonemapperaces")  
+		else if (project_render_tonemapper == e_tonemapper.FILMIC)  
+		    text = text_get("rendertonemapperfilmic")
+		else if (project_render_tonemapper == e_tonemapper.ACES_APPROX)  
+		    text = text_get("rendertonemapperacesapprox")  
+		else  
+		    text = text_get("rendertonemappernone");
 		
 		tab_control_menu()
 		draw_button_menu("rendertonemapper", e_menu.LIST, dx, dy, dw, 24, project_render_tonemapper, text, action_project_render_tonemapper)
@@ -319,6 +359,23 @@ function tab_properties_render()
 		tab_collapse_end()
 	}
 	
+	//Extra Settings
+	if (project_render_engine){
+		tab_control_switch()
+		draw_button_collapse("extrasettings", collapse_map[?"extrasettings"], null, true, "renderextrasettings")
+		
+		tab_next()
+		if (collapse_map[?"extrasettings"])
+			{
+				tab_collapse_start()
+		
+				tab_control_meter()
+				draw_meter("renderextrasettingsdofsample", dx, dy, dw, project_render_dof_sample, 1, 6, 3, 1, tab.render.tbx_dof_sample, action_project_render_dof_sample)
+				tab_next()
+		
+				tab_collapse_end()
+			}
+	}
 	// Default emissive
 	tab_control_dragger()
 	draw_dragger("renderdefaultemissive", dx, dy, dragger_width, round(project_render_block_emissive * 100), 1, 0, no_limit, 100, 1, tab.render.tbx_block_emissive, action_project_render_block_emissive, null, true, false, "renderdefaultemissivetip")

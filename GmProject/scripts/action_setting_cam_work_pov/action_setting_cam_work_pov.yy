@@ -1,11 +1,11 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "debug_info_draw",
+  "name": "action_setting_cam_work_pov",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Debug",
-    "path": "folders/Scripts/App/Debug.yy",
+    "name": "Mine-imator",
+    "path": "Mine-imator.yyp",
   },
 }

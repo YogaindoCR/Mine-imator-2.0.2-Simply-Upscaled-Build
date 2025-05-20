@@ -19,11 +19,14 @@ function settings_startup()
 	
 	backup_text_ani = 0
 	backup_next = 0
+	setting_cam_work_pov = 45
+	setting_gizmos_size = 1
 	setting_backup = true
 	setting_backup_time = 3
 	setting_backup_amount = 5
 	setting_spawn_cameras = true
 	setting_unlimited_values = false
+	setting_viewport_optimization = true
 	
 	setting_watermark_custom = false
 	setting_watermark_fn = ""

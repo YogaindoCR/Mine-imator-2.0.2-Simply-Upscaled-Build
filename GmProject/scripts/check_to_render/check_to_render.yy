@@ -1,11 +1,11 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "debug_info_draw",
+  "name": "check_to_render",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Debug",
-    "path": "folders/Scripts/App/Debug.yy",
+    "name": "Mine-imator",
+    "path": "Mine-imator.yyp",
   },
 }

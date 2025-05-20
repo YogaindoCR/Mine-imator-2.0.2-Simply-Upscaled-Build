@@ -82,7 +82,7 @@ function popup_about_draw()
 	dy += 34
 	draw_label(text_get("aboutmoddevelopment"), dx, dy, fa_left, fa_bottom, c_text_tertiary, a_text_tertiary, font_subheading)
 	dy += 26
-	draw_label("mbanders", dx, dy, fa_left, fa_bottom, c_text_secondary, a_text_secondary, font_label)
+	draw_label("YogaindoCR", dx, dy, fa_left, fa_bottom, c_text_secondary, a_text_secondary, font_label)
 	
 	dx += 130 + 24
 	dy = content_y + 176
@@ -124,7 +124,10 @@ function popup_about_draw()
 		"Swooplezz",
 		"UpgradedMoon",
 		"Vash",
-		"__Mine__"
+		"__Mine__",
+		"Nirwandra",
+		"Randi(11X)Stres",
+		"Azaron"
 	]
 	
 	for (var i = 0; i < array_length(list); i++)

@@ -35,12 +35,16 @@ function app_startup_interface_tabs()
 		render = tab_add_category("render", icons.CAMERA_PHOTO_SMALL, tab_properties_render, false)
 		with (render)
 		{
+			tbx_render_engine = new_textbox_integer()
+			tbx_render_engine_vanilla = new_textbox(true, 0, "")
+			tbx_render_engine_ex = new_textbox(true, 0, "")
 			tbx_render_distance = new_textbox_integer()
 			tbx_samples = new_textbox_integer()
 			
 			tbx_ssao_radius = new_textbox_decimals()
 			tbx_ssao_power = new_textbox_integer()
 			tbx_ssao_power.suffix = "%"
+			tbx_ssao_ratio = new_textbox_decimals()
 			
 			tbx_subsurface_samples = new_textbox_integer()
 			tbx_subsurface_highlight = new_textbox_integer()
@@ -54,6 +58,7 @@ function app_startup_interface_tabs()
 			tbx_indirect_blur_radius.suffix = "%"
 			tbx_indirect_strength = new_textbox_integer()
 			tbx_indirect_strength.suffix = "%"
+			tbx_indirect_raystep = new_textbox_integer()
 			
 			tbx_reflections_precision = new_textbox_integer()
 			tbx_reflections_precision.suffix = "%"
@@ -72,6 +77,8 @@ function app_startup_interface_tabs()
 			
 			tbx_aa_power = new_textbox_integer()
 			tbx_aa_power.suffix = "%"
+			
+			tbx_dof_sample = new_textbox_integer()
 			
 			tbx_texture_filtering_level = new_textbox_integer()
 			
@@ -741,6 +748,9 @@ function app_startup_interface_tabs()
 		program = tab_add_category("settingsprogram", icons.SETTINGS_SMALL, tab_settings_program, false)
 		with (program)
 		{
+			tbx_cam_work_pov = new_textbox_integer()
+			tbx_cam_work_pov.suffix = "°"
+			tbx_gizmos_size = new_textbox_integer()
 			tbx_backup_time = new_textbox_integer()
 			tbx_backup_amount = new_textbox_integer()
 			
