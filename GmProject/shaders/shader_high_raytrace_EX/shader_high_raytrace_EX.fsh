@@ -105,7 +105,7 @@ float VanDerCorput(int n, int base)
 	float denom   = 1.0;
 	float result  = 0.0;
 	
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 32; i++)
 	{
 		if (n > 0)
 		{
@@ -177,16 +177,17 @@ vec3 rayTrace(vec3 rayStart, vec3 rayDir, float rayThickness, vec3 noise)
 	p = progress;
 	
 	float i = 0.0;
-	float steps = 256.0 * (1.0 + uPrecision); // Gradually increase max steps
+	float steps = 312.0 * (1.0 + uPrecision); // Gradually increase max steps
 	float stepscount = 0.0;
 	float precisionJitter = (uRayType == RAY_SPECULAR ? 1.0 : noise.g);
+	float ScreenScale = 0.05 + uScreenSize[1] / 844.0;
 	for (; i < steps; i += 1.0)
 	{
 		// Get previous progress for refining later
 		progressPrev	= progress;
 		deltaPrev		= delta;
 		
-		float stride	= 1.0 + ((i * (1.0 - uPrecision)) * precisionJitter);
+		float stride	= ScreenScale + ((i * (1.0 - uPrecision)) * precisionJitter);
 		progress		= p + (stride * noise.r);
 		p				+= stride;
 		
@@ -256,10 +257,9 @@ void main()
 	vec3 rayCoord = vec3(-1.0);
 	
 	float pixel = (floor(vTexCoord.x * uScreenSize.x) + floor(vTexCoord.y * uScreenSize.y)) + uSampleIndex;
-	bool halfResCast = (mod(pixel, 2.0) == 0.0);
 	
 	// Don't calculate ray if depth isn't valid
-	if (!(depthData.a < 0.001 || depth > 0.999 || materialData.r > 0.95 || !halfResCast))
+	if (!(depthData.a < 0.001 || depth > 0.999 || materialData.r > 0.95))
 	{
 		// Sample buffers
 		normal	= unpackNormal(texture2D(uNormalBuffer, vTexCoord));
@@ -273,7 +273,7 @@ void main()
 		// Specular (GGX)
 		if (uRayType == RAY_SPECULAR)
 		{
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < 2; i++)
 			{
 				vec2 Xi = Hammersley(int(256.0 + ((noise.r - .5) * 256.0)), 512);
 				vec3 H  = normalize(mat * sampleGGX(Xi, materialData.r));
@@ -287,10 +287,10 @@ void main()
 			rayDir = normalize(mat * unpackNormalBlueNoise(noise));
 	
 		// Ray thickness (Increase based on steepness of ray)
-		float rayThickness = uThickness * max(1.0, pow(1.0 - abs(max(0.0, dot(rayDir, normal))), 6.0) * 100.0);
+		float rayThickness = uThickness * max(1.0, pow(1.0 - abs(max(0.0, dot(rayDir, normal))), 7.0) * 100.0);
 		
 		if (rayDir.z < 0.2)
-			rayThickness *= 5.0;
+			rayThickness *= 6.0;
 		
 		// Ray trace
 		rayCoord = rayTrace(rayPos, rayDir, rayThickness, noise.rgb);
@@ -319,7 +319,7 @@ void main()
 			vis *= clamp(1.0 - (fadeUV.x + fadeUV.y), 0.0, 1.0);
 			
 			// Fade if roughness is too high
-			vis *= 1.0 - percent(materialData.r, .85, .95);
+			vis *= 1.0 - percent(materialData.r, .85, .97);
 			vis = clamp(vis, 0.0, 1.0);
 			
 			rayColor = texture2D(uDataBuffer, rayCoord.xy).rgb;

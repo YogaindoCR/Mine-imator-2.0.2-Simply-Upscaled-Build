@@ -91,7 +91,7 @@ vec3 getMappedNormal(vec2 uv)
 
 float unpackDepth(vec4 c)
 {
-	return c.r + c.g / 255.0 + c.b / (255.0 * 255.0);
+    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
 }
 
 vec2 getShadowMapCoord(vec3 look)

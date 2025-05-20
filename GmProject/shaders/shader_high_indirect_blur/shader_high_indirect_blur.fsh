@@ -8,7 +8,6 @@ uniform sampler2D uDepthBuffer;
 uniform sampler2D uNormalBuffer;
 uniform sampler2D uNoiseBuffer;
 uniform vec2 uScreenSize;
-uniform vec2 uPixelCheck;
 
 uniform float uNormalBufferScale;
 uniform float uNoiseSize;
@@ -18,7 +17,7 @@ uniform float uBlurSize;
 // Get Depth Value
 float unpackDepth(vec4 c)
 {
-	return c.r + c.g / 255.0 + c.b / (255.0 * 255.0);
+    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
 }
 
 // Get Normal Value

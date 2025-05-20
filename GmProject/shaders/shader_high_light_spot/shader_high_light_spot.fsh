@@ -91,7 +91,7 @@ vec3 getMappedNormal(vec2 uv)
 
 float unpackDepth(vec4 c)
 {
-	return c.r + c.g / 255.0 + c.b / (255.0 * 255.0);
+    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
 }
 
 float hash(vec2 c)
@@ -213,7 +213,7 @@ void main()
 				if (difMask > 0.0)
 				{
 					// Calculate bias
-					float bias = 1.0;
+					float bias = 0.6;
 					
 					// Shadow
 					float sampleDepth = uLightNear + unpackDepth(texture2D(uDepthBuffer, fragCoord)) * (uLightFar - uLightNear);

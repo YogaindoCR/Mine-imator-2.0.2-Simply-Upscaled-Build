@@ -80,7 +80,7 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 
 float unpackDepth(vec4 c)
 {
-	return c.r + c.g / 255.0 + c.b / (255.0 * 255.0);
+    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
 }
 
 vec4 cascadeDepthBuffer(int index, vec2 coord)
