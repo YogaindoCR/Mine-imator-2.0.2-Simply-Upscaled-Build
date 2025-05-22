@@ -27,7 +27,7 @@ uniform vec4 uColor;
 // Get depth
 float unpackValue(vec4 c)
 {
-    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
+    return dot(c.rgb, vec3(1.0, 0.003921569, 0.00001538));
 }
 
 // Get normal Value

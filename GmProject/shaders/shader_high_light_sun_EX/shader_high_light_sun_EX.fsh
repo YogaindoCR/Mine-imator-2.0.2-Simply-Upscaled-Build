@@ -158,7 +158,7 @@ float calculateShadow(int cascade, vec2 coord, float fragDepth, float bias)
     float result;
     float shadow = 0.0;
 
-    if (uLightSize > 0.01) {
+    if (uLightSize > 0.02) {
         // Apply blur based on cascade level (farther cascades get more blur)
         float blurAmount = uLightSize * (uLightSize / 2.0) * (0.01 + float(cascade) * 0.001);
         float samples = 0.0;
@@ -272,15 +272,18 @@ void main()
 	            // Use the new soft shadow calculation
 	            shadow = vec3(calculateShadow(i, fragCoord, fragDepth, bias));
             
-	            if (sss > 0.001 && dif == 0.0)
+	            if (sss > 0.0 && dif == 0.0)
 				{
-	                float sampleDepth = mix(uSunNear[i], uSunFar[i], unpackDepth(cascadeDepthBuffer(i, fragCoord)));
-	                vec3 dis = vec3(fragDepth + bias - sampleDepth) / (uLightColor.rgb * uLightStrength * uSSSRadius * sss);
-	                if (fragDepth - (bias * 0.01) <= sampleDepth) dis = vec3(0.0);
-	                vec3 dis2 = dis * dis;
-	                vec3 dis4 = dis2 * dis2;
-	                subsurf = pow(max(1.0 - dis4, 0.0), vec3(2.0)) / (dis2 + 1.0);
-	            }
+					float sampleDepth = mix(uSunNear[i], uSunFar[i], unpackDepth(cascadeDepthBuffer(i, fragCoord)));
+					vec3 rad = uSSSRadius * sss;
+					vec3 dis = vec3((fragDepth + bias) - sampleDepth) / (uLightColor.rgb * uLightStrength * rad);
+					
+					if ((fragDepth - (bias * 0.01)) <= sampleDepth)
+						dis = vec3(0.0);
+					
+					subsurf = pow(max(1.0 - pow(dis / rad, vec3(4.0)), 0.0), vec3(2.0)) / (pow(dis, vec3(2.0)) + 1.0);
+					subsurf *= smoothstep(0.0, 1.0, (sss / 5.0));
+				}
 	        }
 	    }
     
@@ -288,14 +291,13 @@ void main()
 	    light = uLightColor.rgb * (uLightStrength * dif * shadow);
     
 	    // Subsurface scattering
-	    if (sss > 0.001)
+	    if (sss > 0.0)
 		{
-	        float transDif = max(dot(-normal, uLightDirection), 0.0);
-	        float phase = CSPhase(dot(normalize(vPosition - uCameraPosition), uLightDirection), uSSSHighlight);
-	        subsurf += subsurf * uSSSHighlightStrength * phase;
-	        light += (uLightColor.rgb * uLightStrength * uSSSColor.rgb * transDif * subsurf) * smoothstep(0.0, 0.1, (sss / 50.0));
-	        light = mix(light, light * uSSSColor.rgb, clamp((sss / 20.0), 0.0, 0.5));
-	    }
+			float transDif = max(0.0, dot(normalize(-normal), uLightDirection));
+			subsurf += (subsurf * uSSSHighlightStrength * CSPhase(dot(normalize(vPosition - uCameraPosition), uLightDirection), uSSSHighlight));
+			light += uLightColor.rgb * uLightStrength * uSSSColor.rgb * transDif * subsurf;
+			light *= mix(vec3(1.0), uSSSColor.rgb, clamp(sss / 75.0, 0.0, 1.0));
+		}
 		
 	    // Specular
 	    spec = vec3(0.0);

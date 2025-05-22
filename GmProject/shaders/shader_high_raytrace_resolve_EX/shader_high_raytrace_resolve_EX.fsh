@@ -54,7 +54,7 @@ void main()
         vec3 originNormal = unpackNormal(texture2D(uNormalBuffer, vTexCoord));
         float originDepth = unpackDepth(texture2D(uDepthBuffer, vTexCoord));
 
-        vec2 texelSize = 0.5 * uScreenSize;
+        vec2 texelSize = 0.1 * uScreenSize;
 
         vec2 directions[8];
 	    directions[0] = vec2(1, 0);

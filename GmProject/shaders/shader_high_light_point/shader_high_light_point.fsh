@@ -1,5 +1,8 @@
 #define SQRT05 0.707106781
 #define PI 3.14159265
+#define INV_PI 0.318309886
+#define ONE_THIRD 0.333333333
+#define ONE_HALF 0.5
 
 uniform sampler2D uTexture; // static
 uniform int uIsSky;
@@ -46,33 +49,36 @@ varying vec2 vTexCoord;
 varying vec4 vCustom;
 varying vec4 vColor;
 
-// Fresnel Schlick approximation
+// Optimized fresnelSchlickRoughness
 float fresnelSchlickRoughness(float cosTheta, float F0, float roughness)
 {
-	return F0 + (max((1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+    float x = clamp(1.0 - cosTheta, 0.0, 1.0);
+    float x2 = x * x;
+    float x5 = x2 * x2 * x;
+    return F0 + (max(1.0 - roughness, F0) - F0) * x5;
 }
 
-// GGX specular (https://learnopengl.com/PBR/Lighting)
+// Optimized distributionGGX
 float distributionGGX(vec3 N, vec3 H, float roughness)
 {
-	float a2 = roughness * roughness * roughness * roughness;
-	float NdotH = max(dot(N, H), 0.0);
-	float denom = (NdotH * NdotH * (a2 - 1.0) + 1.0);
-	return a2 / (PI * denom * denom);
+    float a2 = roughness * roughness;
+    a2 *= a2; // roughness^4
+    float NdotH = max(dot(N, H), 0.0);
+    float denom = NdotH * NdotH * (a2 - 1.0) + 1.0;
+    return a2 / (PI * denom * denom);
 }
 
 float geometrySchlickGGX(float NdotV, float roughness)
 {
-	float r = (roughness + 1.0);
-	float k = (r * r) / 8.0;
-	
-	return NdotV / (NdotV * (1.0 - k) + k);
+    float k = (roughness + 1.0);
+    k = (k * k) * 0.125;
+    return NdotV / (NdotV * (1.0 - k) + k);
 }
 
 float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
-	return geometrySchlickGGX(max(dot(N, V), 0.0), roughness) *
-			geometrySchlickGGX(max(dot(N, L), 0.0), roughness);
+    return geometrySchlickGGX(max(dot(N, V), 0.0), roughness) *
+           geometrySchlickGGX(max(dot(N, L), 0.0), roughness);
 }
 
 uniform int uUseNormalMap; // static
@@ -91,7 +97,7 @@ vec3 getMappedNormal(vec2 uv)
 
 float unpackDepth(vec4 c)
 {
-    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
+    return dot(c.rgb, vec3(1.0, 0.003921569, 0.00001538));
 }
 
 vec2 getShadowMapCoord(vec3 look)
@@ -121,51 +127,8 @@ vec2 getShadowMapCoord(vec3 look)
 // Linear filtering, done in-shader as we use a texture atlas
 vec4 getFilteredDepth(vec2 uv, vec2 uvMin)
 {
-	float samples = 0.0;
-	vec2 sampleuv, uvMax, texelOffset;
-	vec4 color = vec4(0.0);
-	texelOffset = vec2((1.0/vec2(uDepthBufferSize * 3.0, uDepthBufferSize * 2.0)) * 0.5);
-	uvMax = uvMin + vec2(1.0/3.0, 0.5);
-	
-	// Top left
-	sampleuv = uv - texelOffset.x;
-	if (sampleuv.x > uvMin.x && sampleuv.x < uvMax.x &&
-		sampleuv.y > uvMin.y && sampleuv.y < uvMax.y)
-	{
-		color += texture2D(uDepthBuffer, sampleuv);
-		samples += 1.0;
-	}
-	
-	// Top right
-	sampleuv.y = uv.y - texelOffset.x;
-	sampleuv.x = uv.x + texelOffset.y;
-	if (sampleuv.x > uvMin.x && sampleuv.x < uvMax.x &&
-		sampleuv.y > uvMin.y && sampleuv.y < uvMax.y)
-	{
-		color += texture2D(uDepthBuffer, sampleuv);
-		samples += 1.0;
-	}
-	
-	// Bottom left
-	sampleuv.y = uv.y + texelOffset.x;
-	sampleuv.x = uv.x - texelOffset.y;
-	if (sampleuv.x > uvMin.x && sampleuv.x < uvMax.x &&
-		sampleuv.y > uvMin.y && sampleuv.y < uvMax.y)
-	{
-		color += texture2D(uDepthBuffer, sampleuv);
-		samples += 1.0;
-	}
-	
-	// Bottom right
-	sampleuv = uv + texelOffset;
-	if (sampleuv.x > uvMin.x && sampleuv.x < uvMax.x &&
-		sampleuv.y > uvMin.y && sampleuv.y < uvMax.y)
-	{
-		color += texture2D(uDepthBuffer, sampleuv);
-		samples += 1.0;
-	}
-	
-	return color / samples;
+	vec2 texelSize = vec2(1.0/(uDepthBufferSize * 3.0), 1.0/(uDepthBufferSize * 2.0)) * 0.5;
+    return texture2D(uDepthBuffer, clamp(uv, uvMin + texelSize, uvMin + vec2(ONE_THIRD, ONE_HALF) - texelSize));
 }
 
 float hash(vec2 c)
@@ -176,48 +139,35 @@ float hash(vec2 c)
 
 void getMaterial(out float roughness, out float metallic, out float emissive, out float F0, out float sss)
 {
-	vec4 matColor = texture2D(uTextureMaterial, vTexCoord);
-	
-	if (uMaterialFormat == 2) // LabPBR
-	{
-		if (matColor.g > 0.898) // Metallic
-		{
-			metallic = 1.0; F0 = 1.0; sss = 0.0;
-		}
-		else // Non-metallic
-		{
-			metallic = 0.0; F0 = matColor.g;
-			sss = (matColor.b > 0.255 ? (((matColor.b - 0.255) / 0.745) * max(uSSS, uDefaultSubsurface)) : 0.0);
-		}
-		
-		roughness = pow(1.0 - matColor.r, 2.0);
-		emissive = (matColor.a < 1.0 ? matColor.a /= 0.9961 : 0.0) * uDefaultEmissive;
-		
-		return;
-	}
-	
-	if (uMaterialFormat == 1) // SEUS
-	{
-		roughness = (1.0 - matColor.r);
-		metallic = matColor.g;
-		emissive = (matColor.b * uDefaultEmissive);
-	}
-	else // No map
-	{
-		roughness = uRoughness;
-		metallic = uMetallic;
-		emissive = max(uEmissive, vCustom.z * uDefaultEmissive);
-	}
-	
-	F0 = mix(0.0, 1.0, metallic);
-	sss = max(uSSS, vCustom.w * uDefaultSubsurface);
+    vec4 matColor = texture2D(uTextureMaterial, vTexCoord);
+
+    if (uMaterialFormat == 2) { //LabPBR
+        metallic = (matColor.g > 0.898) ? 1.0 : 0.0;
+        F0 = (metallic > 0.5) ? 1.0 : matColor.g;
+        sss = (matColor.b > 0.255) ? ((matColor.b - 0.255) / 0.745) * max(uSSS, uDefaultSubsurface) : 0.0;
+        roughness = pow(1.0 - matColor.r, 2.0);
+        emissive = (matColor.a < 1.0) ? (matColor.a / 0.9961) * uDefaultEmissive : 0.0;
+    } else if (uMaterialFormat == 1) { //Seus
+        roughness = 1.0 - matColor.r;
+        metallic = matColor.g;
+        emissive = matColor.b * uDefaultEmissive;
+        F0 = mix(0.0, 1.0, metallic);
+        sss = max(uSSS, vCustom.w * uDefaultSubsurface);
+    } else { //None
+        roughness = uRoughness;
+        metallic = uMetallic;
+        emissive = max(uEmissive, vCustom.z * uDefaultEmissive);
+        F0 = mix(0.0, 1.0, metallic);
+        sss = max(uSSS, vCustom.w * uDefaultSubsurface);
+    }
 }
 
+// Optimized CSPhase
 float CSPhase(float dotView, float scatter)
 {
-	float result = (3.0 * (1.0 - (scatter * scatter))) * (1.0 + dotView);
-	result /= 2.0 * (2.0 + pow(scatter, 2.0)) * pow(1.0 + pow(scatter, 2.0) - 2.0 * scatter * dotView, 1.5);
-	return result;
+    float scat2 = scatter * scatter;
+    float denom = (2.0 + scat2) * pow(1.0 + scat2 - 2.0 * scatter * dotView, 1.5);
+    return (3.0 * (1.0 - scat2) * (1.0 + dotView)) / (2.0 * denom);
 }
 
 void main()
@@ -338,8 +288,7 @@ void main()
 				bufferMin = vec2(0.0, 0.5);
 			}
 			
-			// Calculate bias
-			float bias = 1.0;
+			float bias = 0.8;
 			
 			// Shadow
 			float fragDepth = distance(vPosition, uShadowPosition);

@@ -240,6 +240,7 @@ void main()
 								dis = vec3(0.0);
 						
 							subsurf = pow(max(1.0 - pow(dis / rad, vec3(4.0)), 0.0), vec3(2.0)) / (pow(dis, vec3(2.0)) + 1.0) * att;
+							subsurf *= smoothstep(0.0, 1.0, (sss / 5.0));
 						}
                     }
                 }
@@ -254,8 +255,8 @@ void main()
 		{
 			float transDif = max(0.0, dot(normalize(-normal), normalize(uLightPosition - vPosition)));
 			subsurf += (subsurf * uSSSHighlightStrength * CSPhase(dot(normalize(vPosition - uCameraPosition), normalize(uLightPosition - vPosition)), uSSSHighlight));
-			light += (uLightColor.rgb * uLightStrength * uSSSColor.rgb * transDif * subsurf * difMask) * smoothstep(0.0, 0.1, (sss / 50.0));
-			light *= mix(vec3(1.0), uSSSColor.rgb, clamp((sss / 20.0), 0.0, 0.5));
+			light += (uLightColor.rgb * uLightStrength * uSSSColor.rgb * transDif * subsurf * difMask);
+			light *= mix(vec3(1.0), uSSSColor.rgb, clamp(sss / 75.0, 0.0, 1.0));
 		}
         
         // Specular calculation

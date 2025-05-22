@@ -181,101 +181,66 @@ vec4 getFilteredDepth(vec2 uv, vec2 uvMin)
     return color / samples;
 }
 
-// Enhanced shadow calculation with distance-based blur
-float calculateShadow(vec2 fragCoord, vec2 bufferMin, float fragDepth, float bias, float distanceFromLight)
+//shadow calculation
+float calculateShadow(vec2 fragCoord, vec2 bufferMin, float fragDepth, float bias)
 {
     float shadow = 0.0;
+    float weightSum = 0.0;
+	float result = 0.0;
 	
-	if (uLightSize > 0.1)
-	{
-		float texelSize = 1.0 / uDepthBufferSize;
-    
-	    // Distance-based blur scaling
-	    float distanceBlurFactor = smoothstep(uLightNear, uLightFar * 0.8, distanceFromLight);
-	    float baseBlur = uLightSize * 0.01;
-	    float maxBlur = uLightSize * 0.2;
-	    float worldSpaceBlurRadius = mix(baseBlur, maxBlur, distanceBlurFactor);
-    
-	    // Resolution adaptation
-	    float resolutionFactor = smoothstep(256.0, 2048.0, uDepthBufferSize);
-	    worldSpaceBlurRadius *= mix(0.5, 2.0, resolutionFactor);
-    
-	    // Convert to UV space
-	    float blurRadiusUV = clamp(worldSpaceBlurRadius / (uLightFar * 0.5), 0.001, 0.05);
-    
-	    // Jitter for noise dithering
-	    vec2 jitter = vec2(
-	        noise(fragCoord * 10.0 + 0.5),
-	        noise(fragCoord * 10.0 + 1.5)
-	    ) * 2.0 - 1.0;
-    
-	    // Poisson disk samples
-	    vec2 poissonDisk[16];
-	    poissonDisk[0] = vec2(-0.94201624, -0.39906216);
-	    poissonDisk[1] = vec2(-0.6961816, 0.45697793);
-	    poissonDisk[2] = vec2(-0.20310713, 0.42402853);
-	    poissonDisk[3] = vec2(0.96234106, -0.1949834);
-	    poissonDisk[4] = vec2(0.47343425, -0.4800269);
-	    poissonDisk[5] = vec2(0.519456, 0.7670221);
-	    poissonDisk[6] = vec2(0.18546124, -0.8931231);
-	    poissonDisk[7] = vec2(0.5074318, 0.0644256);
-	    poissonDisk[8] = vec2(0.89642, 0.4124583);
-	    poissonDisk[9] = vec2(-0.3219406, -0.9326146);
-	    poissonDisk[10] = vec2(-0.791559, -0.597705);
-	    poissonDisk[11] = vec2(-0.5463055, 0.7622272);
-	    poissonDisk[12] = vec2(-0.4621936, -0.283806);
-	    poissonDisk[13] = vec2(0.4144426, 0.1581487);
-	    poissonDisk[14] = vec2(0.1342776, 0.6742424);
-	    poissonDisk[15] = vec2(-0.9083806, 0.0433386);
-    
-	    float weightSum = 0.0;
-    
-	    for (int i = 0; i < 16; i++)
-		{
-	        vec2 sampleOffset = poissonDisk[i] * blurRadiusUV;
-	        sampleOffset += jitter * (blurRadiusUV / 8.0);
-        
-	        vec2 sampleCoord = fragCoord + sampleOffset;
-        
-	        // Boundary check with smooth transition
-	        vec2 clampedCoord = clamp(sampleCoord, bufferMin + vec2(0.001), bufferMin + vec2(1.0/3.0 - 0.001, 0.5 - 0.001));
-	        float boundaryFactor = smoothstep(0.0, 0.002, min(
-	            min(clampedCoord.x - bufferMin.x, bufferMin.x + 1.0/3.0 - clampedCoord.x),
-	            min(clampedCoord.y - bufferMin.y, bufferMin.y + 0.5 - clampedCoord.y)
-	        ));
-        
-	        float sampleDepth = uLightNear + (uLightFar - uLightNear) * 
-	                          unpackDepth(getFilteredDepth(clampedCoord, bufferMin));
-        
-	        // Contact hardening - sharper near contact points
-	        float contactHardening = 1.0 - smoothstep(0.0, 0.2, (fragDepth - sampleDepth) / fragDepth);
-	        float dynamicPenumbra = mix(blurRadiusUV * 0.3, blurRadiusUV * 2.0, contactHardening);
-        
-	        float shadowTest = smoothstep(bias, bias + dynamicPenumbra, fragDepth - sampleDepth);
-        
-	        // Distance-based weighting
-	        float weight = 1.0 - smoothstep(0.0, blurRadiusUV, length(sampleOffset));
-	        shadow += (1.0 - shadowTest) * weight * boundaryFactor;
-	        weightSum += weight * boundaryFactor;
-	    }
-    
-	    // Normalize and apply distance-based darkening
-	    shadow = weightSum > 0.0 ? mix(1.0, shadow / weightSum, smoothstep(0.0, 0.1, weightSum)) : 1.0;
-	    float distanceDarken = smoothstep(uLightFar * 0.7, uLightFar, distanceFromLight);
-	    shadow = mix(shadow, shadow * 0.7, distanceDarken);
-	    shadow = pow(shadow, mix(1.0, 1.5, resolutionFactor));
+	if (uLightSize > 0.001) {
+
+    // Poisson disk
+    vec2 poissonDisk[16];
+    poissonDisk[0] = vec2(-0.94201624, -0.39906216);
+    poissonDisk[1] = vec2(-0.6961816, 0.45697793);
+    poissonDisk[2] = vec2(-0.20310713, 0.42402853);
+    poissonDisk[3] = vec2(0.96234106, -0.1949834);
+    poissonDisk[4] = vec2(0.47343425, -0.4800269);
+    poissonDisk[5] = vec2(0.519456, 0.7670221);
+    poissonDisk[6] = vec2(0.18546124, -0.8931231);
+    poissonDisk[7] = vec2(0.5074318, 0.0644256);
+    poissonDisk[8] = vec2(0.89642, 0.4124583);
+    poissonDisk[9] = vec2(-0.3219406, -0.9326146);
+    poissonDisk[10] = vec2(-0.791559, -0.597705);
+    poissonDisk[11] = vec2(-0.5463055, 0.7622272);
+    poissonDisk[12] = vec2(-0.4621936, -0.283806);
+    poissonDisk[13] = vec2(0.4144426, 0.1581487);
+    poissonDisk[14] = vec2(0.1342776, 0.6742424);
+    poissonDisk[15] = vec2(-0.9083806, 0.0433386);
+
+    for (int i = 0; i < 16; i++)
+    {
+        vec2 sampleOffset = poissonDisk[i] * uLightSize;
+        vec2 sampleCoord = fragCoord + sampleOffset;
+
+        // Clamp to light atlas buffer region
+        vec2 clampedCoord = clamp(
+            sampleCoord,
+            bufferMin + vec2(0.001),
+            bufferMin + vec2(1.0 / 3.0 - 0.001, 0.5 - 0.001)
+        );
+
+        float sampleDepth = uLightNear + (uLightFar - uLightNear) *
+                            unpackDepth(getFilteredDepth(clampedCoord, bufferMin));
+
+        float shadowTest = smoothstep(bias, bias, fragDepth - sampleDepth);
+
+        // Distance weighting for softer edges
+        float weight = 1.0 - smoothstep(0.0, uLightSize, length(sampleOffset));
+        shadow += (1.0 - shadowTest) * weight;
+        weightSum += weight;
+    }
+		result = (weightSum > 0.0) ? shadow / weightSum : 1.0;
 	} else {
-		vec2 clampedCoord = clamp(fragCoord, bufferMin + vec2(0.001), bufferMin + vec2(1.0/3.0 - 0.001, 0.5 - 0.001));
-		float sampleDepth = uLightNear + (uLightFar - uLightNear) * 
-	                        unpackDepth(getFilteredDepth(clampedCoord, bufferMin));
-							
-		float shadowTest = smoothstep(bias, bias, fragDepth - sampleDepth);
-	    shadow += (1.0 - shadowTest);
+		float sampleDepth = uLightNear + (uLightFar - uLightNear) * unpackDepth(getFilteredDepth(fragCoord, bufferMin));
+        shadow = ((fragDepth - bias) > sampleDepth) ? 0.0 : 1.0;
+        result = shadow;
 	}
-	
-	
-    return shadow;
+
+    return result;
 }
+
 
 // Material properties
 void getMaterial(out float roughness, out float metallic, out float emissive, out float F0, out float sss)
@@ -397,10 +362,10 @@ void main()
                 bufferMin = vec2(0.0, 0.5);
             }
             
-            // Calculate bias and shadow with distance-based blur
+            // Calculate bias and shadow
             float bias = max(0.01 * (1.0 - dot(normal, normalize(uLightPosition - vPosition))), 0.6);
             float fragDepth = distance(vPosition, uShadowPosition);
-            shadow = calculateShadow(fragCoord, bufferMin, fragDepth, bias, distance(vPosition, uLightPosition));
+            shadow = calculateShadow(fragCoord, bufferMin, fragDepth, bias);
             
             // Subsurface scattering
             if (sss > 0.001 && dif == 0.0)
@@ -412,6 +377,7 @@ void main()
                     dis = vec3(0.0);
                 
                 subsurf = pow(max(1.0 - pow(dis / rad, vec3(4.0)), 0.0), vec3(2.0)) / (pow(dis, vec3(2.0)) + 1.0) * att;
+                subsurf *= smoothstep(0.0, 1.0, (sss / 5.0));
             }
         }
         
@@ -424,7 +390,7 @@ void main()
             float transDif = max(0.0, dot(normalize(-normal), normalize(uLightPosition - vPosition)));
             subsurf += (subsurf * uSSSHighlightStrength * CSPhase(dot(normalize(vPosition - uCameraPosition), normalize(uLightPosition - vPosition)), uSSSHighlight));
             light += (uLightColor.rgb * uLightStrength * uSSSColor.rgb * transDif * subsurf) * smoothstep(0.0, 0.1, (sss / 50.0));
-            light *= mix(vec3(1.0), uSSSColor.rgb, clamp((sss / 20.0), 0.0, 0.5));
+            light *= mix(vec3(1.0), uSSSColor.rgb, clamp(sss / 75.0, 0.0, 1.0));
         }
         
         // Specular highlights

@@ -23,30 +23,37 @@ uniform vec3 uKernel[SAMPLES];
 uniform float uRadius;
 uniform float uPower;
 uniform float uRatio;
+uniform float uRatioBalance;
 uniform vec4 uColor;
 
-float unpackValue(vec4 c) {
-    return c.r + c.g / 255.0 + c.b / (255.0 * 255.0);
+float unpackValue(vec4 c)
+{
+    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
 }
 
-vec3 unpackNormal(vec4 c) {
+vec3 unpackNormal(vec4 c)
+{
     return (c.rgb / uNormalBufferScale) * 2.0 - 1.0;
 }
 
-float transformDepth(float depth) {
+float transformDepth(float depth)
+{
     return (uFar - (uNear * uFar) / (depth * (uFar - uNear) + uNear)) / (uFar - uNear);
 }
 
-vec3 posFromBuffer(vec2 coord, float depth) {
+vec3 posFromBuffer(vec2 coord, float depth)
+{
     vec4 pos = uProjMatrixInv * vec4(coord.x * 2.0 - 1.0, 1.0 - coord.y * 2.0, transformDepth(depth), 1.0);
     return pos.xyz / pos.w;
 }
 
-vec3 unpackNormalBlueNoise(vec4 c) {
+vec3 unpackNormalBlueNoise(vec4 c)
+{
     return normalize(vec3(c.r, c.g, c.b * 0.5));
 }
 
-float getSSAOstrength(vec2 uv) {
+float getSSAOstrength(vec2 uv)
+{
     float emissive = unpackValue(texture2D(uEmissiveBuffer, uv)) * 255.0;
     float mask = texture2D(uMaskBuffer, uv).r;
     return (1.0 - clamp(emissive, 0.0, 1.0)) * mask;
@@ -72,7 +79,8 @@ void main()
 
     float occlusion = 0.0;
 		// Pass 1
-	    for (int i = 0; i < SAMPLES; i++) {
+	    for (int i = 0; i < SAMPLES; i++)
+		{
 	        vec3 sampleVec = tbn * uKernel[i];
 	        vec3 samplePos = origin + sampleVec * (uRadius * uRatio);
 
@@ -98,7 +106,7 @@ void main()
 	        float rangeFalloff = 1.0 - clamp(dist / (uRadius * uRatio), 0.0, 1.0);
 	        float normalFalloff = clamp(1.0 - dot(normal, sampleNormal), 0.0, 1.0);
 
-	        occlusion += 0.65 * depthHit * rangeFalloff * normalFalloff * sampleStrength;
+	        occlusion += (1.0 - uRatioBalance) * depthHit * rangeFalloff * normalFalloff * sampleStrength;
 	    
 			//Pass 2
 		
@@ -128,14 +136,14 @@ void main()
 	        rangeFalloff = 1.0 - clamp(dist / uRadius, 0.0, 1.0);
 	        normalFalloff = clamp(1.0 - dot(normal, sampleNormal), 0.0, 1.0);
 
-	        occlusion += 0.35 * depthHit * rangeFalloff * normalFalloff * sampleStrength;
+	        occlusion += uRatioBalance * depthHit * rangeFalloff * normalFalloff * sampleStrength;
 		}
 		
 	// Raise to power
 	occlusion = clamp(1.0 - pow(max(0.0, 1.0 - occlusion / float(SAMPLES)), uPower), 0.0, 1.0);
 	
 	// Apply strength
-	occlusion *= getSSAOstrength(vTexCoord) + 1.0;
+	occlusion *= getSSAOstrength(vTexCoord);
 	occlusion = clamp(occlusion, 0.0, 1.0);
 	
 	// Mix

@@ -49,226 +49,178 @@ varying vec4 vColor;
 // Fresnel Schlick approximation
 float fresnelSchlickRoughness(float cosTheta, float F0, float roughness)
 {
-	return F0 + (max((1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+    return F0 + (max(1.0 - roughness, F0) - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
-// GGX specular (https://learnopengl.com/PBR/Lighting)
 float distributionGGX(vec3 N, vec3 H, float roughness)
 {
-	float a2 = roughness * roughness * roughness * roughness;
-	float NdotH = max(dot(N, H), 0.0);
-	float denom = (NdotH * NdotH * (a2 - 1.0) + 1.0);
-	return a2 / (PI * denom * denom);
+    float a2 = roughness * roughness;
+    a2 *= a2;
+    float NdotH = max(dot(N, H), 0.0);
+    float denom = NdotH * NdotH * (a2 - 1.0) + 1.0;
+    return a2 / (PI * denom * denom);
 }
 
 float geometrySchlickGGX(float NdotV, float roughness)
 {
-	float r = (roughness + 1.0);
-	float k = (r * r) / 8.0;
-	
-	return NdotV / (NdotV * (1.0 - k) + k);
+    float k = (roughness + 1.0);
+    k = (k * k) * 0.125;
+    return NdotV / (NdotV * (1.0 - k) + k);
 }
 
 float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
-	return	geometrySchlickGGX(max(dot(N, V), 0.0), roughness) *
-			geometrySchlickGGX(max(dot(N, L), 0.0), roughness);
+    return geometrySchlickGGX(max(dot(N, V), 0.0), roughness) *
+           geometrySchlickGGX(max(dot(N, L), 0.0), roughness);
 }
 
 uniform int uUseNormalMap; // static
 vec3 getMappedNormal(vec2 uv)
 {
-	if (uUseNormalMap < 1)
-		return vec3(vTBN[2][0], vTBN[2][1], vTBN[2][2]);
-	
-	vec4 n = texture2D(uTextureNormal, uv).rgba;
-	n.rgba = (n.a < 0.01 ? vec4(.5, .5, 0.0, 1.0) : n.rgba); // No normal?
-	n.xy = n.xy * 2.0 - 1.0; // Decode
-	n.z = sqrt(max(0.0, 1.0 - dot(n.xy, n.xy))); // Get Z
-	n.y *= -1.0; // Convert Y- to Y+
-	return normalize(vTBN * n.xyz);
+    if (uUseNormalMap < 1)
+        return vTBN[2];
+
+    vec4 n = texture2D(uTextureNormal, uv);
+    if (n.a < 0.01)
+        return vTBN[2];
+
+    n.xy = n.xy * 2.0 - 1.0;
+    n.z = sqrt(max(0.0, 1.0 - dot(n.xy, n.xy)));
+    n.y *= -1.0;
+    return normalize(vTBN * n.xyz);
 }
 
 float unpackDepth(vec4 c)
 {
-    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
+    return dot(c.rgb, vec3(1.0, 0.003921569, 0.00001538));
 }
 
-float hash(vec2 c)
+float hash(vec2 p)
 {
-	return fract(10000.0 * sin(17.0 * c.x + 0.1 * c.y) *
-	(0.1 + abs(sin(13.0 * c.y + c.x))));
+    return fract(10000.0 * sin(17.0 * p.x + 0.1 * p.y) *
+                 (0.1 + abs(sin(13.0 * p.y + p.x))));
 }
 
 void getMaterial(out float roughness, out float metallic, out float emissive, out float F0, out float sss)
 {
-	vec4 matColor = texture2D(uTextureMaterial, vTexCoord);
-	
-	if (uMaterialFormat == 2) // LabPBR
-	{
-		if (matColor.g > 0.898) // Metallic
-		{
-			metallic = 1.0; F0 = 1.0; sss = 0.0;
-		}
-		else // Non-metallic
-		{
-			metallic = 0.0; F0 = matColor.g;
-			sss = (matColor.b > 0.255 ? (((matColor.b - 0.255) / 0.745) * max(uSSS, uDefaultSubsurface)) : 0.0);
-		}
-		
-		roughness = pow(1.0 - matColor.r, 2.0);
-		emissive = (matColor.a < 1.0 ? matColor.a /= 0.9961 : 0.0) * uDefaultEmissive;
-		
-		return;
-	}
-	
-	if (uMaterialFormat == 1) // SEUS
-	{
-		roughness = (1.0 - matColor.r);
-		metallic = matColor.g;
-		emissive = (matColor.b * uDefaultEmissive);
-	}
-	else // No map
-	{
-		roughness = uRoughness;
-		metallic = uMetallic;
-		emissive = max(uEmissive, vCustom.z * uDefaultEmissive);
-	}
-	
-	F0 = mix(0.0, 1.0, metallic);
-	sss = max(uSSS, vCustom.w * uDefaultSubsurface);
+    vec4 matColor = texture2D(uTextureMaterial, vTexCoord);
+
+    if (uMaterialFormat == 2) { //LabPBR
+        metallic = (matColor.g > 0.898) ? 1.0 : 0.0;
+        F0 = (metallic > 0.5) ? 1.0 : matColor.g;
+        sss = (matColor.b > 0.255) ? ((matColor.b - 0.255) / 0.745) * max(uSSS, uDefaultSubsurface) : 0.0;
+        roughness = pow(1.0 - matColor.r, 2.0);
+        emissive = (matColor.a < 1.0) ? (matColor.a / 0.9961) * uDefaultEmissive : 0.0;
+    } else if (uMaterialFormat == 1) { //Seus
+        roughness = 1.0 - matColor.r;
+        metallic = matColor.g;
+        emissive = matColor.b * uDefaultEmissive;
+        F0 = mix(0.0, 1.0, metallic);
+        sss = max(uSSS, vCustom.w * uDefaultSubsurface);
+    } else { //None
+        roughness = uRoughness;
+        metallic = uMetallic;
+        emissive = max(uEmissive, vCustom.z * uDefaultEmissive);
+        F0 = mix(0.0, 1.0, metallic);
+        sss = max(uSSS, vCustom.w * uDefaultSubsurface);
+    }
 }
 
 float CSPhase(float dotView, float scatter)
 {
-	float result = (3.0 * (1.0 - (scatter * scatter))) * (1.0 + dotView);
-	result /= 2.0 * (2.0 + pow(scatter, 2.0)) * pow(1.0 + pow(scatter, 2.0) - 2.0 * scatter * dotView, 1.5);
-	return result;
+    float s2 = scatter * scatter;
+    float denom = pow(1.0 + s2 - 2.0 * scatter * dotView, 1.5);
+    return (3.0 * (1.0 - s2) * (1.0 + dotView)) / (2.0 * (2.0 + s2) * denom);
 }
 
-void main() 
+void main()
 {
-	vec3 light, spec = vec3(0.0);
-	
-	vec2 tex = vTexCoord;
-	vec4 baseColor = texture2D(uTexture, tex) * vColor;
-	
-	if (uAlphaHash > 0)
-	{
-		if (baseColor.a < hash(vec2(hash(vPosition.xy + (uSampleIndex / 255.0)), vPosition.z + (uSampleIndex / 255.0))))
-			discard;
-		else
-			baseColor.a = 1.0;
-	}
-	
-	if (uIsSky > 0)
-	{
-		light = vec3(0.0);
-		spec = vec3(uLightSpecular);
-	}
-	else
-	{
-		// Get material data
-		float roughness, metallic, emissive, F0, sss;
-		getMaterial(roughness, metallic, emissive, F0, sss);
-		vec3 normal = getMappedNormal(vTexCoord);
-		
-		float dif = 0.0;
-		float difMask = 0.0;
-		float shadow = 1.0;
-		float att = 0.0;
-		vec3 subsurf = vec3(0.0);
-		
-		// Check if not behind the spot light
-		if (vScreenCoord.w > 0.0)
+    vec2 tex = vTexCoord;
+    vec4 baseColor = texture2D(uTexture, tex) * vColor;
+
+    if (uAlphaHash > 0) {
+        float aHash = hash(vec2(hash(vPosition.xy + (uSampleIndex / 255.0)), vPosition.z + (uSampleIndex / 255.0)));
+        if (baseColor.a < aHash) discard;
+        baseColor.a = 1.0;
+    }
+
+    vec3 light = vec3(0.0), spec = vec3(0.0);
+
+    if (uIsSky > 0) {
+        spec = vec3(uLightSpecular);
+    } else {
+        float roughness, metallic, emissive, F0, sss;
+        getMaterial(roughness, metallic, emissive, F0, sss);
+        vec3 normal = getMappedNormal(tex);
+        float dif = 0.0, shadow = 1.0, att = 0.0, difMask = 0.0;
+        vec3 subsurf = vec3(0.0);
+
+        if (vScreenCoord.w > 0.0)
 		{
-			// Diffuse factor
-			dif = max(0.0, dot(normal, normalize(uLightPosition - vPosition)));
-			
-			// Attenuation factor
-			att = 1.0 - clamp((distance(vPosition, uLightPosition) - uLightFar * (1.0 - uLightFadeSize)) / (uLightFar * uLightFadeSize), 0.0, 1.0);
-			dif *= att;
-			
-			if (dif > 0.0 || sss > 0.0)
-			{
-				// Spotlight circle
-				float fragDepth = min(vScreenCoord.z, uLightFar);
-				vec2 fragCoord = (vec2(vScreenCoord.x, -vScreenCoord.y) / vScreenCoord.z + 1.0) * 0.5;
-				
-				// Texture position must be valid
-				if (fragCoord.x > 0.0 && fragCoord.y > 0.0 && fragCoord.x < 1.0 && fragCoord.y < 1.0)
+            vec3 L = normalize(uLightPosition - vPosition);
+            dif = max(dot(normal, L), 0.0);
+            float dist = distance(vPosition, uLightPosition);
+            float fadeStart = uLightFar * (1.0 - uLightFadeSize);
+            att = 1.0 - clamp((dist - fadeStart) / (uLightFar * uLightFadeSize), 0.0, 1.0);
+            dif *= att;
+
+            if (dif > 0.0 || sss > 0.0) {
+                vec2 fragCoord = (vec2(vScreenCoord.x, -vScreenCoord.y) / vScreenCoord.z + 1.0) * 0.5;
+                if (fragCoord.x >= 0.0 && fragCoord.y >= 0.0 && fragCoord.x <= 1.0 && fragCoord.y <= 1.0)
 				{
-					// Create circle
-					difMask = 1.0 - clamp((distance(fragCoord, vec2(0.5, 0.5)) - 0.5 * uLightSpotSharpness) / (0.5 * max(0.01, 1.0 - uLightSpotSharpness)), 0.0, 1.0);
-				} 
-				else
-					difMask = 0.0;
-				
-				dif *= difMask;
-				
-				// Calculate shadow
-				fragDepth = min(vShadowCoord.z, uLightFar);
-				fragCoord = (vec2(vShadowCoord.x, -vShadowCoord.y) / vShadowCoord.z + 1.0) * 0.5;
-				
-				if (difMask > 0.0)
-				{
-					// Calculate bias
-					float bias = 0.6;
-					
-					// Shadow
-					float sampleDepth = uLightNear + unpackDepth(texture2D(uDepthBuffer, fragCoord)) * (uLightFar - uLightNear);
-					shadow = ((fragDepth - bias) > sampleDepth) ? 0.0 : 1.0;
-					
-					// Get subsurface translucency
-					if (sss > 0.0 && dif == 0.0)
-					{
-						vec3 rad = uSSSRadius * sss;
-						vec3 dis = vec3((fragDepth + bias) - sampleDepth) / (uLightColor.rgb * uLightStrength * rad);
-						
-						if ((fragDepth - (bias * 0.01)) <= sampleDepth)
-							dis = vec3(0.0);
-						
-						subsurf = pow(max(1.0 - pow(dis / rad, vec3(4.0)), 0.0), vec3(2.0)) / (pow(dis, vec3(2.0)) + 1.0) * att;
-					}
-				}
-			}
-		}
-		
-		// Diffuse light
-		light = uLightColor.rgb * uLightStrength * dif * shadow;
-		
-		// Subsurface translucency
-		if (sss > 0.0)
-		{
-			float transDif = max(0.0, dot(normalize(-normal), normalize(uLightPosition - vPosition)));
-			subsurf += (subsurf * uSSSHighlightStrength * CSPhase(dot(normalize(vPosition - uCameraPosition), normalize(uLightPosition - vPosition)), uSSSHighlight));
-			light += uLightColor.rgb * uLightStrength * uSSSColor.rgb * transDif * subsurf * difMask;
-			light *= mix(vec3(1.0), uSSSColor.rgb, clamp(sss, 0.0, 1.0));
-		}
-		
-		// Calculate specular
-		if (uLightSpecular * dif * shadow > 0.0)
-		{
-			vec3 N = normal;
-			vec3 L = normalize(uLightPosition - vPosition);
-			vec3 V = normalize(uCameraPosition - vPosition);
-			vec3 H = normalize(V + L);
-			float NDF = distributionGGX(N, H, roughness);
-			float G = geometrySmith(N, V, L, roughness);
-		
-			float F = fresnelSchlickRoughness(max(dot(H, V), 0.0), F0, roughness);
-		
-			float numerator = NDF * G * F;
-			float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
-			float specular = numerator / denominator;
-		
-			spec = uLightColor.rgb * shadow * difMask * uLightSpecular * dif * (specular * mix(vec3(1.0), baseColor.rgb, metallic));
-		}
-	}
-	
-	gl_FragData[0] = vec4(light, baseColor.a);
-	gl_FragData[1] = vec4(spec, baseColor.a);
-	
-	if (baseColor.a == 0.0)
-		discard;
+                    difMask = 1.0 - clamp((distance(fragCoord, vec2(0.5)) - 0.5 * uLightSpotSharpness) /
+                                          (0.5 * max(0.01, 1.0 - uLightSpotSharpness)), 0.0, 1.0);
+                }
+
+                dif *= difMask;
+
+                if (difMask > 0.0) {
+                    vec2 shCoord = (vec2(vShadowCoord.x, -vShadowCoord.y) / vShadowCoord.z + 1.0) * 0.5;
+                    float fragDepth = min(vShadowCoord.z, uLightFar);
+                    float sampleDepth = uLightNear + unpackDepth(texture2D(uDepthBuffer, shCoord)) * (uLightFar - uLightNear);
+                    float bias = 0.8;
+
+                    if ((fragDepth - bias) > sampleDepth) shadow = 0.0;
+
+                    if (sss > 0.0 && dif == 0.0 && (fragDepth - (bias * 0.01)) > sampleDepth) {
+                        vec3 rad = uSSSRadius * sss;
+                        vec3 dis = (fragDepth + bias - sampleDepth) / (uLightColor.rgb * uLightStrength * rad);
+                        subsurf = pow(max(1.0 - pow(dis / rad, vec3(4.0)), 0.0), vec3(2.0)) /
+                                  (pow(dis, vec3(2.0)) + 1.0) * att;
+                    }
+                }
+            }
+        }
+
+        light = uLightColor.rgb * uLightStrength * dif * shadow;
+
+        if (sss > 0.0) {
+            float transDif = max(0.0, dot(-normal, normalize(uLightPosition - vPosition)));
+            float cs = CSPhase(dot(normalize(vPosition - uCameraPosition), normalize(uLightPosition - vPosition)), uSSSHighlight);
+            subsurf += subsurf * uSSSHighlightStrength * cs;
+            light += uLightColor.rgb * uLightStrength * uSSSColor.rgb * transDif * subsurf * difMask;
+            light *= mix(vec3(1.0), uSSSColor.rgb, clamp(sss, 0.0, 1.0));
+        }
+
+        if (uLightSpecular * dif * shadow > 0.0) {
+            vec3 V = normalize(uCameraPosition - vPosition);
+            vec3 L = normalize(uLightPosition - vPosition);
+            vec3 H = normalize(V + L);
+            float NDF = distributionGGX(normal, H, roughness);
+            float G = geometrySmith(normal, V, L, roughness);
+            float F = fresnelSchlickRoughness(max(dot(H, V), 0.0), F0, roughness);
+
+            float numerator = NDF * G * F;
+            float denominator = 4.0 * max(dot(normal, V), 0.0) * max(dot(normal, L), 0.0) + 1e-4;
+            float specular = numerator / denominator;
+
+            spec = uLightColor.rgb * shadow * difMask * uLightSpecular * dif *
+                   (specular * mix(vec3(1.0), baseColor.rgb, metallic));
+        }
+    }
+
+    gl_FragData[0] = vec4(light, baseColor.a);
+    gl_FragData[1] = vec4(spec, baseColor.a);
+
+    if (baseColor.a == 0.0) discard;
 }

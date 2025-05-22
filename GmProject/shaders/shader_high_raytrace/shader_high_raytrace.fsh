@@ -53,7 +53,7 @@ uniform float uSampleIndex;
 // Unpacks depth value from packed color
 float unpackValue(vec4 c)
 {
-    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
+    return dot(c.rgb, vec3(1.0, 0.003921569, 0.00001538));
 }
 
 // Transforms Z depth with camera data
@@ -177,16 +177,17 @@ vec3 rayTrace(vec3 rayStart, vec3 rayDir, float rayThickness, vec3 noise)
 	p = progress;
 	
 	float i = 0.0;
-	float steps = 256.0 * (1.0 + uPrecision); // Gradually increase max steps
+	float steps = 256.0 * (uScreenSize[1] / 544.0 + 1.0 + uPrecision); // Gradually increase max steps
 	float stepscount = 0.0;
 	float precisionJitter = (uRayType == RAY_SPECULAR ? 1.0 : noise.g);
+	float ScreenScale = 1.0 + uScreenSize[1] / 510.0;
 	for (; i < steps; i += 1.0)
 	{
 		// Get previous progress for refining later
 		progressPrev	= progress;
 		deltaPrev		= delta;
 		
-		float stride	= 1.0 + ((i * (1.0 - uPrecision)) * precisionJitter);
+		float stride	= ScreenScale + ((i * (1.0 - uPrecision)) * precisionJitter);
 		progress		= p + (stride * noise.r);
 		p				+= stride;
 		

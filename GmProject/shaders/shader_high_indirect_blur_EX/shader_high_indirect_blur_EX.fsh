@@ -13,7 +13,7 @@ uniform vec2 uPixelCheck;
 uniform float uNormalBufferScale;
 uniform float uNoiseSize;
 uniform float uSamples;
-uniform float uBlurSize;
+uniform float uBlurSize2;
 
 uniform float uRayStep;
 
@@ -74,7 +74,7 @@ void main()
 	if (uRayStep > 128.0) {
 		RayStep = 128.0;
 	} else { 
-		RayStep = uRayStep; 
+		RayStep = clamp(uRayStep * (1.0 - centerDepth), 1.0, uRayStep); 
 	}
 
     for (int i = 0; i < SAMPLES; i++) {
@@ -86,8 +86,8 @@ void main()
 
         // Raymarching
         for (float step = 1.0; step <= RayStep; step++) {
-            float dist = step * uBlurSize;
-            vec2 samplePos = vTexCoord + rotatedDir * texelSize * dist;
+			
+            vec2 samplePos = vTexCoord + rotatedDir * texelSize * (step * uBlurSize2);
 
             if (samplePos.x < 0.0 || samplePos.y < 0.0 || samplePos.x > 1.0 || samplePos.y > 1.0)
                 continue;
@@ -96,9 +96,7 @@ void main()
             float sampleDepth = unpackDepth(texture2D(uDepthBuffer, samplePos));
             vec3 sampleColor = texture2D(gm_BaseTexture, samplePos).rgb;
 
-            float angleWeight = max(0.0, dot(centerNormal, sampleNormal));
-            float depthWeight = exp(-abs(centerDepth - sampleDepth) * DEPTH_SENSITIVITY);
-            float sampleWeight = angleWeight * depthWeight;
+            float sampleWeight = (max(0.0, dot(centerNormal, sampleNormal))) * (exp(-abs(centerDepth - sampleDepth) * DEPTH_SENSITIVITY));
 
             color += sampleColor * sampleWeight;
             weight += sampleWeight;

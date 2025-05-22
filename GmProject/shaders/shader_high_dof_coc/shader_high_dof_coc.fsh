@@ -9,7 +9,7 @@ varying vec2 vTexCoord;
 
 float unpackDepth(vec4 c)
 {
-	return c.r + c.g / 255.0 + c.b / (255.0 * 255.0);
+    return dot(c.rgb, vec3(1.0, 0.003921569, 0.00001538));
 }
 
 float getDepth(vec2 coord)

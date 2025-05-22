@@ -105,7 +105,7 @@ float VanDerCorput(int n, int base)
 	float denom   = 1.0;
 	float result  = 0.0;
 	
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < 16; i++)
 	{
 		if (n > 0)
 		{
@@ -142,7 +142,7 @@ float percent(float xx, float start, float end)
 vec3 rayTrace(vec3 rayStart, vec3 rayDir, float rayThickness, vec3 noise)
 {
 	// Ray data
-	vec3 rayEnd			= rayStart.xyz + rayDir * uRayDistance;
+	vec3 rayEnd	= rayStart.xyz + rayDir * uRayDistance;
 	
 	// Clip to near camera plane
 	if (rayEnd.z < uNear)
@@ -177,10 +177,10 @@ vec3 rayTrace(vec3 rayStart, vec3 rayDir, float rayThickness, vec3 noise)
 	p = progress;
 	
 	float i = 0.0;
-	float steps = 312.0 * (1.0 + uPrecision); // Gradually increase max steps
+	float steps = 312.0 * (uScreenSize[1] / 544.0 + uPrecision); // Gradually increase max steps
 	float stepscount = 0.0;
 	float precisionJitter = (uRayType == RAY_SPECULAR ? 1.0 : noise.g);
-	float ScreenScale = 0.05 + uScreenSize[1] / 844.0;
+	float ScreenScale = 1.0 + uScreenSize[1] / 510.0;
 	for (; i < steps; i += 1.0)
 	{
 		// Get previous progress for refining later
