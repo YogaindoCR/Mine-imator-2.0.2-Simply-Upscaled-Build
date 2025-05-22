@@ -25,6 +25,5 @@ function shader_high_ssao_set(mask)
 	render_set_uniform("uKernel", render_ssao_kernel)
 	render_set_uniform("uRadius", app.project_render_ssao_radius)
 	render_set_uniform("uPower", app.project_render_ssao_power)
-	render_set_uniform("uRatio", app.project_render_ssao_ratio)
 	render_set_uniform_color("uColor", app.project_render_ssao_color, 1)
 }

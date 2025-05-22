@@ -82,6 +82,8 @@ function popup_about_draw()
 	dy += 34
 	draw_label(text_get("aboutmoddevelopment"), dx, dy, fa_left, fa_bottom, c_text_tertiary, a_text_tertiary, font_subheading)
 	dy += 26
+	draw_label("mbanders", dx, dy, fa_left, fa_bottom, c_text_secondary, a_text_secondary, font_label)
+	dy += 12
 	draw_label("YogaindoCR", dx, dy, fa_left, fa_bottom, c_text_secondary, a_text_secondary, font_label)
 	
 	dx += 130 + 24
@@ -137,7 +139,7 @@ function popup_about_draw()
 		if (i % 2 = 1)
 		{
 			dx -= 130 + 24
-			dy += 19
+			dy += 16
 		}
 		else
 			dx += 130 + 24

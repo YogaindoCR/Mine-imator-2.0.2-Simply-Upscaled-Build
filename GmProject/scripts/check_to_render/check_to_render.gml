@@ -8,7 +8,7 @@ function check_to_render(){
     {
 		render_low_drawing = 0
     }
-    else if (window_busy != "" && window_busy != "contextmenu" && window_busy != "tabmove"){
+    else if (window_busy != "" && window_busy != "contextmenu" && window_busy != "tabmove" && window_busy != "menu" && window_busy != "settingsmenu"){
 		render_low_drawing = 0
 	}
     else if (timeline_playing || history_resource_update || recent_add_wait > 0){
@@ -39,6 +39,10 @@ function check_to_render(){
 	else if (abs(render_low_Before - cam_work_zoom) > 0.0001)
     {
 		render_low_drawing = 0
+	}
+	else if (mouse_left)
+    {
+		render_low_drawing = -1
 	}
         // Direct matrix comparison
         //for (var i = 0; i < 3; i++)

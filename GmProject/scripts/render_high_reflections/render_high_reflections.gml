@@ -11,7 +11,12 @@ function render_high_reflections(surf)
 		gpu_set_texrepeat(false)
 		draw_clear_alpha(c_black, 1)
 		
+		if (project_render_engine){
+		render_shader_obj = shader_map[?shader_high_raytrace_EX]
+		}else{
 		render_shader_obj = shader_map[?shader_high_raytrace]
+		}
+		
 		with (render_shader_obj)
 		{
 			shader_set(shader)
@@ -31,8 +36,11 @@ function render_high_reflections(surf)
 	surface_set_target(render_surface_hdr[0])
 	{
 		draw_clear_alpha(c_black, 0)
-		
+		if (project_render_engine){
+		render_shader_obj = shader_map[?shader_high_raytrace_resolve_EX]
+		}else{
 		render_shader_obj = shader_map[?shader_high_raytrace_resolve]
+		}
 		with (render_shader_obj)
 		{
 			shader_set(shader)

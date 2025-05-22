@@ -76,6 +76,7 @@ function settings_load()
 			setting_backup_amount = value_get_real(programmap[?"backup_amount"], setting_backup_amount)
 			setting_spawn_cameras = value_get_real(programmap[?"spawn_cameras"], setting_spawn_cameras)
 			setting_unlimited_values = value_get_real(programmap[?"unlimited_values"], setting_unlimited_values)
+			setting_viewport_optimization = value_get_real(programmap[?"viewport_optimization"], setting_viewport_optimization)
 			
 			setting_watermark_custom = value_get_real(programmap[?"watermark_custom"], setting_watermark_custom)
 			setting_watermark_fn = value_get_string(programmap[?"watermark_fn"], setting_watermark_fn)

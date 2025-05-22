@@ -13,7 +13,7 @@ function shader_high_light_spot_EX_set()
 	render_set_uniform_color("uLightColor", render_light_color, 1)
 	render_set_uniform("uLightStrength", render_light_strength)
 	render_set_uniform("uLightSpecular", render_light_specular_strength)
-	render_set_uniform("uLightSize", render_light_size)
+	render_set_uniform("uLightSize", render_light_size * app.project_render_shadows_blur)
 	render_set_uniform("uResolution", app.project_render_shadows_spot_buffer_size)
 	
 	render_set_uniform("uLightNear", render_light_near)

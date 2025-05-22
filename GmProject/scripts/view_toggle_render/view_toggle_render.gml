@@ -29,4 +29,5 @@ function view_toggle_render()
 		else
 			view_main.quality = e_view_mode.RENDER
 	}
+	render_low_drawing = 0
 }

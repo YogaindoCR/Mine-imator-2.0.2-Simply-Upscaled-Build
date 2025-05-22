@@ -7,7 +7,7 @@ function render_generate_dof_samples(blades, rotation, ratio)
 {
 	var rings, samples, rotoff;
 	rings = 7
-	samples = 3
+	samples = (app.project_render_engine) ? app.project_render_dof_sample : 3
 	rotoff = (pi*2) / (360/270)
 	
 	// Clear previous data
@@ -24,7 +24,7 @@ function render_generate_dof_samples(blades, rotation, ratio)
 	}
 	else
 	{
-		disnoise = random(1)
+		disnoise = random_range(0.9, 1.1)
 		rotnoise = random_range(0, pi * 2)
 	}
 	

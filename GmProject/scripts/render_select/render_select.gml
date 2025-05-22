@@ -4,6 +4,7 @@
 
 function render_select(mode, selectsurface)
 {
+		if (render_low_drawing < 3){
 		// Draw selection on separate surface
 		var hlsurf = surface_require(selectsurface, render_width, render_height);
 	
@@ -44,4 +45,5 @@ function render_select(mode, selectsurface)
 		}
 	
 		return hlsurf
+		}
 }

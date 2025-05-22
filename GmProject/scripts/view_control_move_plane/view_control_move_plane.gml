@@ -130,6 +130,8 @@ function view_control_move_plane(view, control, axes, color, mat, normal, corner
 	view_shape_line_draw(corner42D, corner12D)
 	
 	// Draw square
+	if (render_low_drawing < 3){
+	
 	draw_set_alpha(.35)
 	
 	render_set_culling(false)
@@ -137,6 +139,8 @@ function view_control_move_plane(view, control, axes, color, mat, normal, corner
 	view_shape_triangle_draw(corner12D, corner22D, corner32D)
 	view_shape_triangle_draw(corner32D, corner42D, corner12D)
 	draw_primitive_end()
+	
+	}
 	render_set_culling(true)
 	
 	draw_set_color(c_white)

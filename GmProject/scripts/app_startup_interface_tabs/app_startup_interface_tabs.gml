@@ -45,6 +45,12 @@ function app_startup_interface_tabs()
 			tbx_ssao_power = new_textbox_integer()
 			tbx_ssao_power.suffix = "%"
 			tbx_ssao_ratio = new_textbox_decimals()
+			tbx_ssao_ratio.suffix = "x"
+			tbx_ssao_ratio_balance = new_textbox_decimals()
+			tbx_ssao_ratio_balance.suffix = "x"
+			
+			tbx_shadows_blur = new_textbox_decimals()
+			tbx_shadows_blur.suffix = "x"
 			
 			tbx_subsurface_samples = new_textbox_integer()
 			tbx_subsurface_highlight = new_textbox_integer()
@@ -56,9 +62,13 @@ function app_startup_interface_tabs()
 			tbx_indirect_precision.suffix = "%"
 			tbx_indirect_blur_radius = new_textbox_decimals()
 			tbx_indirect_blur_radius.suffix = "%"
+			tbx_indirect_blur_radius_gi = new_textbox_decimals()
+			tbx_indirect_blur_radius_gi.suffix = "%"
 			tbx_indirect_strength = new_textbox_integer()
 			tbx_indirect_strength.suffix = "%"
 			tbx_indirect_raystep = new_textbox_integer()
+			tbx_indirect_denoiser_strength = new_textbox_integer()
+			tbx_indirect_denoiser_strength.suffix = "%"
 			
 			tbx_reflections_precision = new_textbox_integer()
 			tbx_reflections_precision.suffix = "%"
@@ -79,6 +89,9 @@ function app_startup_interface_tabs()
 			tbx_aa_power.suffix = "%"
 			
 			tbx_dof_sample = new_textbox_integer()
+			
+			tbx_motionblur_power = new_textbox_integer()
+			tbx_motionblur_power.suffix = "%"
 			
 			tbx_texture_filtering_level = new_textbox_integer()
 			

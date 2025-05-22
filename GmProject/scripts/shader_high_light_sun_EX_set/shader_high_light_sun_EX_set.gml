@@ -15,7 +15,7 @@ function shader_high_light_sun_EX_set()
 	render_set_uniform_color("uLightColor", render_light_color, 1)
 	render_set_uniform("uLightStrength", render_light_strength)
 	render_set_uniform("uLightSpecular", render_light_specular_strength)
-	render_set_uniform("uLightSize", (app.background_sunlight_angle / 16.0))
+	render_set_uniform("uLightSize", (app.background_sunlight_angle / 16.0) * app.project_render_shadows_blur)
 	
 	render_set_uniform_vec3("uLightDirection", render_sun_direction[X], render_sun_direction[Y], render_sun_direction[Z])
 	

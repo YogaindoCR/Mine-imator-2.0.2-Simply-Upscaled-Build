@@ -16,4 +16,6 @@ function shader_high_indirect_blur_set()
 	render_set_uniform_vec2("uScreenSize", render_width, render_height)
 	render_set_uniform("uSamples", render_samples)
 	render_set_uniform("uBlurSize", app.project_render_indirect_blur_radius)
+	render_set_uniform("uBlurSize2", app.project_render_indirect_blur_radius_gi)
+	render_set_uniform("uRayStep", app.project_render_indirect_raystep)
 }

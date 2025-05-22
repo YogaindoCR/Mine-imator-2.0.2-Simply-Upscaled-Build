@@ -40,12 +40,9 @@ function tab_properties_render()
 	tab_control_switch()
 	
 	if (project_render_engine)
-		{
-			draw_button_collapse("ssao", collapse_map[?"ssao"], action_project_render_ssao, project_render_ssao, "renderhbao", "renderhbaotip")
-			
-		} else {
+			draw_button_collapse("ssao", collapse_map[?"ssao"], action_project_render_ssao, project_render_ssao, "renderhbao", "renderhbaotip") 
+		else
 			draw_button_collapse("ssao", collapse_map[?"ssao"], action_project_render_ssao, project_render_ssao, "renderssao", "renderssaotip")
-		}
 
 	tab_next()
 	
@@ -65,10 +62,15 @@ function tab_properties_render()
 		draw_button_color("renderssaocolor", dx, dy, dw, project_render_ssao_color, c_black, false, action_project_render_ssao_color)
 		tab_next()
 		
-		if (project_render_engine) {
-		tab_control_dragger()
-		draw_dragger("renderssaoratio", dx, dy, dragger_width, project_render_ssao_ratio, 0.001, 0.015, 0.900, 0.222, 0, tab.render.tbx_ssao_ratio, action_project_render_ssao_ratio)
-		tab_next()
+		if (project_render_engine)
+		{
+			tab_control_dragger()
+			draw_dragger("renderssaoratio", dx, dy, dragger_width, project_render_ssao_ratio, 0.001, 0.015, 0.900, 0.222, 0, tab.render.tbx_ssao_ratio, action_project_render_ssao_ratio)
+			tab_next()
+		
+			tab_control_dragger()
+			draw_dragger("renderssaoratiobalance", dx, dy, dragger_width, project_render_ssao_ratio_balance, 0.001, 0.015, 0.975, 0.350, 0, tab.render.tbx_ssao_ratio_balance, action_project_render_ssao_ratio_balance)
+			tab_next()
 		}
 		
 		tab_collapse_end()
@@ -98,6 +100,12 @@ function tab_properties_render()
 		tab_control_switch()
 		draw_switch("rendershadowstransparent", dx, dy, project_render_shadows_transparent, action_project_render_shadows_transparent)
 		tab_next()
+		
+		if (project_render_engine) {
+			tab_control_switch()
+			draw_dragger("rendershadowsblur", dx, dy, dragger_width, project_render_shadows_blur, (project_render_shadows_blur / 500) + 0.001, 0, 10.000, 1.000, 0.001, tab.render.tbx_shadows_blur, action_project_render_shadows_blur)
+			tab_next()
+		}
 		
 		tab_collapse_end()
 	}
@@ -144,7 +152,10 @@ function tab_properties_render()
 		tab_next()
 		
 		tab_control_meter()
-		draw_meter("renderindirectblurradius", dx, dy, dw, round(project_render_indirect_blur_radius * 100), 0, 500, 100, 1, tab.render.tbx_indirect_blur_radius, action_project_render_indirect_blur_radius)
+		if (!project_render_engine)
+			draw_meter("renderindirectblurradius", dx, dy, dw, round(project_render_indirect_blur_radius * 100), 0, 500, 100, 1, tab.render.tbx_indirect_blur_radius, action_project_render_indirect_blur_radius)
+		else
+			draw_meter("renderindirectblurradius", dx, dy, dw, round(project_render_indirect_blur_radius_gi * 100), 0, 500, 100, 1, tab.render.tbx_indirect_blur_radius_gi, action_project_render_indirect_blur_radius_gi)
 		tab_next()
 		
 		tab_control_dragger()
@@ -154,8 +165,23 @@ function tab_properties_render()
 		if (project_render_engine)
 		{
 			tab_control_dragger()
-			draw_dragger("renderindirectraystep", dx, dy, dragger_width, project_render_indirect_raystep, 0.3, 1, 80, 12, 1, tab.render.tbx_indirect_raystep, action_project_render_indirect_raystep, null, true, false, "renderindirectraysteptip")
+			draw_dragger("renderindirectraystep", dx, dy, dragger_width, project_render_indirect_raystep, 0.3, 1, 80, 18, 1, tab.render.tbx_indirect_raystep, action_project_render_indirect_raystep, null, true, false, "renderindirectraysteptip")
 			tab_next()
+		}
+		
+		tab_control_switch()
+		draw_button_collapse("indirectdenoiser", collapse_map[?"indirectdenoiser"], action_project_render_indirect_denoiser, project_render_indirect_denoiser, "renderindirectdenoiser", "renderindirectdenoisertip")
+		tab_next()
+		
+		if (project_render_indirect_denoiser && collapse_map[?"indirectdenoiser"])
+		{
+			tab_collapse_start()
+			
+			tab_control_dragger()
+			draw_dragger("renderindirectdenoiserstrength", dx, dy, dragger_width, (project_render_indirect_denoiser_strength * 100), project_render_indirect_denoiser_strength / 4, 1, 300, 100, 1, tab.render.tbx_indirect_denoiser_strength, action_project_render_indirect_denoiser_strength, null, true, false)
+			tab_next()
+			
+			tab_collapse_end()
 		}
 		
 		tab_collapse_end()
@@ -372,10 +398,28 @@ function tab_properties_render()
 				tab_control_meter()
 				draw_meter("renderextrasettingsdofsample", dx, dy, dw, project_render_dof_sample, 1, 6, 3, 1, tab.render.tbx_dof_sample, action_project_render_dof_sample)
 				tab_next()
-		
+				
 				tab_collapse_end()
 			}
 	}
+	
+	//Motion Blur
+	tab_control_switch()
+	draw_button_collapse("motionblur", collapse_map[?"motionblur"], action_project_render_motionblur, project_render_motionblur, "rendermotionblur", "rendermotionblurtip")
+	tab_next()
+				
+	if (project_render_motionblur && collapse_map[?"motionblur"])
+		{
+			tab_collapse_start()
+			
+			tab_control_meter()
+			draw_meter("rendermotionblurpower", dx, dy, dw, (project_render_motionblur_power * 100), 1, 100, 10, 1, tab.render.tbx_motionblur_power, action_project_render_motionblur_power)
+			tab_next()
+		
+			tab_collapse_end()
+		}
+		
+		
 	// Default emissive
 	tab_control_dragger()
 	draw_dragger("renderdefaultemissive", dx, dy, dragger_width, round(project_render_block_emissive * 100), 1, 0, no_limit, 100, 1, tab.render.tbx_block_emissive, action_project_render_block_emissive, null, true, false, "renderdefaultemissivetip")

@@ -180,6 +180,8 @@ function render_startup()
 	globalvar render_samples_clear;
 	render_samples_clear = false
 	
+	globalvar testing;
+	testing = 1
 	
 	
 	// Render samples

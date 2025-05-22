@@ -84,6 +84,7 @@ function shader_startup()
 		new_shader("shader_high_raytrace_resolve_EX")
 		new_shader("shader_high_indirect_blur")
 		new_shader("shader_high_indirect_blur_EX")
+		new_shader("shader_bilateral_blur")
 		new_shader("shader_tonemap")
 		new_shader("shader_clip")
 		new_shader("shader_high_glint")
@@ -430,6 +431,7 @@ function shader_startup()
 		new_shader_uniform("uPower")
 		new_shader_uniform("uColor")
 		new_shader_uniform("uRatio")
+		new_shader_uniform("uRatioBalance")
 		new_shader_uniform("uHbaoStep")
 	}
 	
@@ -649,6 +651,18 @@ function shader_startup()
 		new_shader_uniform("uIndirectStength")
 	}
 	
+	with (shader_map[?shader_bilateral_blur])
+	{
+		new_shader_sampler("uDepthBuffer")
+		new_shader_sampler("uNormalBuffer")
+		new_shader_sampler("uIndirectTex")
+		new_shader_uniform("uDepthSigma")
+		new_shader_uniform("uNormalSigma")
+		new_shader_uniform("uBilateralRadius")
+		new_shader_uniform("uNormalBufferScale")
+		new_shader_uniform("uScreenSize")
+	}
+	
 	with (shader_map[?shader_high_indirect_blur])
 	{
 		new_shader_sampler("uDepthBuffer")
@@ -670,6 +684,7 @@ function shader_startup()
 		new_shader_uniform("uScreenSize")
 		new_shader_uniform("uNoiseSize")
 		new_shader_uniform("uBlurSize")
+		new_shader_uniform("uBlurSize2")
 		new_shader_uniform("uRayStep")
 	}
 	

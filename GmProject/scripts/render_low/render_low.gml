@@ -13,6 +13,7 @@ function render_low()
 	    render_alpha_hash_force = true;
         surface_set_target(surf);
         {
+			testing = 1
             draw_clear_alpha(c_black, 0);
             // Background
             render_world_background();

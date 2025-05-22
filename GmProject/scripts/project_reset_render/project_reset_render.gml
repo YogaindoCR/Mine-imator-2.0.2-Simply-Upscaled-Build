@@ -11,12 +11,14 @@ function project_reset_render()
 	project_render_ssao_power = 1
 	project_render_ssao_color = c_black
 	project_render_ssao_ratio = .222
+	project_render_ssao_ratio_balance = .35
 	
 	project_render_shadows = true
 	project_render_shadows_sun_buffer_size = 2048
 	project_render_shadows_spot_buffer_size = 512
 	project_render_shadows_point_buffer_size = 256
 	project_render_shadows_transparent = false
+	project_render_shadows_blur = 1
 	
 	project_render_subsurface_samples = 7
 	project_render_subsurface_highlight = .5
@@ -25,8 +27,11 @@ function project_reset_render()
 	project_render_indirect = true
 	project_render_indirect_precision = .3
 	project_render_indirect_blur_radius = 1
+	project_render_indirect_blur_radius_gi = .5
 	project_render_indirect_strength = 1
-	project_render_indirect_raystep = 12
+	project_render_indirect_raystep = 16
+	project_render_indirect_denoiser = true
+	project_render_indirect_denoiser_strength = 1
 	
 	project_render_reflections = true
 	project_render_reflections_precision = .3
@@ -44,6 +49,9 @@ function project_reset_render()
 	project_render_aa_power = 1
 	
 	project_render_dof_sample = 3
+	
+	project_render_motionblur = false
+	project_render_motionblur_power = 0.35
 	
 	project_render_texture_filtering = true
 	project_render_transparent_block_texture_filtering = false
