@@ -34,7 +34,7 @@ function render_startup()
 	globalvar render_pass_surf;
 	
 	// Extraku
-	globalvar render_low_drawing, render_low_Before;
+	globalvar render_low_drawing, render_low_Before, render_shadow_blur_kernel;
 	
 	log("Render init")
 	

@@ -318,6 +318,8 @@ function render_high_shadows()
 	sampleend = 0
 	lightlist = array()
 	
+	render_shadow_blur_kernel = vec2(random_range(44, 1), random_range(0.6, 1.4))
+	
 	// Get visible lights
 	with (obj_timeline)
 	{
