@@ -1,6 +1,5 @@
 #define PI 3.14159265
 #define NUM_CASCADES 3
-#define SHADOW_SAMPLES 16
 
 // Grouped uniforms by frequency of use
 uniform sampler2D uTexture; // static
@@ -15,6 +14,7 @@ uniform vec4 uLightColor; // static
 uniform float uLightStrength; // static
 uniform float uSunNear[NUM_CASCADES]; // static
 uniform float uSunFar[NUM_CASCADES]; // static
+uniform vec2 uKernel2D;
 
 uniform sampler2D uDepthBuffer0; // static
 uniform sampler2D uDepthBuffer1; // static
@@ -160,30 +160,13 @@ float calculateShadow(int cascade, vec2 coord, float fragDepth, float bias)
 
     if (uLightSize > 0.02) {
         // Apply blur based on cascade level (farther cascades get more blur)
-        float blurAmount = uLightSize * (uLightSize / 2.0) * (0.01 + float(cascade) * 0.001);
+        float blurAmount = uLightSize * (uLightSize / 2.0) * (0.01 + float(cascade) * 0.001) * uKernel2D[1];
         float samples = 0.0;
 
-        // Poisson disk samples for soft shadows
-        vec2 poissonDisk[16];
-        poissonDisk[0]  = vec2(-0.94201624, -0.39906216);
-        poissonDisk[1]  = vec2(-0.6961816,   0.45697793);
-        poissonDisk[2]  = vec2(-0.20310713,  0.42402853);
-        poissonDisk[3]  = vec2( 0.96234106, -0.1949834);
-        poissonDisk[4]  = vec2( 0.47343425, -0.4800269);
-        poissonDisk[5]  = vec2( 0.519456,    0.7670221);
-        poissonDisk[6]  = vec2( 0.18546124, -0.8931231);
-        poissonDisk[7]  = vec2( 0.5074318,   0.0644256);
-        poissonDisk[8]  = vec2( 0.89642,     0.4124583);
-        poissonDisk[9]  = vec2(-0.3219406,  -0.9326146);
-        poissonDisk[10] = vec2(-0.791559,   -0.597705);
-        poissonDisk[11] = vec2(-0.5463055,   0.7622272);
-        poissonDisk[12] = vec2(-0.4621936,  -0.283806);
-        poissonDisk[13] = vec2( 0.4144426,   0.1581487);
-        poissonDisk[14] = vec2( 0.1342776,   0.6742424);
-        poissonDisk[15] = vec2(-0.9083806,   0.0433386);
-
-        for (int i = 0; i < SHADOW_SAMPLES; i++) {
-            vec2 sampleCoord = coord + poissonDisk[i] * blurAmount;
+        // Soft shadows
+        for (int i = 0; i < 20; i++) {
+			float angle = float(i) * 18.0 + uKernel2D[0];
+            vec2 sampleCoord = coord + vec2(cos(angle), sin(angle)) * blurAmount;
 
             if (sampleCoord.x >= 0.0 && sampleCoord.y >= 0.0) {
                 float sampleDepth = mix(

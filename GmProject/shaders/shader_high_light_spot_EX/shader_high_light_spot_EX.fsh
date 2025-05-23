@@ -20,6 +20,7 @@ uniform float uLightSpecular;
 uniform float uLightSize;
 uniform float uResolution;
 uniform float uBlurSample;
+uniform vec2 uKernel2D;
 
 uniform sampler2D uDepthBuffer; // static
 
@@ -215,14 +216,15 @@ void main()
 						//Shadow Blur
 						if (uLightSize > 0.1)
 						{
-							float texelSize = (0.5 / uResolution) * uLightSize;
+							float texelSize = (0.5 / uResolution) * uLightSize * uKernel2D[1];
 
-							for (float i = 0.0;i <= 32.0;i++) {
+							for (float i = 0.0;i < 24.0;i++) {
+								float angle = i * 15.0 + uKernel2D[0];
 							    vec2 offset = vec2(sin(i), cos(i)) * texelSize;
 							    float sampleDepth = uLightNear + unpackDepth(texture2D(uDepthBuffer, shadowCoord + offset)) * (uLightFar - uLightNear);
 							    shadow += step(fragDepth - bias, sampleDepth);
 							}
-							shadow /= 32.0; // Average the samples
+							shadow /= 24.0; // Average the samples
 						
 						} else {
 							float sampleDepth = uLightNear + unpackDepth(texture2D(uDepthBuffer, shadowCoord)) * (uLightFar - uLightNear);
