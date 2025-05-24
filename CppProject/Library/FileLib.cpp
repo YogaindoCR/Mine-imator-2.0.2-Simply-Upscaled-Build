@@ -8,8 +8,44 @@
 #define ZIP_STATIC
 #include <zip.h>
 
+//Multithread Ahh
+#include <QtConcurrent>
+#include <QFuture>
+#include <QThreadPool>
+#include <QMutex>
+#include <QFutureWatcher>
+
 namespace CppProject
 {
+	void copyFileAsync(StringType src, StringType dst, std::function<void(bool)> onDone = nullptr)
+	{
+		QtConcurrent::run([src, dst, onDone]() {
+			QFile srcFile(src);
+			if (!srcFile.exists()) {
+				if (onDone) onDone(false);
+				return;
+			}
+
+			QFile dstFile(dst);
+			if (dstFile.exists()) {
+				AddPerms(dstFile);
+				if (!dstFile.remove()) {
+					WARNING("Could not delete file " + dst.QStr() + ": " + dstFile.errorString());
+					if (onDone) onDone(false);
+					return;
+				}
+			}
+
+			AddPerms(srcFile);
+			BoolType ok = srcFile.copy(dst);
+			if (!ok)
+				WARNING("Could not copy file " + src.QStr() + ": " + srcFile.errorString());
+
+			if (onDone) onDone(ok);
+		});
+	}
+
+	
 	RealType lib_open_url(StringType url)
 	{
 		if (!url.StartsWith("http"))
@@ -21,7 +57,8 @@ namespace CppProject
 	{
 		return 0.0;
 	}
-
+	
+	//Run unziping on multithread instead
 	RealType lib_unzip(StringType src, StringType dst)
 	{
 		int err;
@@ -34,72 +71,81 @@ namespace CppProject
 		}
 
 		IntType numEntries = zip_get_num_entries(za, 0);
-		IntType files = 0, numFiles = numEntries;
+		IntType numFiles = 0, totalFiles = numEntries;
+
+		QMutex counterMutex;
+		QAtomicInt filesExtracted = 0;
+
+		QList<QFuture<void>> futures;
+
 		for (int i = 0; i < numEntries; i++)
 		{
 			struct zip_stat sb;
 			if (zip_stat_index(za, i, 0, &sb))
 			{
-				WARNING("Could not extract file " + StringType(sb.name));
+				WARNING("Could not stat file " + StringType(sb.name));
 				continue;
 			}
 
-			QString fileName = dst + sb.name;
-			QFileInfo info(fileName);
-			if (fileName.endsWith("/")) // Skip directories
-			{
-				numFiles--;
+			// Skip directories
+			if (QString(sb.name).endsWith("/")) {
+				totalFiles--;
 				continue;
 			}
 
-			// Create path of directories to file if needed
-			if (!QDir(info.path()).exists())
-				if (!QDir().mkpath(info.path()))
-					WARNING("Could not create path " + info.path());
-
-			// Open destination file for writing
-			struct zip_file* zf = zip_fopen_index(za, i, 0);
-			QFile file(fileName);
-			AddPerms(file);
-
-			if (!zf || !file.open(QFile::WriteOnly))
-			{
-				WARNING("Could not extract file " + QString(sb.name) + ": " + file.errorString());
-				continue;
-			}
-
-			int sum = 0;
-			bool readErr = false;
-			while (sum != sb.size)
-			{
-				char buf[1024];
-				int readNum = zip_fread(zf, buf, sizeof(buf));
-				if (readNum < 0)
+			futures.append(QtConcurrent::run([=, &filesExtracted, &counterMutex]() {
+				struct zip_file* zf = zip_fopen_index(za, i, 0);
+				if (!zf)
 				{
-					WARNING("Could not extract file " + StringType(sb.name));
-					readErr = true;
-					break;
+					WARNING("Could not open zip entry " + StringType(sb.name));
+					return;
 				}
-				if (file.write(buf, readNum) < 0)
-				{
-					WARNING("Could not extract file " + StringType(sb.name));
-					readErr = true;
-					break;
-				}
-				sum += readNum;
-			}
 
-			zip_fclose(zf);
-			if (!readErr)
-				files++;
+				QString fileName = dst + sb.name;
+				QFileInfo info(fileName);
+				if (!QDir(info.path()).exists())
+					QDir().mkpath(info.path());
+
+				QFile file(fileName);
+				AddPerms(file);
+				if (!file.open(QFile::WriteOnly))
+				{
+					WARNING("Could not open destination file " + fileName + ": " + file.errorString());
+					zip_fclose(zf);
+					return;
+				}
+
+				int sum = 0;
+				bool readErr = false;
+				while (sum != sb.size)
+				{
+					char buf[1024];
+					int readNum = zip_fread(zf, buf, sizeof(buf));
+					if (readNum < 0 || file.write(buf, readNum) < 0)
+					{
+						WARNING("Failed to extract " + StringType(sb.name));
+						readErr = true;
+						break;
+					}
+					sum += readNum;
+				}
+
+				zip_fclose(zf);
+				if (!readErr)
+					filesExtracted++;
+			}));
 		}
 
-		if (zip_close(za) < 0)
-			return -1;
-		
-		DEBUG("Extracted " + NumStr(files) + "/" + NumStr(numFiles) + " files");
-		return files == numFiles;
+		// Wait for all threads to finish
+		for (auto& future : futures)
+			future.waitForFinished();
+
+		zip_close(za);
+
+		DEBUG("Extracted " + NumStr(filesExtracted.load()) + "/" + NumStr(totalFiles) + " files");
+		return filesExtracted == totalFiles;
 	}
+
 
 	RealType lib_gzunzip(StringType src, StringType dst)
 	{
@@ -145,24 +191,10 @@ namespace CppProject
 
 	RealType lib_file_copy(StringType src, StringType dst)
 	{
-		QFile srcFile(src);
-		if (!srcFile.exists())
-			return false;
-
-		QFile dstFile(dst);
-		if (dstFile.exists())
-		{
-			AddPerms(dstFile);
-			if (!dstFile.remove(dst))
-				WARNING("Could not delete file " + dst.QStr() + ": " + srcFile.errorString());
-		}
-
-		AddPerms(srcFile);
-		BoolType ok = srcFile.copy(dst);
-		if (!ok)
-			WARNING("Could not copy file " + src.QStr() + ": " + srcFile.errorString());
-		return ok;
+		copyFileAsync(src, dst); // fire-and-forget
+		return true; // always returns instantly; doesn't wait
 	}
+
 
 	RealType lib_file_delete(StringType fn)
 	{
