@@ -1,11 +1,11 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "json_load_value",
+  "name": "action_project_render_subsurface_highlight_strength2064",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Load",
-    "path": "folders/Shaders/Utility/File/JSON/Load.yy",
+    "name": "Mine-imator",
+    "path": "Mine-imator.yyp",
   },
 }

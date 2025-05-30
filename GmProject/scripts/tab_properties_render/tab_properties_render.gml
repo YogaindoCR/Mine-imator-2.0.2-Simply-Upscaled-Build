@@ -131,6 +131,12 @@ function tab_properties_render()
 		draw_dragger("rendersubsurfacescatterhighlightstrength", dx, dy, dragger_width, round(project_render_subsurface_highlight_strength * 100), 0.1, 0, no_limit, 100, 1, tab.render.tbx_subsurface_highlight_strength, action_project_render_subsurface_highlight_strength)
 		tab_next()
 		
+		if (project_render_engine) {
+			tab_control_dragger()
+			draw_dragger("rendersubsurfacescatterabsorption", dx, dy, dragger_width, round(project_render_subsurface_absorption * 100), 0.1, 0, 100, 25, 1, tab.render.tbx_subsurface_absorption, action_project_render_subsurface_absorption)
+			tab_next()
+		}
+		
 		tab_collapse_end()
 	}
 	
@@ -178,7 +184,7 @@ function tab_properties_render()
 			tab_collapse_start()
 			
 			tab_control_dragger()
-			draw_dragger("renderindirectdenoiserstrength", dx, dy, dragger_width, (project_render_indirect_denoiser_strength * 100), project_render_indirect_denoiser_strength / 4, 1, 300, 100, 1, tab.render.tbx_indirect_denoiser_strength, action_project_render_indirect_denoiser_strength, null, true, false)
+			draw_dragger("renderindirectdenoiserstrength", dx, dy, dragger_width, project_render_indirect_denoiser_strength, project_render_indirect_denoiser_strength / 400, 1, 300, 100, 1, tab.render.tbx_indirect_denoiser_strength, action_project_render_indirect_denoiser_strength, null, true, false)
 			tab_next()
 			
 			tab_collapse_end()

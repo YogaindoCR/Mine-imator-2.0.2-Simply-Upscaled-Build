@@ -305,6 +305,7 @@ function shader_startup()
 		new_shader_uniform("uLightSpecular")
 		new_shader_uniform("uLightSize")
 		new_shader_uniform("uKernel2D")
+		new_shader_uniform("uAbsorption")
 	}
 	
 	with (shader_map[?shader_high_light_point_shadowless])
@@ -355,6 +356,7 @@ function shader_startup()
 		new_shader_uniform("uLightSize")
 		new_shader_uniform("uResolution")
 		new_shader_uniform("uKernel2D")
+		new_shader_uniform("uAbsorption")
 	}
 	
 	with (shader_map[?shader_high_light_sun])
@@ -393,6 +395,7 @@ function shader_startup()
 		new_shader_uniform("uLightMatBiasMVP")
 		new_shader_uniform("uCascadeEndClipSpace")
 		new_shader_uniform("uKernel2D")
+		new_shader_uniform("uAbsorption")
 	}
 	
 	with (shader_map[?shader_high_ssao])

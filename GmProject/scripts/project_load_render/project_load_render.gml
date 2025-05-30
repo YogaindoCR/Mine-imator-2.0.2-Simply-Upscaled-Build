@@ -26,6 +26,7 @@ function project_load_render(map)
 	project_render_subsurface_samples = value_get_real(map[?"render_subsurface_samples"], project_render_subsurface_samples)
 	project_render_subsurface_highlight = value_get_real(map[?"render_subsurface_highlight"], project_render_subsurface_highlight)
 	project_render_subsurface_highlight_strength = value_get_real(map[?"render_subsurface_highlight_strength"], project_render_subsurface_highlight_strength)
+	project_render_subsurface_absorption = value_get_real(map[?"render_subsurface_absorption"], project_render_subsurface_absorption)
 	
 	project_render_indirect = value_get_real(map[?"render_indirect"], project_render_indirect)
 	project_render_indirect_blur_radius = value_get_real(map[?"render_indirect_blur_radius"], project_render_indirect_blur_radius)

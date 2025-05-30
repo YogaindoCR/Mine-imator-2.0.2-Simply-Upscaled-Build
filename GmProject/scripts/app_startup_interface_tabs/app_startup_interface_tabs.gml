@@ -57,6 +57,8 @@ function app_startup_interface_tabs()
 			tbx_subsurface_highlight.suffix = "%"
 			tbx_subsurface_highlight_strength = new_textbox_integer()
 			tbx_subsurface_highlight_strength.suffix = "%"
+			tbx_subsurface_absorption = new_textbox_integer()
+			tbx_subsurface_absorption.suffix = "%"
 			
 			tbx_indirect_precision = new_textbox_integer()
 			tbx_indirect_precision.suffix = "%"

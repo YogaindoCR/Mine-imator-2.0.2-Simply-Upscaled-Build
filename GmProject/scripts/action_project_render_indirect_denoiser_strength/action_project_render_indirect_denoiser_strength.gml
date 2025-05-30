@@ -4,8 +4,8 @@
 function action_project_render_indirect_denoiser_strength(val, add)
 {
 	if (!history_undo && !history_redo)
-		history_set_var(action_project_render_indirect_denoiser_strength, project_render_indirect_denoiser_strength, project_render_indirect_denoiser_strength * add + (val / 100), 1)
+		history_set_var(action_project_render_indirect_denoiser_strength, project_render_indirect_denoiser_strength, project_render_indirect_denoiser_strength * add + val, 1)
 		
-	project_render_indirect_denoiser_strength = project_render_indirect_denoiser_strength * add + (val / 100)
+	project_render_indirect_denoiser_strength = project_render_indirect_denoiser_strength * add + val
 	render_samples = -1
 }

@@ -153,4 +153,7 @@ function settings_startup()
 	settings_load()
 	languages_load()
 	interface_update_instant()
+	
+	//Delta Fix
+	room_speed += 10
 }

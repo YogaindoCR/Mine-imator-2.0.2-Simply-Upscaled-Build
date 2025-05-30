@@ -21,8 +21,9 @@ function project_reset_render()
 	project_render_shadows_blur = 1
 	
 	project_render_subsurface_samples = 7
-	project_render_subsurface_highlight = .5
-	project_render_subsurface_highlight_strength = 1
+	project_render_subsurface_highlight = .25
+	project_render_subsurface_highlight_strength = .5
+	project_render_subsurface_absorption = .25
 	
 	project_render_indirect = true
 	project_render_indirect_precision = .3
@@ -31,7 +32,7 @@ function project_reset_render()
 	project_render_indirect_strength = 1
 	project_render_indirect_raystep = 16
 	project_render_indirect_denoiser = true
-	project_render_indirect_denoiser_strength = 1
+	project_render_indirect_denoiser_strength = 100
 	
 	project_render_reflections = true
 	project_render_reflections_precision = .3
