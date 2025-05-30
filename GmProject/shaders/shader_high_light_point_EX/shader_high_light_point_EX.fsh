@@ -39,6 +39,7 @@ uniform vec3 uSSSRadius;
 uniform vec4 uSSSColor;
 uniform float uSSSHighlight;
 uniform float uSSSHighlightStrength;
+uniform float uAbsorption;
 
 varying vec3 vPosition;
 varying vec3 vNormal;
@@ -352,7 +353,7 @@ void main()
             shadow = calculateShadow(fragCoord, bufferMin, fragDepth, bias);
             
             // Subsurface scattering
-            if (sss > 0.001 && dif == 0.0)
+            if (sss > 0.001)
 			{
                 vec3 rad = uSSSRadius * sss;
                 vec3 dis = vec3((fragDepth + bias) - (uLightNear + (uLightFar - uLightNear) * unpackDepth(getFilteredDepth(fragCoord, bufferMin)))) / (uLightColor.rgb * uLightStrength * rad);
@@ -361,7 +362,22 @@ void main()
                     dis = vec3(0.0);
                 
                 subsurf = pow(max(1.0 - pow(dis / rad, vec3(4.0)), 0.0), vec3(2.0)) / (pow(dis, vec3(2.0)) + 1.0) * att;
-                subsurf *= smoothstep(0.0, 1.0, (sss / 5.0));
+                subsurf *= smoothstep(0.0, 0.5, sss);
+                
+				if (uSSSHighlightStrength > 0.01)
+				{
+					//normalize based on both highlight affectance and strength
+					rad = uSSSRadius * sss * (1.0 - uSSSHighlight);
+	                dis = vec3((fragDepth + bias) - (uLightNear + (uLightFar - uLightNear) * unpackDepth(getFilteredDepth(fragCoord, bufferMin)))) / (uLightColor.rgb * uLightStrength * rad);
+                
+	                if ((fragDepth - (bias * 0.01)) <= (uLightNear + (uLightFar - uLightNear) * unpackDepth(getFilteredDepth(fragCoord, bufferMin))))
+	                    dis = vec3(0.0);
+                
+					//Power by uSSSHighlightStrength
+	                subsurf += (pow(max(1.0 - pow(dis / rad, vec3(4.0)), 0.0), vec3(2.0)) / (pow(dis, vec3(2.0)) + 1.0) * att) * uSSSHighlightStrength;
+				}
+				//Reduce the subsurf strength
+				subsurf /= 2.0;
             }
         }
         
@@ -372,7 +388,7 @@ void main()
         if (sss > 0.001)
 		{
             float transDif = max(0.0, dot(normalize(-normal), normalize(uLightPosition - vPosition)));
-            subsurf += (subsurf * uSSSHighlightStrength * CSPhase(dot(normalize(vPosition - uCameraPosition), normalize(uLightPosition - vPosition)), uSSSHighlight));
+            subsurf += (subsurf * CSPhase(dot(normalize(vPosition - uCameraPosition), normalize(uLightPosition - vPosition)), uAbsorption));
             light += (uLightColor.rgb * uLightStrength * uSSSColor.rgb * transDif * subsurf) * smoothstep(0.0, 0.1, (sss / 50.0));
             light *= mix(vec3(1.0), uSSSColor.rgb, clamp(sss / 75.0, 0.0, 1.0));
         }

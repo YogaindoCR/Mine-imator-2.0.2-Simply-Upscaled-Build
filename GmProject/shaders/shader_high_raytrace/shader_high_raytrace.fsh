@@ -142,7 +142,7 @@ float percent(float xx, float start, float end)
 vec3 rayTrace(vec3 rayStart, vec3 rayDir, float rayThickness, vec3 noise)
 {
 	// Ray data
-	vec3 rayEnd			= rayStart.xyz + rayDir * uRayDistance;
+	vec3 rayEnd	= rayStart.xyz + rayDir * uRayDistance;
 	
 	// Clip to near camera plane
 	if (rayEnd.z < uNear)

@@ -74,7 +74,7 @@ void main()
 
         // Only update color if the sample has significant weight
         if (sampleColor.a > MIN_WEIGHT_THRESHOLD)
-            color.rgb = sampleColor.rgb / sampleColor.a;
+            color.rgb = (sampleColor.rgb * 2.0) / sampleColor.a;
     }
 
     gl_FragColor = color;

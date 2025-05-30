@@ -28,6 +28,7 @@ uniform float uSSSHighlight;
 uniform float uSSSHighlightStrength;
 uniform float uLightSpecular;
 uniform float uLightSize;
+uniform float uAbsorption;
 
 uniform float uDefaultSubsurface;
 uniform float uDefaultEmissive;
@@ -265,7 +266,22 @@ void main()
 						dis = vec3(0.0);
 					
 					subsurf = pow(max(1.0 - pow(dis / rad, vec3(4.0)), 0.0), vec3(2.0)) / (pow(dis, vec3(2.0)) + 1.0);
-					subsurf *= smoothstep(0.0, 1.0, (sss / 5.0));
+					subsurf *= smoothstep(0.0, 0.5, sss);
+                
+					if (uSSSHighlightStrength > 0.01)
+					{
+						//normalize based on both highlight affectance and strength
+						rad = uSSSRadius * sss * (1.0 - uSSSHighlight);
+				              dis = vec3((fragDepth + bias) - sampleDepth) / (uLightColor.rgb * uLightStrength * rad);
+                
+				            if ((fragDepth - (bias * 0.01)) <= sampleDepth)
+								dis = vec3(0.0);
+                
+							//Power by uSSSHighlightStrength
+				            subsurf += pow(max(1.0 - pow(dis / rad, vec3(4.0)), 0.0), vec3(2.0)) / (pow(dis, vec3(2.0)) + 1.0) * uSSSHighlightStrength;
+							}
+							//Reduce the subsurf strength
+							subsurf /= 2.0;
 				}
 	        }
 	    }
@@ -277,8 +293,8 @@ void main()
 	    if (sss > 0.0)
 		{
 			float transDif = max(0.0, dot(normalize(-normal), uLightDirection));
-			subsurf += (subsurf * uSSSHighlightStrength * CSPhase(dot(normalize(vPosition - uCameraPosition), uLightDirection), uSSSHighlight));
-			light += uLightColor.rgb * uLightStrength * uSSSColor.rgb * transDif * subsurf;
+			subsurf += (subsurf * CSPhase(dot(normalize(vPosition - uCameraPosition), uLightDirection), uAbsorption));
+			light += uLightColor.rgb * uLightStrength * uSSSColor.rgb * transDif * subsurf * smoothstep(0.0, 0.1, (sss / 50.0));
 			light *= mix(vec3(1.0), uSSSColor.rgb, clamp(sss / 75.0, 0.0, 1.0));
 		}
 		
