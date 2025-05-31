@@ -1704,15 +1704,23 @@ function tab_timeline()
 	
 	content_mouseon = app_mouse_box(content_x, content_y, content_width, content_height, "place") && !popup_mouseon && !toast_mouseon && !context_menu_mouseon
 	
-	var ver_scroll_speed = 8;
+	//Scaling speed
+	var ver_scroll_speed = clamp(7.5 + timeline_scroll_scalling, 0, 32)
+	
+	var ver_scroll_bef = timeline.ver_scroll.value
 	
 	// Move view when selecting
 	if (window_busy = "timelinemove" || window_busy = "timelineselect" || (window_busy = "place" && mouseinnames))
 	{
-		if (mouse_y < tly + 6)
+		if (mouse_y < tly + 6) {
+			timeline_scroll_scalling += 0.1 * delta
 			timeline.ver_scroll.value -= ver_scroll_speed
-		if (mouse_y > tly + tlh - 6)
+		}
+			
+		if (mouse_y > tly + tlh - 6) {
+			timeline_scroll_scalling += 0.1 * delta
 			timeline.ver_scroll.value += ver_scroll_speed
+		}
 		
 		timeline.ver_scroll.value = max(0, timeline.ver_scroll.value)
 		timeline.ver_scroll.value_goal = timeline.ver_scroll.value
@@ -1750,10 +1758,15 @@ function tab_timeline()
 			window_busy != "timelinesetregionend"
 		)
 		{
-			if (mouse_y < tly + 6)
+			if (mouse_y < tly + 6) {
+				timeline_scroll_scalling += 0.1 * delta
 				timeline.ver_scroll.value -= ver_scroll_speed
-			if (mouse_y > tly + tlh - 6)
+			}
+			
+			if (mouse_y > tly + tlh - 6) {
+				timeline_scroll_scalling += 0.1 * delta
 				timeline.ver_scroll.value += ver_scroll_speed
+			}
 		}
 		
 		timeline.ver_scroll.value = max(0, timeline.ver_scroll.value)
@@ -1775,6 +1788,10 @@ function tab_timeline()
 				mouse_click_y += ver_scroll_speed
 		}
 	}
+	
+	//Check if it moved or not
+	if (ver_scroll_bef = timeline.ver_scroll.value)
+		timeline_scroll_scalling = 0
 	
 	// Zoom
 	if (window_scroll_focus_prev = "timelinezoom" && window_busy = "" && mouse_wheel <> 0)

@@ -10,7 +10,7 @@ function app_update_micro_animations()
 	{
 		if (timeline_zoom != timeline_zoom_goal)
 		{
-			timeline_zoom += (timeline_zoom_goal - timeline_zoom) / max(1, 4 / delta)
+			timeline_zoom += (timeline_zoom_goal - timeline_zoom) / max(1, ((app.setting_reduced_motion) ? 2.7 : 4) / delta)
 			timeline.hor_scroll.value_goal = max(0, timeline.hor_scroll.value_goal)
 			timeline.hor_scroll.value = max(0, timeline.hor_scroll.value)
 		}
@@ -25,7 +25,7 @@ function app_update_micro_animations()
 		if (!value_ease)
 			value = value_goal
 		else
-			value += (value_goal - value) / max(1, 4 / delta)
+			value += (value_goal - value) / max(1, ((app.setting_reduced_motion) ? 2.7 : 4) / delta)
 		
 		mousenear.update(constantspeed)
 	}
