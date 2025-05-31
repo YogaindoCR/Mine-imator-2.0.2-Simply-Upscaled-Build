@@ -13,13 +13,11 @@ uniform float uBilateralRadius;
 
 uniform float uNormalBufferScale;
 
-vec3 unpackNormal(vec4 c)
-{
+vec3 unpackNormal(vec4 c) {
     return (c.rgb / uNormalBufferScale) * 2.0 - 1.0;
 }
 
-float unpackDepth(vec4 c)
-{
+float unpackDepth(vec4 c) {
     return dot(c.rgb, vec3(1.0, 1.0/255.0, 1.0/65025.0));
 }
 
@@ -40,14 +38,11 @@ void main()
 
             if (sampleCoord.x < 0.0 || sampleCoord.y < 0.0 || sampleCoord.x > 1.0 || sampleCoord.y > 1.0)
                 continue;
-
+				
             vec3 sampleColor = texture2D(uIndirectTex, sampleCoord).rgb;
-            
-            // Skip black pixels (all components exactly 0.0)
-            if (length(sampleColor) == 0.0) {
-                continue;
-            }
-
+			if (length(sampleColor) == 0.0)
+				continue;
+				
             float sampleDepth = unpackDepth(texture2D(uDepthBuffer, sampleCoord));
             vec3 sampleNormal = unpackNormal(texture2D(uNormalBuffer, sampleCoord));
 
@@ -62,11 +57,6 @@ void main()
         }
     }
 
-    // If no non-black samples were found, keep the original color
-    if (totalWeight <= 0.0) {
-        gl_FragColor = vec4(centerColor, 1.0);
-    } else {
-        finalColor /= totalWeight;
-        gl_FragColor = vec4(finalColor, 1.0);
-    }
+    finalColor /= max(totalWeight, 0.0001);
+    gl_FragColor = vec4(finalColor, 1.0);
 }
