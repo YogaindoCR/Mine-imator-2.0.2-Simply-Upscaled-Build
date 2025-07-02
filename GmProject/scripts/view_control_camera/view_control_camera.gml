@@ -108,7 +108,7 @@ function view_control_camera(view)
 			vecmouse = vec2(mouse_dx, mouse_dy)
 			vecdot = vec2_dot(vec2_normalize(view_control_vec), vec2_normalize(vecmouse))
 			dis = point3D_distance(tl_edit.world_pos, tl_edit.world_pos_rotate)
-			view_control_move_distance -= vec2_length(vecmouse) * (dis / veclen) * vecdot * dragger_multiplier
+			view_control_move_distance -= vec2_length(vecmouse) * (dis / veclen) * vecdot * dragger_multiplier * ((render_view_scaling) ? setting_view_scaling_value : 1)
 			
 			snapval = (dragger_snap ? setting_snap_size_position : snap_min)
 			

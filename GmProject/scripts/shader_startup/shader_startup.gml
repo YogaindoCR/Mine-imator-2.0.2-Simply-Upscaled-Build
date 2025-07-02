@@ -48,15 +48,20 @@ function shader_startup()
 		new_shader("shader_replace")
 		new_shader("shader_replace_alpha")
 		new_shader("shader_high_dof")
+		new_shader("shader_high_dof_EX")
 		new_shader("shader_high_dof_coc")
 		new_shader("shader_high_dof_coc_blur")
 		new_shader("shader_high_fog")
 		new_shader("shader_high_fog_apply")
 		new_shader("shader_high_light_point")
+		new_shader("shader_high_light_point_EX")
 		new_shader("shader_high_light_point_shadowless")
 		new_shader("shader_high_light_spot")
+		new_shader("shader_high_light_spot_EX")
 		new_shader("shader_high_light_sun")
+		new_shader("shader_high_light_sun_EX")
 		new_shader("shader_high_ssao")
+		new_shader("shader_high_ssao_EX")
 		new_shader("shader_color_glow")
 		new_shader("shader_high_bloom_threshold")
 		new_shader("shader_add")
@@ -74,8 +79,12 @@ function shader_startup()
 		new_shader("shader_high_subsurface")
 		new_shader("shader_high_subsurface_scatter")
 		new_shader("shader_high_raytrace")
+		new_shader("shader_high_raytrace_EX")
 		new_shader("shader_high_raytrace_resolve")
+		new_shader("shader_high_raytrace_resolve_EX")
 		new_shader("shader_high_indirect_blur")
+		new_shader("shader_high_indirect_blur_EX")
+		new_shader("shader_bilateral_blur")
 		new_shader("shader_tonemap")
 		new_shader("shader_clip")
 		new_shader("shader_high_glint")
@@ -216,6 +225,28 @@ function shader_startup()
 		new_shader_uniform("uSampleAmount")
 		new_shader_uniform("uSamples")
 		new_shader_uniform("uWeightSamples")
+		new_shader_uniform("uGhostingFix")
+		new_shader_uniform("uGhostingFixThreshold")
+		new_shader_uniform("uDesaturation")
+	}
+	
+	with (shader_map[?shader_high_dof_EX])
+	{
+		new_shader_sampler("uBlurBuffer")
+		new_shader_uniform("uScreenSize")
+		new_shader_uniform("uBlurSize")
+		new_shader_uniform("uBias")
+		new_shader_uniform("uThreshold")
+		new_shader_uniform("uGain")
+		new_shader_uniform("uFringe")
+		new_shader_uniform("uFringeAngle")
+		new_shader_uniform("uFringeStrength")
+		new_shader_uniform("uSampleAmount")
+		new_shader_uniform("uSamples")
+		new_shader_uniform("uWeightSamples")
+		new_shader_uniform("uGhostingFix")
+		new_shader_uniform("uGhostingFixThreshold")
+		new_shader_uniform("uDesaturation")
 	}
 	
 	with (shader_map[?shader_high_dof_coc])
@@ -263,6 +294,27 @@ function shader_startup()
 		new_shader_uniform("uLightSize")
 	}
 	
+	with (shader_map[?shader_high_light_point_EX])
+	{
+		shader_material_uniforms()
+		
+		new_shader_uniform("uIsSky")
+		new_shader_uniform("uLightPosition")
+		new_shader_uniform("uLightColor")
+		new_shader_uniform("uLightStrength")
+		new_shader_uniform("uLightNear")
+		new_shader_uniform("uLightFar")
+		new_shader_uniform("uLightFadeSize")
+		new_shader_sampler("uDepthBuffer")
+		new_shader_uniform("uDepthBufferSize")
+		new_shader_uniform("uShadowPosition")
+		new_shader_uniform("uLightSpecular")
+		new_shader_uniform("uLightSize")
+		new_shader_uniform("uKernel2D")
+		new_shader_uniform("uAbsorption")
+		new_shader_uniform("uShadowBlurSample")
+	}
+	
 	with (shader_map[?shader_high_light_point_shadowless])
 	{
 		shader_material_uniforms()
@@ -292,6 +344,28 @@ function shader_startup()
 		new_shader_uniform("uLightSize")
 	}
 	
+	with (shader_map[?shader_high_light_spot_EX])
+	{
+		shader_material_uniforms()
+		
+		new_shader_uniform("uIsSky")
+		new_shader_uniform("uLightMatrix")
+		new_shader_uniform("uShadowMatrix")
+		new_shader_uniform("uLightPosition")
+		new_shader_uniform("uLightColor")
+		new_shader_uniform("uLightStrength")
+		new_shader_uniform("uLightNear")
+		new_shader_uniform("uLightFar")
+		new_shader_uniform("uLightFadeSize")
+		new_shader_uniform("uLightSpotSharpness")
+		new_shader_sampler("uDepthBuffer")
+		new_shader_uniform("uLightSpecular")
+		new_shader_uniform("uLightSize")
+		new_shader_uniform("uResolution")
+		new_shader_uniform("uKernel2D")
+		new_shader_uniform("uShadowBlurSample")
+	}
+	
 	with (shader_map[?shader_high_light_sun])
 	{
 		shader_material_uniforms()
@@ -308,6 +382,28 @@ function shader_startup()
 		new_shader_uniform("uLightSpecular")
 		new_shader_uniform("uLightMatBiasMVP")
 		new_shader_uniform("uCascadeEndClipSpace")
+	}
+	
+	with (shader_map[?shader_high_light_sun_EX])
+	{
+		shader_material_uniforms()
+		
+		new_shader_uniform("uIsSky")
+		new_shader_uniform("uLightDirection")
+		new_shader_uniform("uLightColor")
+		new_shader_uniform("uLightStrength")
+		new_shader_uniform("uLightSize")
+		new_shader_uniform("uSunNear")
+		new_shader_uniform("uSunFar")
+		new_shader_sampler("uDepthBuffer0")
+		new_shader_sampler("uDepthBuffer1")
+		new_shader_sampler("uDepthBuffer2")
+		new_shader_uniform("uLightSpecular")
+		new_shader_uniform("uLightMatBiasMVP")
+		new_shader_uniform("uCascadeEndClipSpace")
+		new_shader_uniform("uKernel2D")
+		new_shader_uniform("uAbsorption")
+		new_shader_uniform("uShadowBlurSample")
 	}
 	
 	with (shader_map[?shader_high_ssao])
@@ -328,6 +424,29 @@ function shader_startup()
 		new_shader_uniform("uRadius")
 		new_shader_uniform("uPower")
 		new_shader_uniform("uColor")
+	}
+	
+	with (shader_map[?shader_high_ssao_EX])
+	{
+		new_shader_sampler("uDepthBuffer")
+		new_shader_sampler("uNormalBuffer")
+		new_shader_sampler("uEmissiveBuffer")
+		new_shader_sampler("uNoiseBuffer")
+		new_shader_sampler("uMaskBuffer")
+		new_shader_uniform("uNormalBufferScale")
+		new_shader_uniform("uNear")
+		new_shader_uniform("uFar")
+		new_shader_uniform("uProjMatrix")
+		new_shader_uniform("uProjMatrixInv")
+		new_shader_uniform("uScreenSize")
+		new_shader_uniform("uNoiseSize")
+		new_shader_uniform("uKernel")
+		new_shader_uniform("uRadius")
+		new_shader_uniform("uPower")
+		new_shader_uniform("uColor")
+		new_shader_uniform("uRatio")
+		new_shader_uniform("uRatioBalance")
+		new_shader_uniform("uSampleStep")
 	}
 	
 	with (shader_map[?shader_color_glow])
@@ -512,6 +631,52 @@ function shader_startup()
 		new_shader_uniform("uIndirectStength")
 	}
 	
+	with (shader_map[?shader_high_raytrace_EX])
+	{
+		new_shader_sampler("uDepthBuffer")
+		new_shader_sampler("uNormalBuffer")
+		new_shader_sampler("uNoiseBuffer")
+		new_shader_sampler("uMaterialBuffer")
+		new_shader_sampler("uDiffuseBuffer")
+		new_shader_sampler("uDataBuffer")
+		
+		new_shader_uniform("uNormalBufferScale")
+		new_shader_uniform("uNoiseSize")
+		new_shader_uniform("uNear")
+		new_shader_uniform("uFar")
+		new_shader_uniform("uProjMatrix")
+		new_shader_uniform("uProjMatrixInv")
+		new_shader_uniform("uViewMatrixInv")
+		new_shader_uniform("uScreenSize")
+		new_shader_uniform("uPrecision")
+		new_shader_uniform("uThickness")
+		
+		new_shader_uniform("uRayType")
+		new_shader_uniform("uRayDirection")
+		new_shader_uniform("uRayDistance")
+		
+		// Specular
+		new_shader_uniform("uFadeAmount")
+		new_shader_uniform("uGamma")
+		new_shader_uniform("uSkyColor")
+		new_shader_uniform("uFogColor")
+		
+		// Diffuse
+		new_shader_uniform("uIndirectStength")
+	}
+	
+	with (shader_map[?shader_bilateral_blur])
+	{
+		new_shader_sampler("uDepthBuffer")
+		new_shader_sampler("uNormalBuffer")
+		new_shader_sampler("uIndirectTex")
+		new_shader_uniform("uDepthSigma")
+		new_shader_uniform("uNormalSigma")
+		new_shader_uniform("uBilateralRadius")
+		new_shader_uniform("uNormalBufferScale")
+		new_shader_uniform("uScreenSize")
+	}
+	
 	with (shader_map[?shader_high_indirect_blur])
 	{
 		new_shader_sampler("uDepthBuffer")
@@ -524,7 +689,30 @@ function shader_startup()
 		new_shader_uniform("uBlurSize")
 	}
 	
+	with (shader_map[?shader_high_indirect_blur_EX])
+	{
+		new_shader_sampler("uDepthBuffer")
+		new_shader_sampler("uNormalBuffer")
+		new_shader_sampler("uNoiseBuffer")
+		new_shader_uniform("uNormalBufferScale")
+		new_shader_uniform("uScreenSize")
+		new_shader_uniform("uNoiseSize")
+		new_shader_uniform("uBlurSize")
+		new_shader_uniform("uBlurSize2")
+		new_shader_uniform("uRayStep")
+	}
+	
 	with (shader_map[?shader_high_raytrace_resolve])
+	{
+		new_shader_sampler("uDataBuffer")
+		new_shader_sampler("uDepthBuffer")
+		new_shader_sampler("uNormalBuffer")
+		new_shader_sampler("uMaterialBuffer")
+		new_shader_uniform("uNormalBufferScale")
+		new_shader_uniform("uScreenSize")
+	}
+	
+	with (shader_map[?shader_high_raytrace_resolve_EX])
 	{
 		new_shader_sampler("uDataBuffer")
 		new_shader_sampler("uDepthBuffer")

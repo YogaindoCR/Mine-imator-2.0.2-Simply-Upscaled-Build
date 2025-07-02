@@ -86,7 +86,12 @@ function render_high_dof(prevsurf)
 		gpu_set_texfilter(true)
 		gpu_set_texrepeat(false)
 		
-		render_shader_obj = shader_map[?shader_high_dof]
+		if (project_render_engine) {
+			render_shader_obj = shader_map[?shader_high_dof_EX]
+		} else {
+			render_shader_obj = shader_map[?shader_high_dof]
+		}
+			
 		with (render_shader_obj)
 		{
 			shader_set(shader)

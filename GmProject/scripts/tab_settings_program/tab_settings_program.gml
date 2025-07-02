@@ -16,6 +16,16 @@ function tab_settings_program()
 	draw_button_menu("settingsminecraftversion", e_menu.LIST, dx, dy, dw, 24, setting_minecraft_assets_version, setting_minecraft_assets_version, action_setting_minecraft_assets_version, false, null, null, "", c_white, c_white)
 	tab_next()
 	
+	// Cam Work POV
+	tab_control_dragger()
+	draw_dragger("settingscamworkpov", dx, dy, dragger_width, setting_cam_work_pov, 1, 20, 110, 50, 1, tab.program.tbx_cam_work_pov, action_setting_cam_work_pov, null, true, false)
+	tab_next()
+	
+	// Gizmos Size
+	tab_control_dragger()
+	draw_dragger("settingsgizmossize", dx, dy, dragger_width, setting_gizmos_size, 0.005, 0.5, 3.0, 1.0, 0.0, tab.program.tbx_gizmos_size, action_setting_gizmos_size, null, true, false)
+	tab_next()
+	
 	// Backups
 	tab_control_switch()
 	draw_button_collapse("backup", collapse_map[?"backup"], action_setting_backup, setting_backup, "settingsbackup")
@@ -125,5 +135,10 @@ function tab_settings_program()
 	// Remove edges on large scenery
 	tab_control_switch()
 	draw_switch("settingssceneryremoveedges", dx, dy, setting_scenery_remove_edges, action_setting_scenery_remove_edges)
+	tab_next()
+	
+	// Viewport optimization by disabling when unfocus
+	tab_control_switch()
+	draw_switch("settingsviewportoptimization", dx, dy, setting_viewport_optimization, action_setting_viewport_optimization)
 	tab_next()
 }

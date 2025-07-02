@@ -61,5 +61,15 @@ function toolbar_draw()
 			else
 				popup_show(popup_advanced)
 		}
+	} else {
+		// Time elapsed
+		project_time_elapsed += current_time - time_elapsed_before
+		time_elapsed_before = current_time
+		
+		draw_label(string(floor(project_time_elapsed / 3600000)) + " Hour " +
+		string(floor((project_time_elapsed % 3600000) / 60000)) + " Minutes " +
+		string(floor((project_time_elapsed % 60000) / 1000)) + " Seconds",
+		content_x + content_width - 10, dy + 22, fa_right, fa_bottom, 
+		c_text_secondary, a_text_secondary * 0.3, font_value)
 	}
 }

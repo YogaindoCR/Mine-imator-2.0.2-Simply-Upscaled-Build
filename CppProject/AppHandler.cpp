@@ -25,8 +25,8 @@
 #ifdef OS_WINDOWS
 #define USE_GPU 1
 typedef unsigned long DWORD;
-extern "C" __declspec(dllexport) DWORD NvOptimusEnablement = USE_GPU;
-extern "C" __declspec(dllexport) DWORD AmdPowerXpressRequestHighPerformance = USE_GPU;
+extern "C" __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+extern "C" __declspec(dllexport) DWORD AmdPowerXpressRequestHighPerformance = 1;
 #endif
 
 int main(int argc, char* argv[])

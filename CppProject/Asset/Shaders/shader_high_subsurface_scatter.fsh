@@ -1,4 +1,4 @@
-#define MAX_SAMPLES 65
+#define MAX_SAMPLES 129
 #define PI 3.14159265
 
 uniform sampler2D uSSSBuffer;

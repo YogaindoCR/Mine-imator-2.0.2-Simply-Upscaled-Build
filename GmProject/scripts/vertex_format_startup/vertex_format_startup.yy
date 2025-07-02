@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Vertex",
-    "path": "folders/Scripts/Utility/Vertex.yy",
+    "path": "folders/Shaders/Utility/Vertex.yy",
   },
 }

@@ -121,6 +121,14 @@ function tl_update_value_types()
 		type = e_tl_type.SPOT_LIGHT)
 		value_type[e_value_type.ROT_POINT] = false
 	
+	// Modifier
+	value_type[e_value_type.MODIFIER] = true
+	if (type = e_tl_type.PARTICLE_SPAWNER ||
+		type = e_tl_type.CAMERA ||
+		type = e_tl_type.POINT_LIGHT ||
+		type = e_tl_type.SPOT_LIGHT)
+		value_type[e_value_type.MODIFIER] = false
+	
 	// Enable material tab
 	value_type[e_value_type.MATERIAL] = (value_type[e_value_type.MATERIAL_TEXTURE] || value_type[e_value_type.MATERIAL_COLOR] ||
 										value_type[e_value_type.MATERIAL_SURFACE] || value_type[e_value_type.MATERIAL_SUBSURFACE])

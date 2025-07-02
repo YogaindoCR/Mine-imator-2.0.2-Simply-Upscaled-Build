@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "File",
-    "path": "folders/Scripts/Utility/File.yy",
+    "path": "folders/Shaders/Utility/File.yy",
   },
 }

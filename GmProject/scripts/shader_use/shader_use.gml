@@ -59,12 +59,46 @@ function shader_use()
 	if (!is_undefined(uniform_map[?"uDefaultSubsurface"]) && uniform_map[?"uDefaultSubsurface"] > -1)
 		render_set_uniform("uDefaultSubsurface", app.project_render_block_subsurface)
 	
+	// Shadows
+	if (!is_undefined(uniform_map[?"uShadowBlurSample"]) && uniform_map[?"uShadowBlurSample"] > -1)
+		render_set_uniform("uShadowBlurSample", app.project_render_shadows_blur_sample)
+	
+	// Subsurface
+	if (!is_undefined(uniform_map[?"uSSSHighQuality"]) && uniform_map[?"uSSSHighQuality"] > -1)
+		render_set_uniform("uSSSHighQuality", app.project_render_subsurface_quality)
+		
+	if (!is_undefined(uniform_map[?"uSSSStrength"]) && uniform_map[?"uSSSStrength"] > -1)
+		render_set_uniform("uSSSStrength", app.project_render_subsurface_strength)
+		
+	if (!is_undefined(uniform_map[?"uAbsorption"]) && uniform_map[?"uAbsorption"] > -1)
+		render_set_uniform("uAbsorption", app.project_render_subsurface_absorption)
+		
+	if (!is_undefined(uniform_map[?"uSSSSharpness"]) && uniform_map[?"uSSSSharpness"] > -1)
+		render_set_uniform("uSSSSharpness", 1.0 + app.project_render_subsurface_sharpness * app.project_render_subsurface_sharpness * 2)
+		
+	if (!is_undefined(uniform_map[?"uSSSDesaturation"]) && uniform_map[?"uSSSDesaturation"] > -1)
+		render_set_uniform("uSSSDesaturation", app.project_render_subsurface_desaturation)
+		
+	if (!is_undefined(uniform_map[?"uSSSColorThreshold"]) && uniform_map[?"uSSSColorThreshold"] > -1)
+		render_set_uniform("uSSSColorThreshold", app.project_render_subsurface_colorthreshold)
+	
+	
 	// Subsurface highlight
 	if (!is_undefined(uniform_map[?"uSSSHighlight"]) && uniform_map[?"uSSSHighlight"] > -1)
 		render_set_uniform("uSSSHighlight", 1 - app.project_render_subsurface_highlight)
 	
 	if (!is_undefined(uniform_map[?"uSSSHighlightStrength"]) && uniform_map[?"uSSSHighlightStrength"] > -1)
 		render_set_uniform("uSSSHighlightStrength", app.project_render_subsurface_highlight_strength)
+	
+	if (!is_undefined(uniform_map[?"uSSSHighlightSharpness"]) && uniform_map[?"uSSSHighlightSharpness"] > -1)
+		render_set_uniform("uSSSHighlightSharpness", 1.0 + app.project_render_subsurface_highlight_sharpness * app.project_render_subsurface_highlight_sharpness * 2)
+	
+	if (!is_undefined(uniform_map[?"uSSSHighlightDesaturation"]) && uniform_map[?"uSSSHighlightDesaturation"] > -1)
+		render_set_uniform("uSSSHighlightDesaturation", app.project_render_subsurface_highlight_desaturation)
+	
+	if (!is_undefined(uniform_map[?"uSSSHighlightColorThreshold"]) && uniform_map[?"uSSSHighlightColorThreshold"] > -1)
+		render_set_uniform("uSSSHighlightColorThreshold", app.project_render_subsurface_highlight_colorthreshold)
+	
 	
 	// Glint
 	if (!is_undefined(uniform_map[?"uGlintEnabled"]) && uniform_map[?"uGlintEnabled"] > -1)

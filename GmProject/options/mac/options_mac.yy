@@ -5,6 +5,7 @@
   "option_mac_display_name": "mineimator",
   "option_mac_app_id": "",
   "option_mac_version": "1.0.6.0",
+  "option_mac_build_number": 0,
   "option_mac_output_dir": "~/GameMaker-Studio/mineimator",
   "option_mac_team_id": "",
   "option_mac_signing_identity": "Developer ID Application:",

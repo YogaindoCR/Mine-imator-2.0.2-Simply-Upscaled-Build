@@ -467,7 +467,7 @@ function tab_timeline()
 		// Draw keyframes
 		var framecolor, framealpha;
 		framecolor = c_text_secondary
-		framealpha = a_text_secondary
+		framealpha = a_text_secondary + 0.1
 		
 		if (tl.color_tag != null)
 		{
@@ -530,7 +530,7 @@ function tab_timeline()
 					maxy = clamp(dy + itemhalf - maxv * wavehei, dy, dy + itemh)
 					
 					draw_vertex_color(boxx + xx + 1, maxy, kf.selected ? c_accent : framecolor, kf.selected ? 1 : framealpha)
-					draw_vertex_color(boxx + xx + 1, miny, kf.selected ? c_accent : framecolor, kf.selected ? 1 : framealpha)
+					draw_vertex_color(boxx + xx + 1, miny, kf.selected ? color_multiply(c_accent, hex_to_color("7a8ca3")) : color_multiply(framecolor, hex_to_color("a6a6a6")), kf.selected ? 1 : framealpha)
 				}
 				draw_primitive_end()
 				
@@ -571,8 +571,7 @@ function tab_timeline()
 				// Sprite
 				var image = ((round(timeline_marker) = kf.position && tl.selected) || kf.selected);
 				
-				draw_image(spr_icons, image ? icons.KEYFRAME : icons.KEYFRAME_FILLED, dx + 1, dy + itemhalf, 1, 1, c_level_top, 1)
-				draw_image(spr_icons, image ? icons.KEYFRAME : icons.KEYFRAME_FILLED, dx + 1, dy + itemhalf, 1, 1, kf.selected ? c_accent : framecolor, kf.selected ? 1 : framealpha)
+				draw_image(spr_icons, image ? icons.KEYFRAME : icons.KEYFRAME_FILLED, dx + 1, dy + itemhalf, 1, 1, kf.selected ? c_accent : framecolor, kf.selected ? 1 : framealpha, (kf.value[e_value.TRANSITION] == "instant") ? 45 : 0)
 			}
 			
 			if (mouse && mouseintl && !tl.lock)
@@ -585,6 +584,7 @@ function tab_timeline()
 	// Drag select keyframes
 	if (window_busy != "timelineclickkeyframes" && window_busy != "timelineselectkeyframes")
 		timeline_zoom_current = timeline_zoom
+		
 	if (window_busy = "timelineselectkeyframes")
 	{
 		mouse_cursor = cr_handpoint
@@ -1383,7 +1383,7 @@ function tab_timeline()
 			}
 		}
 		
-		if (mouse_middle_pressed)
+		if (mouse_middle_pressed || mouse_middle_alternate)
 		{
 			window_focus = "timeline"
 			window_busy = "timelinedrag"
@@ -1697,7 +1697,7 @@ function tab_timeline()
 		timeline.hor_scroll.value = max(0, timeline.hor_scroll.value - mouse_dx)
 		timeline.ver_scroll.value = max(0, timeline.ver_scroll.value - mouse_dy)
 		
-		if (!mouse_middle)
+		if (!mouse_middle && !mouse_middle_alternate)
 		{
 			timeline.hor_scroll.value = snap(timeline.hor_scroll.value, timeline.hor_scroll.snap_value)
 			timeline.ver_scroll.value = snap(timeline.ver_scroll.value, timeline.ver_scroll.snap_value)
@@ -1710,15 +1710,23 @@ function tab_timeline()
 	
 	content_mouseon = app_mouse_box(content_x, content_y, content_width, content_height, "place") && !popup_mouseon && !toast_mouseon && !context_menu_mouseon
 	
-	var ver_scroll_speed = 8;
+	//Scaling speed
+	var ver_scroll_speed = clamp(7.5 + timeline_scroll_scalling, 0, 32)
+	
+	var ver_scroll_bef = timeline.ver_scroll.value
 	
 	// Move view when selecting
 	if (window_busy = "timelinemove" || window_busy = "timelineselect" || (window_busy = "place" && mouseinnames))
 	{
-		if (mouse_y < tly + 6)
+		if (mouse_y < tly + 6) {
+			timeline_scroll_scalling += 0.1 * delta
 			timeline.ver_scroll.value -= ver_scroll_speed
-		if (mouse_y > tly + tlh - 6)
+		}
+			
+		if (mouse_y > tly + tlh - 6) {
+			timeline_scroll_scalling += 0.1 * delta
 			timeline.ver_scroll.value += ver_scroll_speed
+		}
 		
 		timeline.ver_scroll.value = max(0, timeline.ver_scroll.value)
 		timeline.ver_scroll.value_goal = timeline.ver_scroll.value
@@ -1756,10 +1764,15 @@ function tab_timeline()
 			window_busy != "timelinesetregionend"
 		)
 		{
-			if (mouse_y < tly + 6)
+			if (mouse_y < tly + 6) {
+				timeline_scroll_scalling += 0.1 * delta
 				timeline.ver_scroll.value -= ver_scroll_speed
-			if (mouse_y > tly + tlh - 6)
+			}
+			
+			if (mouse_y > tly + tlh - 6) {
+				timeline_scroll_scalling += 0.1 * delta
 				timeline.ver_scroll.value += ver_scroll_speed
+			}
 		}
 		
 		timeline.ver_scroll.value = max(0, timeline.ver_scroll.value)
@@ -1781,6 +1794,10 @@ function tab_timeline()
 				mouse_click_y += ver_scroll_speed
 		}
 	}
+	
+	//Check if it moved or not
+	if (ver_scroll_bef = timeline.ver_scroll.value)
+		timeline_scroll_scalling = 0
 	
 	// Zoom
 	if (window_scroll_focus_prev = "timelinezoom" && window_busy = "" && mouse_wheel <> 0)

@@ -3,9 +3,9 @@
 	"file/": {
 		"language": "English",
 		"locale": "en-US",
-		"translator": "David, Nimi, mbanders",
-		"forversion": "2.0.2 Continuation Build 1.0.10",
-		"lastchange": "2025.06.17"
+		"translator": "David, Nimi, mbanders, YogaindoCR",
+		"forversion": "2.0.2 Continuation Build 1.0.9",
+		"lastchange": "2025.06.20"
 	},
 	"particle/": {
 		"default": "Default spawner",
@@ -511,6 +511,7 @@
 			"upgrade": "Upgrade"
 		},
 		"backup": "Backing up...",
+		"time": "Time elapsed: ",
 		"simplemode": "Simple mode enabled"
 	},
 	"type/": {
@@ -665,6 +666,7 @@
 			"includehidden": "Include hidden objects",
 			"highquality": "High quality rendering",
 			"watermark": "Show watermark",
+			"optimization": "Enable optimization",
 			"save": "Save"
 		},
 		"image/": {
@@ -876,11 +878,20 @@
 		"griddisable": "Disable grid overlay",
 		"aspectratioenable": "Enable aspect ratio",
 		"aspectratiodisable": "Disable aspect ratio",
-		"overlaysenable": "Enable overlays",
-		"overlaysdisable": "Disable overlays",
-		"renderpass": "Render pass: %1",
-		"renderfps": "%1 FPS (%2/%3 samples)",
-		"rendertime": "Rendered in %1 seconds",
+		"overlays/": {
+			"light": "Light overlays",
+			"particle": "Particle overlays",
+			"path": "Path overlays",
+			"enable": "Enable overlays",
+			"disable": "Disable overlays"
+		},
+		"render/": {
+			"pass": "Render pass: %1",
+			"fps": "%1 FPS (%2/%3 samples)",
+			"time": "Rendered in %1 seconds",
+			"scaling": "Render preview scaling",
+			"scalingdrag": "Resolution scale"
+		},
 		"workcamera": "Work camera",
 		"activecamera": "Active camera (%1)",
 		"selectedcamera": "Selected camera (%1)"
@@ -898,7 +909,8 @@
 		"frameeditor": "%1 (%2)",
 		"frameeditorsingle": "Frame %1",
 		"frameeditormulti": "%1 Frames",
-		"settings": "Preferences"
+		"settings": "Preferences",
+		"filepath": "File Paths"
 	},
 	"key/": {
 		"left": "Left",
@@ -1444,9 +1456,9 @@
 			"biome": "Biome",
 			"profession_level": "Profession level",
 			"crack_amount": "Crack amount",
-			"pumpkin": "Pumpkin",
 			"harness": "Harness",
 			"ropes": "Ropes",
+			"pumpkin": "Pumpkin",
 			"color": "Color",
 			"has_egg": "Has egg",
 			"size": "Size",
@@ -2584,7 +2596,11 @@
 			"hd_720p_cinematic": "HD 720p Cinematic",
 			"fhd_1080p_cinematic": "FHD 1080p Cinematic",
 			"qhd_1440p_cinematic": "QHD 1440p Cinematic",
-			"uhd_4k_cinematic": "UHD 4K Cinematic"
+			"qhdplus_4k_cinematic": "QHD+ 1600p Cinematic",
+			"uw4k": "UW4K Cinematic",
+			"uhd_4k_cinematic": "UW5K Cinematic",
+			"ave-xprev": "AVE-X Preview",
+			"ave-x": "AVE-X"
 		},
 		"videosizecustom": "Custom",
 		"videosizecustomwidth": "W",
@@ -2602,47 +2618,89 @@
 	},
 	"render": "RENDER SETTINGS",
 	"render/": {
+		"engine": "Render Engine",
+		"engine/": {
+			"vanilla": "Vanilla+",
+			"ex": "AVE-X"
+		},
+		"enginetip": "Choose between two Rendering Method. AVE-X have Higher quality but Heavy, Vanilla have lower Quality but faster and supported",
 		"samples": "Samples",
 		"distance": "Render distance",
 		"distancetip": "The distance where rendered objects are cut off. Also determines the maximum fog distance.",
 		"ssao": "Ambient occlusion",
+		"hbao": "HBAO Occlusion",
 		"ssaotip": "Darkens areas that are less exposed to light.",
+		"hbaotip": "Darkens areas that are less exposed to light in more accurate way.",
 		"ssao/": {
+			"sample": "Sample Quality",
 			"radius": "Radius",
 			"power": "Strength",
 			"blurpasses": "Blur passes",
-			"color": "Color"
+			"color": "Color",
+			"ratio": "Ratio",
+			"ratiobalance": "Ratio Balance"
 		},
 		"shadows": "Shadows",
 		"shadows/": {
 			"sunbuffersize": "Sun light buffer size",
 			"spotbuffersize": "Spot light buffer size",
 			"pointbuffersize": "Point light buffer size",
+			"blur": "Shadows blur markiplier",
+			"blursample": "Shadows Blur Sample",
 			"transparent": "Transparent shadows",
+			"buffersize128": "Tiny",
 			"buffersize256": "Very small",
+			"buffersize384": "Smaller",
 			"buffersize512": "Small",
+			"buffersize768": "Moderate",
 			"buffersize1024": "Medium",
+			"buffersize1536": "Large",
 			"buffersize2048": "Big",
+			"buffersize3072": "Bigger",
 			"buffersize4096": "Very big",
-			"buffersize8192": "Gigantic"
+			"buffersize6144": "Enormous",
+			"buffersize8192": "Gigantic",
+			"buffersize12288": "Madman"
 		},
 		"subsurfacescattering": "Subsurface scattering",
 		"subsurfacescatteringtip": "Simulates light passing through an object, such as leaves.",
 		"subsurfacescatter/": {
-			"quality": "Blur quality",
-			"highlight": "Highlight",
+			"quality2": "High Quality",
+			"quality2tip": "Make Subsurface affected by the shadow blur for a way smoother result. Can be inconsistent for certain scenarios. Best with 0 Blur Sample",
+			"sample": "Blur Sample",
+			"strength": "Strength",
+			"absorption": "Absorption",
+			"absorptiontip": "Control how strong the light penetrating object subsurfaces",
+			"sharpness": "Sharpness",
+			"desaturation": "Desaturation",
+			"desaturationtip": "Desaturate the light colors passing through the object",
+			"colorthreshold": "Color Threshold",
+			"colorthresholdtip": "Fight back light colors subtraction for a strong subsurface result, Works best with desaturation",
+			"highlight": "Highlight Size",
 			"highlighttip": "Distributes additional light in objects when a light source is directly behind it.",
-			"highlightstrength": "Highlight strength"
+			"highlightstrength": "Highlight Strength",
+			"highlightsharpness": "Highlight Sharpness",
+			"highlightdesaturation": "Highlight Desaturation",
+			"highlightcolorthreshold": "Highlight Color Threshold"
 		},
 		"indirect": "Indirect lighting",
+		"indirectgi": "Indirect Global Illumination",
 		"indirecttip": "Bounces light off of bright objects, lighting more of the scene.",
 		"indirect/": {
 			"precision": "Precision",
 			"precisiontip": "The accuracy of raytracing for light bounces, higher precision is slower.",
+			"raysteptip": "The amount of Ray bounce before it stops, Higher more precise and smoother but SLOWER.",
 			"blurradius": "Denoise radius",
-			"strength": "Strength"
+			"strength": "Strength",
+			"raystep" : "Ray Step Blur",
+			"denoiser" : "Denoiser",
+			"denoisertip" : "Add a simple bilateral blur to Indirect lighting to smooth out the results",
+			"denoiser/": {
+				"strength": "Blur Radius"
+			}
 		},
 		"reflections": "Reflections",
+		"reflectionsfull": "Reflections (Full)",
 		"reflections/": {
 			"precision": "Precision",
 			"precisiontip": "The accuracy of raytracing reflections, higher precision is slower.",
@@ -2668,6 +2726,18 @@
 		"aa": "Anti-aliasing",
 		"aatip": "Smoothen the edges of objects in the final render.",
 		"aapower": "Strength",
+		"extrasettings": "Extra Settings",
+		"extrasettings/": {
+			"dofsample": "DOF Sample",
+			"dofghostingfix": "DOF Ghosting Fix",
+			"dofghostingfixtip": "Fix DOF edge ghosting issue on near objects",
+			"dofghostingfixthreshold": "Threshold"
+		},
+		"motionblurtip": "Add sample based motion blur to the scene, Only Works When Exporting",
+		"motionblur": "Motion Blur",
+		"motionblur/":{
+			"power": "Power"
+		},
 		"modelsscenery": "Models and scenery",
 		"bendstyle": "Limb bending style",
 		"bendstylerealistic": "Realistic",
@@ -2694,7 +2764,10 @@
 		"tonemapper/": {
 			"none": "None",
 			"reinhard": "Reinhard",
-			"aces": "Academy (ACES)"
+			"aces": "Academy (ACES)",
+			"filmic": "Filmic",
+			"agx": "AGX",
+			"acesapprox": "Academy Approximation (ACES)"
 		},
 		"exposure": "Exposure",
 		"gamma": "Gamma",
@@ -3485,6 +3558,18 @@
 			"angletarget": "Angle target",
 			"angleoffset": "Angle offset"
 		},
+		"modifier" : "Modifiers",
+		"modifier/": {
+			"shake": "Shake",
+			"shaketip": "Add a randomized noise value",
+			"shakeposition": "Position",
+			"shakerotation": "Rotation",
+			"shakeintensity": "Intensity",
+			"shakespeed": "Speed",
+			"shakeoffset": "Offset",
+			"frameskip": "Frame skip",
+			"frameskipvalue": "Skip on every"
+		},
 		"material": "MATERIAL",
 		"opacity": "Opacity",
 		"blendcolor": "Blend color",
@@ -3565,7 +3650,10 @@
 			"tonemapper/": {
 				"none": "None",
 				"reinhard": "Reinhard",
-				"aces": "Academy (ACES)"
+				"aces": "Academy (ACES)",
+				"filmic": "Filmic",
+				"agx": "AGX",
+				"acesapprox": "Academy Approximation (ACES)"
 			},
 			"exposure": "Exposure",
 			"gamma": "Gamma",
@@ -3603,7 +3691,8 @@
 					"x": "X",
 					"y": "Y",
 					"z": "Z"
-				}
+				},
+				"offset": "Offset"
 			},
 			"dof": "Depth of field",
 			"dof/": {
@@ -3624,7 +3713,8 @@
 					"red": "R",
 					"green": "G",
 					"blue": "B"
-				}
+				},
+				"desaturation": "Desaturation"
 			},
 			"bloom": "Bloom",
 			"bloom/": {
@@ -3752,6 +3842,8 @@
 			"advancedtip": "Access to all available features, recommended for advanced users."
 		},
 		"minecraftversion": "Minecraft version",
+		"camworkpov": "Work camera POV",
+		"gizmossize": "Gizmos size",
 		"backup": "Automatic backups",
 		"backuptime": "Time between backups",
 		"backuptimeminutes": " min",
@@ -3770,6 +3862,7 @@
 		"spawncameras": "Copy work camera into new cameras",
 		"unlimitedvalues": "Allow unlimited values",
 		"sceneryremoveedges": "Remove edges of large scenery",
+		"viewportoptimization": "Viewport optimization",
 		"interface": "INTERFACE",
 		"appearance": "Appearance",
 		"theme": "Theme",
@@ -3879,6 +3972,13 @@
 		"movespeed": "Move speed",
 		"looksensitivity": "Look sensitivity",
 		"fastmodifier": "Fast modifier",
-		"slowmodifier": "Slow modifier"
+		"slowmodifier": "Slow modifier",
+		"filepath": "FILE PATH",
+		"filepath/": {
+			"project": "Project",
+			"mineimator": "Mine-imator",
+			"mctemp": "Temp Unzip",
+			"language": "Language"
+		}
 	}
 }

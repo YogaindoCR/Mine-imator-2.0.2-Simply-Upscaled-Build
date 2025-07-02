@@ -7,7 +7,7 @@ function export_update()
 		export_escape_time = current_time
 	
 	// Stop!
-	if (export_escape_time > 0 && current_time - export_escape_time > 1000)
+	if (export_escape_time > 0 && current_time - export_escape_time > 500)
 	{
 		export_escape_time = 0
 		
@@ -24,7 +24,6 @@ function export_update()
 			return 0
 		}
 	}
-	
 	// Update movie
 	if (window_state = "export_movie")
 	{
@@ -39,7 +38,18 @@ function export_update()
 			}
 			
 			// Update animations
-			app_update_animate()
+			app_update_animate(false)
+		}
+		
+		if (project_render_motionblur){
+		timeline_marker += project_render_motionblur_power / (project_render_samples * (popup_exportmovie.framespersecond / project_tempo))
+
+		app_update_animate(false)
+		if (timeline_marker > exportmovie_marker_end)
+			{
+				export_done_movie()
+				return 0
+			}
 		}
 	}
 	

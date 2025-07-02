@@ -10,7 +10,7 @@
   "option_windows_copyright_info": "(c)2023 Stuff by David",
   "option_windows_description_info": "Minecraft 3D animation software",
   "option_windows_display_cursor": true,
-  "option_windows_icon": "${options_dir}/windows/icons/icon.ico",
+  "option_windows_icon": "icons/icon.ico",
   "option_windows_save_location": 1,
   "option_windows_splash_screen": "${options_dir}/windows/splash.png",
   "option_windows_use_splash": false,

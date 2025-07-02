@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Read",
-    "path": "folders/Scripts/Utility/File/Buffer/Read.yy",
+    "path": "folders/Shaders/Utility/File/Buffer/Read.yy",
   },
 }

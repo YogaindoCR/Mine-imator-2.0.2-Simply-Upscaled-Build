@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Color",
-    "path": "folders/Scripts/Utility/Color.yy",
+    "path": "folders/Shaders/Utility/Color.yy",
   },
 }

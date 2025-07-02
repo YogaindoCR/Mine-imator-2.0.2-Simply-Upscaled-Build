@@ -221,7 +221,43 @@ function view_draw(view)
 	}
 	
 	dx -= padding
+	
+	// Preview Resolution Scaling
+	if (view = view_main) {
+		draw_divide_vertical(dx, dy, dh)
+		
+		dx -= 16 + padding
+		
+		if (draw_button_icon("viewrenderscalingsettings", dx, dy, 16, 24, settings_menu_name = (string(view) + "viewrenderscalingsettings"), icons.CHEVRON_DOWN_TINY))
+		{
+			menu_settings_set(dx, dy, (string(view) + "viewrenderscalingsettings"), 24)
+			settings_menu_view = view
+			settings_menu_script = menu_scaling_settings
+		}
+	
+		if (settings_menu_name = (string(view) + "viewrenderscalingsettings") && settings_menu_ani_type != "hide")
+			current_microani.active.value = true
+	}
+	
+	dx -= dw
+	
+	// Preview Resolution Scaling Button
+	tip_set_keybind(e_keybind.RENDER_SCALING)
+	if (draw_button_icon("viewrenderscaling", dx, dy, dw, dh, view.scaling, icons.BOUNDARY_BOX, null, false, "viewrenderscaling"))
+	{
+		view.scaling = !view.scaling
+		
+		if (view = view_main)
+			setting_view_main_scaling = !setting_view_main_scaling
+		
+		if (view = view_second)
+			setting_view_second_scaling = !setting_view_second_scaling
+	}
+	
+	dx -= padding
 	draw_divide_vertical(dx, dy, dh)
+	
+	
 	
 	// Quality settings
 	dx -= 16 + padding
@@ -305,9 +341,33 @@ function view_draw(view)
 		view.aspect_ratio = !view.aspect_ratio
 	
 	// Overlays
-	dx -= dw + padding
-	if (draw_button_icon("viewoverlays", dx, dy, dw, dh, view.gizmos, icons.OVERLAYS, null, false, view.gizmos ? "viewoverlaysdisable" : "viewoverlaysenable"))
+	if (view = view_main)
+	{
+		dx -= padding
+		draw_divide_vertical(dx, dy, dh)
+		dx -= 16 + padding
+		
+		if (draw_button_icon("viewoverlayssettings", dx, dy, 16, 24, settings_menu_name = (string(view) + "viewoverlayssettings"), icons.CHEVRON_DOWN_TINY))
+		{
+			menu_settings_set(dx, dy, (string(view) + "viewoverlayssettings"), 24)
+			settings_menu_view = view
+			settings_menu_script = menu_overlay_settings
+		}
+		
+		dx -= dw + padding
+		if (draw_button_icon("viewoverlays", dx, dy, dw, dh, view.gizmos, icons.OVERLAYS, null, false, view.gizmos ? "viewoverlaysdisable" : "viewoverlaysenable"))
+			view.gizmos = !view.gizmos
+		
+		if (settings_menu_name = (string(view) + "viewoverlays") && settings_menu_ani_type != "hide")
+			current_microani.active.value = true
+	} else {
+		dx -= dw + padding
+		if (draw_button_icon("viewoverlays", dx, dy, dw, dh, view.gizmos, icons.OVERLAYS, null, false, view.gizmos ? "viewoverlaysdisable" : "viewoverlaysenable"))
 		view.gizmos = !view.gizmos
+	}
+	
+	
+	
 	
 	// Snap settings
 	if (view = view_main)

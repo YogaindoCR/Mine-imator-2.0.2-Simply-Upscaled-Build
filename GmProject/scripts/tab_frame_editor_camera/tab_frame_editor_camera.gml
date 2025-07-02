@@ -48,8 +48,8 @@ function tab_frame_editor_camera()
 	}
 	
 	// FOV
-	tab_control_meter()
-	draw_meter("frameeditorcamerafov", dx, dy, dw, tl_edit.value[e_value.CAM_FOV], 1, 170, 45, 1, tab.camera.tbx_fov, action_tl_frame_cam_fov)
+	tab_control_dragger()
+	draw_dragger("frameeditorcamerafov", dx, dy, dragger_width, tl_edit.value[e_value.CAM_FOV], 1, 1, 170, 45, 0.1, tab.camera.tbx_fov, action_tl_frame_cam_fov,)
 	tab_next()
 	
 	// Advanced mode only
@@ -92,9 +92,13 @@ function tab_frame_editor_camera()
 			text = text_get("frameeditorcameratonemapperreinhard")
 		else if (tl_edit.value[e_value.CAM_TONEMAPPER] = e_tonemapper.ACES)
 			text = text_get("frameeditorcameratonemapperaces")
+		else if (tl_edit.value[e_value.CAM_TONEMAPPER] = e_tonemapper.FILMIC)
+			text = text_get("frameeditorcameratonemapperfilmic")
+		else if (tl_edit.value[e_value.CAM_TONEMAPPER] = e_tonemapper.ACES_APPROX)
+			text = text_get("frameeditorcameratonemapperacesapprox")
 		else
 			text = text_get("frameeditorcameratonemappernone")
-		
+			
 		tab_control_menu()
 		draw_button_menu("frameeditorcameratonemapper", e_menu.LIST, dx, dy, dw, 24, tl_edit.value[e_value.CAM_TONEMAPPER], text, action_tl_frame_cam_tonemapper)
 		tab_next()
@@ -192,6 +196,10 @@ function tab_frame_editor_camera()
 			draw_textfield_group("frameeditorcameracamerashakespeed", dx, dy, dw, null, null, null, .01, true, false, 1)
 			tab_next()
 			
+			tab_control_dragger()
+			draw_dragger("frameeditorcameracamerashakeoffset", dx, dy, dragger_width, round(tl_edit.value[e_value.CAM_SHAKE_OFFSET] * 100) / 100, 0.1, -no_limit, no_limit, 0, 0.01, tab.camera.tbx_shake_offset, action_tl_frame_cam_shake_offset)
+			tab_next()
+			
 			tab_collapse_end()
 		}
 	}
@@ -282,6 +290,10 @@ function tab_frame_editor_camera()
 				
 				tab_collapse_end(false)
 			}
+			
+			tab_control_meter()
+			draw_meter("frameeditorcameradofdesaturation", dx, dy, dw, round(tl_edit.value[e_value.CAM_DOF_DESATURATION] * 100), 0, 100, 0, 1, tab.camera.tbx_dof_desaturation, action_tl_frame_cam_dof_desaturation)
+			tab_next()
 		}
 		
 		tab_collapse_end()

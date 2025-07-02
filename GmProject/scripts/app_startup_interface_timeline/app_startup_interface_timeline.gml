@@ -32,6 +32,8 @@ function app_startup_interface_timeline()
 	timeline_show_frames = false
 	timeline_marker_length = 0
 	
+	timeline_scroll_scalling = 0
+	
 	timeline_move_obj = null
 	timeline_move_highlight_tl = null
 	timeline_move_highlight_pos = null

@@ -79,6 +79,9 @@ function app_update_keyboard()
 				action_tl_frame_next()
 		}
 		
+		if (keybinds[e_keybind.RENDER_SCALING].pressed)
+			view_toggle_render_scaling()
+		
 		if (keybinds[e_keybind.RENDER_MODE].pressed)
 			view_toggle_render()
 		
@@ -138,6 +141,7 @@ function app_update_keyboard()
 		
 		if (keybinds[e_keybind.TOOL_MOVE].pressed)
 		{
+			render_low_drawing = 0
 			if (setting_separate_tool_modes)
 			{
 				action_tools_disable_all()
@@ -155,6 +159,7 @@ function app_update_keyboard()
 		
 		if (keybinds[e_keybind.TOOL_ROTATE].pressed)
 		{
+			render_low_drawing = 0
 			if (setting_separate_tool_modes)
 			{
 				action_tools_disable_all()
@@ -169,6 +174,7 @@ function app_update_keyboard()
 		
 		if (keybinds[e_keybind.TOOL_SCALE].pressed)
 		{
+			render_low_drawing = 0
 			if (setting_separate_tool_modes)
 			{
 				action_tools_disable_all()
@@ -189,6 +195,7 @@ function app_update_keyboard()
 		
 		if (keybinds[e_keybind.TOOL_BEND].pressed)
 		{
+			render_low_drawing = 0
 			if (setting_separate_tool_modes)
 			{
 				action_tools_disable_all()
@@ -203,6 +210,7 @@ function app_update_keyboard()
 		
 		if (keybinds[e_keybind.TOOL_TRANSFORM].pressed)
 		{
+			render_low_drawing = 0
 			if (setting_separate_tool_modes)
 			{
 				action_tools_disable_all()

@@ -19,11 +19,14 @@ function settings_startup()
 	
 	backup_text_ani = 0
 	backup_next = 0
+	setting_cam_work_pov = 45
+	setting_gizmos_size = 1
 	setting_backup = true
 	setting_backup_time = 3
 	setting_backup_amount = 5
 	setting_spawn_cameras = true
 	setting_unlimited_values = false
+	setting_viewport_optimization = true
 	
 	setting_watermark_custom = false
 	setting_watermark_fn = ""
@@ -34,8 +37,8 @@ function settings_startup()
 	setting_watermark_scale = .33
 	setting_watermark_opacity = 1
 	
-	setting_theme = theme_light
-	setting_accent = 3
+	setting_theme = theme_darker
+	setting_accent = 6
 	setting_accent_custom = hex_to_color("03A9F4")
 	
 	setting_language_filename = language_file
@@ -72,7 +75,9 @@ function settings_startup()
 	setting_settings_location = "right_secondary"
 	
 	setting_view_split = 0.5
+	setting_view_scaling_value = 1
 	
+	setting_view_main_scaling = false
 	setting_view_main_overlays = true
 	setting_view_main_aspect_ratio = false
 	setting_view_main_grid = false
@@ -82,6 +87,7 @@ function settings_startup()
 	setting_view_main_particles = true
 	setting_view_main_location = "full"
 	
+	setting_view_second_scaling = false
 	setting_view_second_show = false
 	setting_view_second_overlays = true
 	setting_view_second_aspect_ratio = true
@@ -117,6 +123,7 @@ function settings_startup()
 	setting_export_image_include_hidden = false
 	setting_export_image_high_quality = true
 	setting_export_image_watermark = trial_version
+	setting_export_optimization = false
 	
 	project_render_pass = e_render_pass.COMBINED
 	
@@ -132,6 +139,10 @@ function settings_startup()
 	setting_snap_size_position = 1
 	setting_snap_size_rotation = 15
 	setting_snap_size_scale = 0.25
+	
+	setting_overlay_show_light = true
+	setting_overlay_show_particle = true
+	setting_overlay_show_path = true
 	
 	setting_tool_select = false
 	setting_tool_move = true
@@ -150,4 +161,7 @@ function settings_startup()
 	settings_load()
 	languages_load()
 	interface_update_instant()
+	
+	//Delta Fix
+	room_speed += 10
 }

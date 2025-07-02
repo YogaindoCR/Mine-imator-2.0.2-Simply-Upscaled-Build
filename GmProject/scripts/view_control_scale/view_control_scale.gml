@@ -127,7 +127,7 @@ function view_control_scale(view)
 			// Find move factor
 			vecmouse = vec2(mouse_dx, mouse_dy)
 			vecdot = vec2_dot(vec2_normalize(view_control_vec), vec2_normalize(vecmouse))
-			view_control_move_distance += ((vec2_length(vecmouse) / veclen) * len * vecdot) * .05 * dragger_multiplier
+			view_control_move_distance += ((vec2_length(vecmouse) / veclen) * len * vecdot) * .05 * dragger_multiplier * ((render_view_scaling) ? setting_view_scaling_value : 1)
 			
 			snapval = (dragger_snap ? setting_snap_size_scale : snap_min)
 			move = view_control_move_distance

@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Data structure",
-    "path": "folders/Scripts/Utility/Data structure.yy",
+    "path": "folders/Shaders/Utility/Data structure.yy",
   },
 }

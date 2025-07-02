@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Scissor",
-    "path": "folders/Scripts/Utility/Scissor.yy",
+    "path": "folders/Shaders/Utility/Scissor.yy",
   },
 }

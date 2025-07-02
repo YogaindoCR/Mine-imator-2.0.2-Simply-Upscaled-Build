@@ -19,10 +19,19 @@ function shader_material_uniforms()
 	
 	// Subsurface
 	new_shader_uniform("uSSS")
+	new_shader_uniform("uSSSStrength")
 	new_shader_uniform("uSSSRadius")
 	new_shader_uniform("uSSSColor")
+	new_shader_uniform("uSSSSharpness")
+	new_shader_uniform("uSSSDesaturation")
+	new_shader_uniform("uSSSColorThreshold")
 	new_shader_uniform("uSSSHighlight")
 	new_shader_uniform("uSSSHighlightStrength")
+	new_shader_uniform("uSSSHighlightSharpness")
+	new_shader_uniform("uSSSHighlightDesaturation")
+	new_shader_uniform("uSSSHighlightColorThreshold")
+	new_shader_uniform("uSSSHighQuality")
+	new_shader_uniform("uAbsorption")
 	
 	// Other
 	new_shader_uniform("uIsWater")

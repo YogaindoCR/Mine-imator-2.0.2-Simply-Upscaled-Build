@@ -1,11 +1,12 @@
-/// app_update_animate()
+/// app_update_animate(force)
+/// @arg force
 /// @desc Handles the playing of various animations. Runs once per step.
 
-function app_update_animate()
+function app_update_animate(force)
 {
 	// Go through timelines
 	var bgobject, updatevalues, cameraarr, spawnerarr;
-	updatevalues = (timeline_marker_previous != timeline_marker)
+	updatevalues = ((timeline_marker_previous != timeline_marker) || force)
 	bgobject = null
 	cameraarr = []
 	spawnerarr = []
@@ -24,13 +25,23 @@ function app_update_animate()
 	
 	// Update samples
 	if ((background_time_prev != background_time || app.history_resource_update) || app.timeline_playing)
+		if (window_state != "export_movie")
 		render_samples = -1
+		
 	
 	with (obj_timeline)
 	{
+		//check if hided
+		if (app.setting_viewport_optimization && hide && parent != app && (app.window_state != "export_movie" || app.popup_exportmovie.optimization) && !selected)
+			continue;
+		
 		// Update values
 		if (updatevalues)
 			tl_update_values()
+			
+		//check if not updated or visible
+		if (app.setting_viewport_optimization && (app.window_state != "export_movie" || app.popup_exportmovie.optimization) && (!value_inherit[e_value.VISIBLE] || hide))
+			continue;
 		
 		tex_obj = value_inherit[e_value.TEXTURE_OBJ]
 		

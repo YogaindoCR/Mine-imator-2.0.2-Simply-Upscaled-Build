@@ -4,7 +4,7 @@
 function view_control_rotate(view)
 {
 	var len, xrot, yrot, zrot;
-	len = point3D_distance(cam_from, tl_edit.world_pos) * view_3d_control_size * 0.6
+	len = point3D_distance(cam_from, tl_edit.world_pos) * view_3d_control_size * 0.6 * view_control_ratio
 	
 	// Create matrices
 	with (tl_edit)
@@ -35,11 +35,22 @@ function view_control_rotate(view)
 			var ang, prevang, rot, snapval, axesang, newval;
 			axis_edit = view_control_edit - e_view_control.ROT_X
 			
-			// Find rotate amount
-			ang = point_direction(mouse_x - content_x, mouse_y - content_y, view_control_pos[X], view_control_pos[Y])
-			prevang = point_direction(mouse_previous_x - content_x, mouse_previous_y - content_y, view_control_pos[X], view_control_pos[Y])
-			rot = angle_difference_fix(ang, prevang) * negate(view_control_flip)
-			view_control_move_distance += rot * dragger_multiplier
+			
+			//Scale up with the scaling viewport
+			if (render_quality = e_view_mode.RENDER && render_view_scaling) {
+				// Find rotate amount
+				ang = point_direction((mouse_x * setting_view_scaling_value) - (content_x * setting_view_scaling_value), (mouse_y * setting_view_scaling_value) - (content_y * setting_view_scaling_value), view_control_pos[X], view_control_pos[Y])
+				prevang = point_direction((mouse_previous_x * setting_view_scaling_value) - (content_x * setting_view_scaling_value), (mouse_previous_y * setting_view_scaling_value) - (content_y * setting_view_scaling_value), view_control_pos[X], view_control_pos[Y])
+				rot = angle_difference_fix(ang, prevang) * negate(view_control_flip)
+				view_control_move_distance += rot * dragger_multiplier
+			} else {
+				// Find rotate amount
+				ang = point_direction(mouse_x - content_x, mouse_y - content_y, view_control_pos[X], view_control_pos[Y])
+				prevang = point_direction(mouse_previous_x - content_x, mouse_previous_y - content_y, view_control_pos[X], view_control_pos[Y])
+				rot = angle_difference_fix(ang, prevang) * negate(view_control_flip)
+				view_control_move_distance += rot * dragger_multiplier
+			}
+			
 			
 			snapval = (dragger_snap ? setting_snap_size_rotation : snap_min)
 			axesang = view_control_move_distance

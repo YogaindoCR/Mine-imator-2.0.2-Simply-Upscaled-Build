@@ -39,6 +39,8 @@ function project_reset()
 	
 	app_update_step = 0
 	
+	project_time_elapsed = 0
+	
 	project_path_tl_array = []
 	project_use_path_tl_array = []
 	project_ik_part_array = []

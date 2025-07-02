@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Vertex buffer",
-    "path": "folders/Scripts/Utility/Vertex/Vertex buffer.yy",
+    "path": "folders/Shaders/Utility/Vertex/Vertex buffer.yy",
   },
 }

@@ -16,6 +16,7 @@ function app_startup_lists()
 	globalvar timeline_icon_list, timeline_icon_list_dark;
 	globalvar render_pass_list;
 	
+	
 	// Values
 	value_name_list = ds_list_create()
 	ds_list_add(value_name_list,
@@ -81,6 +82,7 @@ function app_startup_lists()
 		"CAM_ROTATE_ANGLE_Z",
 		"CAM_SHAKE",
 		"CAM_SHAKE_MODE",
+		"CAM_SHAKE_OFFSET",
 		"CAM_SHAKE_STRENGTH_X",
 		"CAM_SHAKE_STRENGTH_Y",
 		"CAM_SHAKE_STRENGTH_Z",
@@ -96,6 +98,7 @@ function app_startup_lists()
 		"CAM_DOF_BIAS",
 		"CAM_DOF_THRESHOLD",
 		"CAM_DOF_GAIN",
+		"CAM_DOF_DESATURATION",
 		"CAM_DOF_FRINGE",
 		"CAM_DOF_FRINGE_ANGLE_RED",
 		"CAM_DOF_FRINGE_ANGLE_GREEN",
@@ -222,6 +225,14 @@ function app_startup_lists()
 		"IK_BLEND",
 		"IK_TARGET_ANGLE",
 		"IK_ANGLE_OFFSET",
+		"MODIFIER_SHAKE",
+		"MODIFIER_SHAKE_POSITION",
+		"MODIFIER_SHAKE_ROTATION",
+		"MODIFIER_SHAKE_SPEED",
+		"MODIFIER_SHAKE_INTENSITY",
+		"MODIFIER_SHAKE_OFFSET",
+		"MODIFIER_FRAMESKIP",
+		"MODIFIER_FRAMESKIP_VALUE",
 		"VISIBLE",
 		"TRANSITION",
 		"EASE_IN_X",
@@ -384,6 +395,8 @@ function app_startup_lists()
 	transition_texture_small_map = new_transition_texture_map(24, 24, 3, false)
 	log("Transitions OK")
 	
+	
+	
 	// Video templates
 	videotemplate_list = ds_list_create()
 	ds_list_add(videotemplate_list,
@@ -396,7 +409,10 @@ function app_startup_lists()
 		new_videotemplate("hd_720p_cinematic", 1680, 720),
 		new_videotemplate("fhd_1080p_cinematic", 2560, 1080),
 		new_videotemplate("qhd_1440p_cinematic", 3440, 1440),
-		new_videotemplate("uhd_4k_cinematic", 5120, 2160)
+		new_videotemplate("qhdplus_4k_cinematic", 3840, 1600),
+		new_videotemplate("uw4k", 4320, 1800),
+		new_videotemplate("uhd_4k_cinematic", 5120, 2160),
+		new_videotemplate("ave-xprev", 960, 400)
 	)
 	
 	// Video qualities

@@ -29,8 +29,17 @@ function tl_update_values()
 	if (keyframe_next != null)
 		keyframe_next_values = keyframe_next.value
 	
-	// Transition
 	keyframe_progress_ease = 0
+		
+	// Visible
+	tl_update_values_ease(e_value.VISIBLE)
+	
+	//if(app.setting_viewport_optimization && app.window_state != "export_movie" && !selected && !value_inherit[e_value.VISIBLE])
+	//{
+	//	return 0
+	//}
+	
+	// Transition
 	tl_update_values_ease(e_value.TRANSITION)
 	tl_update_values_ease(e_value.EASE_IN_X)
 	tl_update_values_ease(e_value.EASE_IN_Y)
@@ -102,6 +111,19 @@ function tl_update_values()
 	{
 		tl_update_values_ease(e_value.PATH_POINT_ANGLE)
 		tl_update_values_ease(e_value.PATH_POINT_SCALE)
+	}
+	
+	// Shake Modifier
+	if (value_type[e_value_type.MODIFIER])
+	{
+		tl_update_values_ease(e_value.MODIFIER_SHAKE)
+		tl_update_values_ease(e_value.MODIFIER_SHAKE_POSITION)
+		tl_update_values_ease(e_value.MODIFIER_SHAKE_ROTATION)
+		tl_update_values_ease(e_value.MODIFIER_SHAKE_SPEED)
+		tl_update_values_ease(e_value.MODIFIER_SHAKE_INTENSITY)
+		tl_update_values_ease(e_value.MODIFIER_SHAKE_OFFSET)
+		tl_update_values_ease(e_value.MODIFIER_FRAMESKIP)
+		tl_update_values_ease(e_value.MODIFIER_FRAMESKIP_VALUE)
 	}
 	
 	// Color
@@ -181,6 +203,7 @@ function tl_update_values()
 		
 		tl_update_values_ease(e_value.CAM_SHAKE)
 		tl_update_values_ease(e_value.CAM_SHAKE_MODE)
+		tl_update_values_ease(e_value.CAM_SHAKE_OFFSET)
 		tl_update_values_ease(e_value.CAM_SHAKE_STRENGTH_X)
 		tl_update_values_ease(e_value.CAM_SHAKE_STRENGTH_Y)
 		tl_update_values_ease(e_value.CAM_SHAKE_STRENGTH_Z)
@@ -197,6 +220,7 @@ function tl_update_values()
 		tl_update_values_ease(e_value.CAM_DOF_BIAS)
 		tl_update_values_ease(e_value.CAM_DOF_THRESHOLD)
 		tl_update_values_ease(e_value.CAM_DOF_GAIN)
+		tl_update_values_ease(e_value.CAM_DOF_DESATURATION)
 		tl_update_values_ease(e_value.CAM_DOF_FRINGE)
 		tl_update_values_ease(e_value.CAM_DOF_FRINGE_ANGLE_RED)
 		tl_update_values_ease(e_value.CAM_DOF_FRINGE_ANGLE_GREEN)
@@ -352,9 +376,6 @@ function tl_update_values()
 		tl_update_values_ease(e_value.TEXTURE_MATERIAL_OBJ)
 		tl_update_values_ease(e_value.TEXTURE_NORMAL_OBJ)
 	}
-	
-	// Visible
-	tl_update_values_ease(e_value.VISIBLE)
 	
 	// Play sounds
 	if (type = e_tl_type.AUDIO && !hide && app.timeline_marker > app.timeline_marker_previous && app.timeline_playing)

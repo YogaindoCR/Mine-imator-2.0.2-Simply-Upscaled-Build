@@ -65,10 +65,10 @@ function view_control_move(view)
 				if (!setting_snap_absolute && dragger_snap)
 					move[i] = snap(move[i], snapval)
 				
-				move[i] /= tl_edit.value_inherit[e_value.SCA_X + axis_edit]
+				move[i] /= tl_edit.value_inherit[e_value.SCA_X + axis_edit] / ((render_quality = e_view_mode.RENDER && render_view_scaling) ? setting_view_scaling_value : 1)
 				
 				// Add object value
-				pos[i] = view_control_value[i] + move[i]
+				pos[i] = view_control_value[i] + move[i] 
 				
 				// Clamp value
 				pos[i] = tl_value_clamp(e_value.POS_X + i, pos[i])
@@ -112,7 +112,7 @@ function view_control_move(view)
 			// Find move factor
 			vecmouse = vec2(mouse_dx, mouse_dy)
 			vecdot = vec2_dot(vec2_normalize(view_control_vec), vec2_normalize(vecmouse))
-			view_control_move_distance += (vec2_length(vecmouse) / veclen) * len * vecdot * dragger_multiplier * negate(view_control_flip)
+			view_control_move_distance += (vec2_length(vecmouse) / veclen) * len * vecdot * dragger_multiplier * negate(view_control_flip) * ((render_quality = e_view_mode.RENDER && render_view_scaling) ? setting_view_scaling_value : 1)
 			
 			snapval = (dragger_snap ? setting_snap_size_position : snap_min)
 			

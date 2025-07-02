@@ -112,6 +112,13 @@ function popup_exportmovie_draw()
 	draw_checkbox("exportmoviewatermark", dx, dy, popup.watermark, action_toolbar_exportmovie_watermark)
 	tab_next()
 	
+	// Enable optimization
+	if (setting_viewport_optimization) {
+		tab_control_checkbox()
+		draw_checkbox("exportmovieoptimization", dx, dy, popup.optimization, action_toolbar_exportmovie_optimization)
+		tab_next()
+	}
+	
 	// Save
 	tab_control_button_label()
 	draw_button_label("exportmoviesave", dx + dw, dy, null, icons.SAVE, e_button.PRIMARY, action_toolbar_exportmovie_save, e_anchor.RIGHT, badvideosize)

@@ -86,6 +86,7 @@ function app_startup_interface_popups()
 		include_hidden = app.setting_export_movie_include_hidden
 		high_quality = app.setting_export_movie_high_quality
 		watermark = app.setting_export_movie_watermark
+		optimization = app.setting_export_optimization
 		tbx_video_size_custom_width = new_textbox_integer()
 		tbx_video_size_custom_height = new_textbox_integer()
 		tbx_framespersecond = new_textbox_integer()

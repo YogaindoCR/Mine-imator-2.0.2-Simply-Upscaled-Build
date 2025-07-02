@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "JSON",
-    "path": "folders/Scripts/Utility/File/JSON.yy",
+    "path": "folders/Shaders/Utility/File/JSON.yy",
   },
 }

@@ -75,27 +75,35 @@ function view_control_scale_all(view, mat, radius)
 	}
 	else
 	{
-		draw_circle_ext(mousecoord[X], mousecoord[Y], 4, false, 16, c_black, 1)
+		var scaling;
+		scaling = ((render_view_scaling) ? setting_view_scaling_value : 1)
+		
+		draw_circle_ext(mousecoord[X] * scaling, mousecoord[Y] * scaling, 4, false, 16, c_black, 1)
 		
 		// Draw notches
 		for (var i = 1; i < ceil(view_control_scale_amount * 8); i++)
 		{
 			var nx, ny, angle;
-			nx = lerp(mousecoord[X], drawcoord[X], i/(view_control_scale_amount * 8))
-			ny = lerp(mousecoord[Y], drawcoord[Y], i/(view_control_scale_amount * 8))
+			nx = lerp(mousecoord[X] * scaling, drawcoord[X], i/(view_control_scale_amount * 8))
+			ny = lerp(mousecoord[Y] * scaling, drawcoord[Y], i/(view_control_scale_amount * 8))
 			
 			if (nx > content_width || ny > content_height || nx < 0 || ny < 0)
 				continue
 			
-			angle = -radtodeg(arctan2(mousecoord[Y] - drawcoord[Y], mousecoord[X] - drawcoord[X]))
+			angle = -radtodeg(arctan2((mousecoord[Y] * scaling) - drawcoord[Y], (mousecoord[X] * scaling) - drawcoord[X]))
 			
 			draw_line_ext(nx, ny, nx + lengthdir_x(5, angle), ny + lengthdir_y(5, angle), c_black, 1)
 		}
 	}
 	
 	// Check mouse
-	if (place_tl = null && content_mouseon && (abs(point_distance(mouse_x - content_x, mouse_y - content_y, coord[X], coord[Y]) - radius2D) < view_3d_control_width/2))
-		view.control_mouseon = e_view_control.SCA_XYZ
+	if (render_quality = e_view_mode.RENDER && render_view_scaling) {
+		if (place_tl = null && content_mouseon && (abs(point_distance((mouse_x * setting_view_scaling_value) - (content_x * setting_view_scaling_value), (mouse_y * setting_view_scaling_value) - (content_y * setting_view_scaling_value), coord[X], coord[Y]) - radius2D) < (view_3d_control_width / 2) / setting_view_scaling_value))
+			view.control_mouseon = e_view_control.SCA_XYZ
+	} else {
+		if (place_tl = null && content_mouseon && (abs(point_distance(mouse_x - content_x, mouse_y - content_y, coord[X], coord[Y]) - radius2D) < view_3d_control_width/2))
+			view.control_mouseon = e_view_control.SCA_XYZ
+	}
 	
 	draw_set_color(c_white)
 	draw_set_alpha(1)

@@ -20,7 +20,7 @@ function view_shape_circle()
 	if (point3D_project_error)
 		return 0
 	
-	// use perpendicular distance for correct scale at screen edges
+	// use perpendicular distance for correct scale at screen edgesAdd commentMore actions
 	var camdir, cdist;
 	camdir = vec3_direction(cam_from, cam_to)
 	cdist = abs(
@@ -34,7 +34,7 @@ function view_shape_circle()
 			)
 	rad2D = ((rad / cdist) * render_height) / (cam_fov / 58.72) //point3D_distance(pos, cam_from)
 	
-	detail = 32
+	detail = 10
 	
 	for (var i = 0; i < 1; i += 1 / detail)
 	{

@@ -18,7 +18,8 @@ function app_update_mouse()
 	mouse_right_released = (mouse_right && !mouse_check_button(mb_right))
 	mouse_right = mouse_check_button(mb_right)
 	mouse_middle_pressed = (!mouse_middle && mouse_check_button(mb_middle))
-	mouse_middle = mouse_check_button(mb_middle)
+	mouse_middle_alternate = (keyboard_check(vk_control) && keyboard_check(vk_alt) && mouse_left)
+	mouse_middle = (mouse_check_button(mb_middle) || mouse_middle_alternate)
 	mouse_wheel = mouse_wheel_down() - mouse_wheel_up()
 	
 	if (mouse_left_pressed)
@@ -44,7 +45,6 @@ function app_update_mouse()
 	
 	window_scroll_focus_prev = window_scroll_focus
 	window_scroll_focus = ""
-	
 	#region Double click
 	
 	if (mouse_still = 0)

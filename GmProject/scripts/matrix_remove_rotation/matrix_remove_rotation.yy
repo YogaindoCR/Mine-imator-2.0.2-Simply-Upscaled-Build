@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Matrix",
-    "path": "folders/Scripts/Utility/Math/Matrix.yy",
+    "path": "folders/Shaders/Utility/Math/Matrix.yy",
   },
 }

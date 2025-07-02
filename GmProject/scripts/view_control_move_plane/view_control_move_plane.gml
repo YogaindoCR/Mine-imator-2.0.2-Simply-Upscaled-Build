@@ -130,6 +130,8 @@ function view_control_move_plane(view, control, axes, color, mat, normal, corner
 	view_shape_line_draw(corner42D, corner12D)
 	
 	// Draw square
+	if (render_low_drawing < 3){
+	
 	draw_set_alpha(.35)
 	
 	render_set_culling(false)
@@ -137,12 +139,19 @@ function view_control_move_plane(view, control, axes, color, mat, normal, corner
 	view_shape_triangle_draw(corner12D, corner22D, corner32D)
 	view_shape_triangle_draw(corner32D, corner42D, corner12D)
 	draw_primitive_end()
+	
+	}
 	render_set_culling(true)
 	
 	draw_set_color(c_white)
 	draw_set_alpha(1)
-	
-	if ((point_in_triangle(mouse_x - content_x, mouse_y - content_y, corner12D[X], corner12D[Y], corner22D[X], corner22D[Y], corner32D[X], corner32D[Y]) || 
-		point_in_triangle(mouse_x - content_x, mouse_y - content_y, corner12D[X], corner12D[Y], corner42D[X], corner42D[Y], corner32D[X], corner32D[Y])) && place_tl = null && content_mouseon)
-		view.control_mouseon = control
+	if (render_quality = e_view_mode.RENDER && render_view_scaling) {
+		if ((point_in_triangle((mouse_x * setting_view_scaling_value) - (content_x * setting_view_scaling_value), (mouse_y * setting_view_scaling_value) - (content_y * setting_view_scaling_value), corner12D[X], corner12D[Y], corner22D[X], corner22D[Y], corner32D[X], corner32D[Y]) || 
+			point_in_triangle((mouse_x * setting_view_scaling_value) - (content_x * setting_view_scaling_value), (mouse_y * setting_view_scaling_value) - (content_y * setting_view_scaling_value), corner12D[X], corner12D[Y], corner42D[X], corner42D[Y], corner32D[X], corner32D[Y])) && place_tl = null && content_mouseon)
+			view.control_mouseon = control
+	} else {
+		if ((point_in_triangle(mouse_x - content_x, mouse_y - content_y, corner12D[X], corner12D[Y], corner22D[X], corner22D[Y], corner32D[X], corner32D[Y]) || 
+			point_in_triangle(mouse_x - content_x, mouse_y - content_y, corner12D[X], corner12D[Y], corner42D[X], corner42D[Y], corner32D[X], corner32D[Y])) && place_tl = null && content_mouseon)
+			view.control_mouseon = control
+	}
 }

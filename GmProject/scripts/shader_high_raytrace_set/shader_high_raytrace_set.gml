@@ -20,7 +20,7 @@ function shader_high_raytrace_set(mode, surf = null)
 	{
 		render_set_uniform("uPrecision", app.project_render_indirect_precision)
 		render_set_uniform("uThickness", 0.001)
-		render_set_uniform("uRayDistance", 5000)
+		render_set_uniform("uRayDistance", app.project_render_engine ? 10000 : 5000)
 		
 		texture_set_stage(sampler_map[?"uMaterialBuffer"], surface_get_texture(render_surface_emissive))
 		texture_set_stage(sampler_map[?"uDataBuffer"], surface_get_texture(render_surface_shadows))
@@ -30,7 +30,7 @@ function shader_high_raytrace_set(mode, surf = null)
 	{
 		render_set_uniform("uPrecision", app.project_render_reflections_precision)
 		render_set_uniform("uThickness", app.project_render_reflections_thickness)
-		render_set_uniform("uRayDistance", 5000)
+		render_set_uniform("uRayDistance", app.project_render_engine ? 30000 : 6000)
 		
 		texture_set_stage(sampler_map[?"uDataBuffer"], surface_get_texture(surf))
 	}

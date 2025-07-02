@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Save",
-    "path": "folders/Scripts/Utility/File/JSON/Save.yy",
+    "path": "folders/Shaders/Utility/File/JSON/Save.yy",
   },
 }

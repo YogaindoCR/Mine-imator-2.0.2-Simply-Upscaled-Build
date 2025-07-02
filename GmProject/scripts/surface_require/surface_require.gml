@@ -13,6 +13,11 @@ function surface_require(surf, w, h, depth = true, hdr = false)
 	
 	starttime = current_time
 	
+	// Initialize surf if undefined
+    if (is_undefined(surf)) {
+        surf = -1; // Force creation of new surface
+    }
+	
 	// First usage
 	if (surf < 0)
 		surf = surface_create_ext2(w, h, depth, hdr)

@@ -145,8 +145,13 @@ function view_control_rotate_axis(view, control, vid, color, mat, len)
 			view_shape_line_draw(start2D, end2D)
 		
 		// Check mouse
-		if (place_tl = null && content_mouseon && point_line_distance(start2D[X], start2D[Y], end2D[X], end2D[Y], mouse_x - content_x, mouse_y - content_y) < view_3d_control_width / 2)
-			view.control_mouseon = control
+		if (render_quality = e_view_mode.RENDER && render_view_scaling) {
+			if (place_tl = null && content_mouseon && point_line_distance(start2D[X], start2D[Y], end2D[X], end2D[Y], (mouse_x * setting_view_scaling_value) - (content_x * setting_view_scaling_value), (mouse_y * setting_view_scaling_value) - (content_y * setting_view_scaling_value)) < (view_3d_control_width / 2) * setting_view_scaling_value)
+				view.control_mouseon = control
+		} else {
+			if (place_tl = null && content_mouseon && point_line_distance(start2D[X], start2D[Y], end2D[X], end2D[Y], mouse_x - content_x, mouse_y - content_y) < view_3d_control_width / 2)
+				view.control_mouseon = control
+		}
 		
 		// Set next start position as current end position
 		start3D = end3D

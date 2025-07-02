@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Curve",
-    "path": "folders/Scripts/Utility/Math/Curve.yy",
+    "path": "folders/Shaders/Utility/Math/Curve.yy",
   },
 }

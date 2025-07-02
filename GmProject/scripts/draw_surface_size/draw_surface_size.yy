@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Surface",
-    "path": "folders/Scripts/Utility/Surface.yy",
+    "path": "folders/Shaders/Utility/Surface.yy",
   },
 }

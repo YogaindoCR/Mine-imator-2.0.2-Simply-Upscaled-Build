@@ -38,13 +38,17 @@ function recent_add()
 			// Create thumbnail from work camera
 			var surf = null;
 			render_start(surf, null, recent_thumbnail_width, recent_thumbnail_height)
+			render_low_drawing = -1
 			render_low()
 			surf = render_done()
 			surface_save_lib(surf, thumbnailfn)
 			surface_free(surf)
 		}
 	}
+	
+	
 	texture_free(project_thumbnail_image)
+	
 	project_thumbnail_image = texture_create(thumbnailfn)
 	recent_add_wait = 0
 	

@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Write",
-    "path": "folders/Scripts/Utility/File/Buffer/Write.yy",
+    "path": "folders/Shaders/Utility/File/Buffer/Write.yy",
   },
 }

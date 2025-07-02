@@ -146,6 +146,11 @@ function view_control_scale_plane(view, control, axes, color, mat, normal, corne
 	draw_set_color(c_white)
 	draw_set_alpha(1)
 	
-	if (point_in_triangle(mouse_x - content_x, mouse_y - content_y, corner12D[X], corner12D[Y], corner22D[X], corner22D[Y], corner42D[X], corner42D[Y]) && place_tl = null && content_mouseon)
-		view.control_mouseon = control
+	if (render_quality = e_view_mode.RENDER && render_view_scaling) {
+		if (point_in_triangle((mouse_x * setting_view_scaling_value) - (content_x * setting_view_scaling_value), (mouse_y * setting_view_scaling_value) - (content_y * setting_view_scaling_value), corner12D[X], corner12D[Y], corner22D[X], corner22D[Y], corner42D[X], corner42D[Y]) && place_tl = null && content_mouseon)
+			view.control_mouseon = control
+	} else {
+		if (point_in_triangle(mouse_x - content_x, mouse_y - content_y, corner12D[X], corner12D[Y], corner22D[X], corner22D[Y], corner42D[X], corner42D[Y]) && place_tl = null && content_mouseon)
+			view.control_mouseon = control
+	}
 }

@@ -5,7 +5,7 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "Update",
-    "path": "folders/Scripts/App/Update.yy",
+    "name": "Minecraft",
+    "path": "folders/Scripts/Minecraft.yy",
   },
 }

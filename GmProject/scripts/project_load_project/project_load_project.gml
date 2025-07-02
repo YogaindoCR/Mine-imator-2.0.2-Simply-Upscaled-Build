@@ -22,6 +22,8 @@ function project_load_project(map)
 	view_main.camera = value_get_save_id(map[?"view_main_camera"], -4)
 	view_second.camera = value_get_save_id(map[?"view_second_camera"], -5)
 	
+	project_time_elapsed = value_get_real(map[?"time_elapsed"], project_time_elapsed)
+	
 	// If render settings file doesn't exists, set to custom
 	if (project_render_settings != "" && !file_exists_lib(render_directory + project_render_settings + ".mirender"))
 		project_render_settings = ""

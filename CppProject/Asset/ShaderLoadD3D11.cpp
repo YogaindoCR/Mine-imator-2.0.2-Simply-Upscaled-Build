@@ -16,8 +16,8 @@ namespace CppProject
         { Shader::MAT4, "float4x4" },
     };
 
-	void Shader::LoadCode(QString vsCode, QString fsCode, BoolType useCache)
-	{
+    void Shader::LoadCode(QString vsCode, QString fsCode, BoolType useCache)
+    {
         // Free resources
         releaseAndReset(d3dVertexShader);
         releaseAndReset(d3dPixelShader);
@@ -57,62 +57,62 @@ namespace CppProject
         QString setAttrs = "", inputDecl = "", attrsDecl = "";
         switch (vertexFormat)
         {
-            case PRIMITIVE:
-                inputDecl += "\tfloat3 Position : A;\n";
-                inputDecl += "\tfloat4 Color : B;\n";
-                inputDecl += "\tfloat2 TextureCoord : C;\n";
-                attrsDecl = inputDecl;
+        case PRIMITIVE:
+            inputDecl += "\tfloat3 Position : A;\n";
+            inputDecl += "\tfloat4 Color : B;\n";
+            inputDecl += "\tfloat2 TextureCoord : C;\n";
+            attrsDecl = inputDecl;
 
-                setAttrs += "\n\t_attrs.Position = _input.Position;";
-                setAttrs += "\n\t_attrs.Color = _input.Color;";
-                setAttrs += "\n\t_attrs.TextureCoord = _input.TextureCoord;";
+            setAttrs += "\n\t_attrs.Position = _input.Position;";
+            setAttrs += "\n\t_attrs.Color = _input.Color;";
+            setAttrs += "\n\t_attrs.TextureCoord = _input.TextureCoord;";
 
-                vsCode.replace(QRegularExpression("\\bin_Position\\b"), "_attrs.Position");
-                vsCode.replace(QRegularExpression("\\bin_Colour\\b"), "_attrs.Color");
-                vsCode.replace(QRegularExpression("\\bin_TextureCoord\\b"), "_attrs.TextureCoord");
-                break;
+            vsCode.replace(QRegularExpression("\\bin_Position\\b"), "_attrs.Position");
+            vsCode.replace(QRegularExpression("\\bin_Colour\\b"), "_attrs.Color");
+            vsCode.replace(QRegularExpression("\\bin_TextureCoord\\b"), "_attrs.TextureCoord");
+            break;
 
-            case VERTEX_BUFFER:
-                inputDecl += "\tfloat3 Position : A;\n";
-                inputDecl += "\tuint Normal : B;\n";
-                inputDecl += "\tuint Color : C;\n";
-                inputDecl += "\tfloat2 TextureCoord: D;\n";
-                inputDecl += "\tuint Data: E;\n";
-                inputDecl += "\tuint Tangent: F;\n";
-                attrsDecl += "\tfloat3 Position: A;\n";
-                attrsDecl += "\tfloat3 Normal: B;\n";
-                attrsDecl += "\tfloat4 Color: C;\n";
-                attrsDecl += "\tfloat2 TextureCoord: D;\n";
-                attrsDecl += "\tfloat4 Wave: E;\n";
-                attrsDecl += "\tfloat3 Tangent: F;\n";
-                varsDecl += "\tnointerpolation uint _vObjIndex: " + QString((char)('A' + varId++)) + ";\n";
+        case VERTEX_BUFFER:
+            inputDecl += "\tfloat3 Position : A;\n";
+            inputDecl += "\tuint Normal : B;\n";
+            inputDecl += "\tuint Color : C;\n";
+            inputDecl += "\tfloat2 TextureCoord: D;\n";
+            inputDecl += "\tuint Data: E;\n";
+            inputDecl += "\tuint Tangent: F;\n";
+            attrsDecl += "\tfloat3 Position: A;\n";
+            attrsDecl += "\tfloat3 Normal: B;\n";
+            attrsDecl += "\tfloat4 Color: C;\n";
+            attrsDecl += "\tfloat2 TextureCoord: D;\n";
+            attrsDecl += "\tfloat4 Wave: E;\n";
+            attrsDecl += "\tfloat3 Tangent: F;\n";
+            varsDecl += "\tnointerpolation uint _vObjIndex: " + QString((char)('A' + varId++)) + ";\n";
 
-                setAttrs += "\n\t_attrs.Position = _input.Position;";
-                setAttrs += "\n\t_attrs.Normal = " UNPACK_VERTEX_NORMAL("_input.Normal") ";";
-                setAttrs += "\n\t_attrs.Color = " UNPACK_VERTEX_COLOR("_input.Color") ";";
-                setAttrs += "\n\t_attrs.TextureCoord = _input.TextureCoord;";
-                setAttrs += "\n\t_attrs.Wave = " UNPACK_VERTEX_WAVE("_input.Data") ";";
-                setAttrs += "\n\t_attrs.Tangent = " UNPACK_VERTEX_NORMAL("_input.Tangent") ";";
-                setAttrs += "\n\t_vars._vObjIndex = _input.Data >> 16;";
+            setAttrs += "\n\t_attrs.Position = _input.Position;";
+            setAttrs += "\n\t_attrs.Normal = " UNPACK_VERTEX_NORMAL("_input.Normal") ";";
+            setAttrs += "\n\t_attrs.Color = " UNPACK_VERTEX_COLOR("_input.Color") ";";
+            setAttrs += "\n\t_attrs.TextureCoord = _input.TextureCoord;";
+            setAttrs += "\n\t_attrs.Wave = " UNPACK_VERTEX_WAVE("_input.Data") ";";
+            setAttrs += "\n\t_attrs.Tangent = " UNPACK_VERTEX_NORMAL("_input.Tangent") ";";
+            setAttrs += "\n\t_vars._vObjIndex = _input.Data >> 16;";
 
-                vsCode.replace(QRegularExpression("\\bin_Position\\b"), "_attrs.Position");
-                vsCode.replace(QRegularExpression("\\bin_Normal\\b"), "_attrs.Normal");
-                vsCode.replace(QRegularExpression("\\bin_Colour\\b"), "_attrs.Color");
-                vsCode.replace(QRegularExpression("\\bin_TextureCoord\\b"), "_attrs.TextureCoord");
-                vsCode.replace(QRegularExpression("\\bin_Wave\\b"), "_attrs.Wave");
-                vsCode.replace(QRegularExpression("\\bin_Tangent\\b"), "_attrs.Tangent");
-                break;
+            vsCode.replace(QRegularExpression("\\bin_Position\\b"), "_attrs.Position");
+            vsCode.replace(QRegularExpression("\\bin_Normal\\b"), "_attrs.Normal");
+            vsCode.replace(QRegularExpression("\\bin_Colour\\b"), "_attrs.Color");
+            vsCode.replace(QRegularExpression("\\bin_TextureCoord\\b"), "_attrs.TextureCoord");
+            vsCode.replace(QRegularExpression("\\bin_Wave\\b"), "_attrs.Wave");
+            vsCode.replace(QRegularExpression("\\bin_Tangent\\b"), "_attrs.Tangent");
+            break;
 
-            case WORLD:
-                inputDecl += "\tuint Pos : A;\n";
-                inputDecl += "\tuint Data : B;\n";
-                attrsDecl = inputDecl;
-                setAttrs += "\n\t_attrs.Pos = _input.Pos;";
-                setAttrs += "\n\t_attrs.Data = _input.Data;";
+        case WORLD:
+            inputDecl += "\tuint Pos : A;\n";
+            inputDecl += "\tuint Data : B;\n";
+            attrsDecl = inputDecl;
+            setAttrs += "\n\t_attrs.Pos = _input.Pos;";
+            setAttrs += "\n\t_attrs.Data = _input.Data;";
 
-                vsCode.replace(QRegularExpression("\\bin_Pos\\b"), "_attrs.Pos");
-                vsCode.replace(QRegularExpression("\\bin_Data\\b"), "_attrs.Data");
-                break;
+            vsCode.replace(QRegularExpression("\\bin_Pos\\b"), "_attrs.Pos");
+            vsCode.replace(QRegularExpression("\\bin_Data\\b"), "_attrs.Data");
+            break;
         }
 
         inputDecl = "struct Input\n{\n" + inputDecl + "};\n\n";
@@ -147,10 +147,10 @@ namespace CppProject
 
         // Process code
         auto processCode = [&](QString code, BoolType isVertex)
-        {
-            // Texture2D function to sample using UvRect uniform
-            if (code.contains("texture2D("))
-                code = "\n"
+            {
+                // Texture2D function to sample using UvRect uniform
+                if (code.contains("texture2D("))
+                    code = "\n"
                     "float4 _sampleUvRect(Texture2D tex, SamplerState s, float4 uvRect, bool repeat, float2 uv)\n"
                     "{\n"
                     "\tfloat2 lodUv = uvRect.xy + uv * uvRect.zw;\n"
@@ -161,97 +161,97 @@ namespace CppProject
                     "\treturn tex.SampleGrad(s, uv, derivX, derivY);\n"
                     "}\n\n" + code;
 
-            // Pro RegEx hacker way to replace M * expr with mul(M, expr), beats writing a GLSL parser
-            QStringList matrices = gmMatrixUniformName;
-            auto matIt = QRegularExpression("mat\\d ([a-zA-Z0-9]*)(\\[.*?\\])?.*;").globalMatch(code);
-            while (matIt.hasNext())
-            {
-                QRegularExpressionMatch match = matIt.next();
-                QString name = match.captured(1);
-                if (!match.captured(2).isEmpty()) // Array
-                    name += "[.*?]";
-                if (varsDecl.contains(name))
-                    name = "_vars." + name;
-                matrices.append(name);
-            }
-
-            for (QString mat : matrices)
-            {
-                mat.replace("[", "\\[");
-                mat.replace("]", "\\]");
-                auto mulIt = QRegularExpression("((" + mat + ")|([a-zA-Z0-9]+\\((.*?, )?" + mat + "\\)))( *\\* *)(.*?);").globalMatch(code);
-                while (mulIt.hasNext())
+                // Pro RegEx hacker way to replace M * expr with mul(M, expr), beats writing a GLSL parser
+                QStringList matrices = gmMatrixUniformName;
+                auto matIt = QRegularExpression("mat\\d ([a-zA-Z0-9]*)(\\[.*?\\])?.*;").globalMatch(code);
+                while (matIt.hasNext())
                 {
-                    QRegularExpressionMatch match = mulIt.next();
-                    QString left = match.captured(1);
-                    QString mul = match.captured(5);
-                    QString right = match.captured(6);
+                    QRegularExpressionMatch match = matIt.next();
+                    QString name = match.captured(1);
+                    if (!match.captured(2).isEmpty()) // Array
+                        name += "[.*?]";
+                    if (varsDecl.contains(name))
+                        name = "_vars." + name;
+                    matrices.append(name);
+                }
 
-                    // Truncate right by skipping trailing )
-                    IntType len, parLevel = 0;
-                    for (len = 0; len < right.length(); len++)
+                for (QString mat : matrices)
+                {
+                    mat.replace("[", "\\[");
+                    mat.replace("]", "\\]");
+                    auto mulIt = QRegularExpression("((" + mat + ")|([a-zA-Z0-9]+\\((.*?, )?" + mat + "\\)))( *\\* *)(.*?);").globalMatch(code);
+                    while (mulIt.hasNext())
                     {
-                        if (right.at(len) == '(')
-                            parLevel++;
-                        else if (right.at(len) == ')')
-                            parLevel--;
-                        if (parLevel < 0)
-                            break;
+                        QRegularExpressionMatch match = mulIt.next();
+                        QString left = match.captured(1);
+                        QString mul = match.captured(5);
+                        QString right = match.captured(6);
+
+                        // Truncate right by skipping trailing )
+                        IntType len, parLevel = 0;
+                        for (len = 0; len < right.length(); len++)
+                        {
+                            if (right.at(len) == '(')
+                                parLevel++;
+                            else if (right.at(len) == ')')
+                                parLevel--;
+                            if (parLevel < 0)
+                                break;
+                        }
+                        right = right.left(len);
+
+                        code = code.replace(left + mul + right, "mul(" + left + ", " + right + ")");
                     }
-                    right = right.left(len);
-
-                    code = code.replace(left + mul + right, "mul(" + left + ", " + right + ")");
                 }
-            }
 
-            // Find uniforms/matrices
-            LoadCodeCommon(code);
+                // Find uniforms/matrices
+                LoadCodeCommon(code);
 
-            // Find user functions, send in attributes/varyings
-            auto funcIt = QRegularExpression("^([a-zA-Z0-9]+?) ([a-zA-Z0-9]+?)\\((.*?)\\)\\n", QRegularExpression::MultilineOption).globalMatch(code);
-            while (funcIt.hasNext())
-            {
-                QRegularExpressionMatch match = funcIt.next();
-                QString typeName = match.captured(1);
-                QString name = match.captured(2);
-                QString args = match.captured(3);
-                if (name == "main")
-                    continue;
-
-                if (isVertex)
+                // Find user functions, send in attributes/varyings
+                auto funcIt = QRegularExpression("^([a-zA-Z0-9]+?) ([a-zA-Z0-9]+?)\\((.*?)\\)\\n", QRegularExpression::MultilineOption).globalMatch(code);
+                while (funcIt.hasNext())
                 {
-                    code.replace(match.captured(0), typeName + " " + name + " (Attrs _attrs, Vars _vars" + (args.isEmpty() ? "" : ", " + args) + ")\n");
-                    code.replace(QRegularExpression("\\b" + name + "\\("), name + "(_attrs, _vars, ");
+                    QRegularExpressionMatch match = funcIt.next();
+                    QString typeName = match.captured(1);
+                    QString name = match.captured(2);
+                    QString args = match.captured(3);
+                    if (name == "main")
+                        continue;
+
+                    if (isVertex)
+                    {
+                        code.replace(match.captured(0), typeName + " " + name + " (Attrs _attrs, Vars _vars" + (args.isEmpty() ? "" : ", " + args) + ")\n");
+                        code.replace(QRegularExpression("\\b" + name + "\\("), name + "(_attrs, _vars, ");
+                    }
+                    else
+                    {
+                        code.replace(match.captured(0), typeName + " " + name + " (Vars _vars" + (args.isEmpty() ? "" : ", " + args) + ")\n");
+                        code.replace(QRegularExpression("\\b" + name + "\\("), name + "(_vars, ");
+                    }
+                    code.replace(", )", ")");
+                    code.replace(typeName + " " + name + " (", typeName + " " + name + "(");
                 }
-                else
-                {
-                    code.replace(match.captured(0), typeName + " " + name + " (Vars _vars" + (args.isEmpty() ? "" : ", " + args) + ")\n");
-                    code.replace(QRegularExpression("\\b" + name + "\\("), name + "(_vars, ");
-                }
-                code.replace(", )", ")");
-                code.replace(typeName + " " + name + " (", typeName + " " + name + "(");
-            }
 
-            // Replace type/functions
-            code.replace(QRegularExpression("\\bvec2\\("), "float2_(");
-            code.replace(QRegularExpression("\\bvec3\\("), "float3_(");
-            code.replace(QRegularExpression("\\bvec4\\("), "float4_(");
-            code.replace(QRegularExpression("\\bmat3\\("), "float3x3_(");
-            code.replace(QRegularExpression("\\bvec2\\b"), "float2");
-            code.replace(QRegularExpression("\\bvec3\\b"), "float3");
-            code.replace(QRegularExpression("\\bvec4\\b"), "float4");
-            code.replace(QRegularExpression("\\bmat3\\b"), "float3x3");
-            code.replace(QRegularExpression("\\bmat4\\b"), "float4x4");
-            code.replace(QRegularExpression("\\bmix\\b"), "lerp");
-            code.replace(QRegularExpression("\\bfract\\b"), "frac");
-            code.replace(QRegularExpression("\\bpow\\b"), "power");
-            code.replace(QRegularExpression("\\batan\\b"), "atan2");
+                // Replace type/functions
+                code.replace(QRegularExpression("\\bvec2\\("), "float2_(");
+                code.replace(QRegularExpression("\\bvec3\\("), "float3_(");
+                code.replace(QRegularExpression("\\bvec4\\("), "float4_(");
+                code.replace(QRegularExpression("\\bmat3\\("), "float3x3_(");
+                code.replace(QRegularExpression("\\bvec2\\b"), "float2");
+                code.replace(QRegularExpression("\\bvec3\\b"), "float3");
+                code.replace(QRegularExpression("\\bvec4\\b"), "float4");
+                code.replace(QRegularExpression("\\bmat3\\b"), "float3x3");
+                code.replace(QRegularExpression("\\bmat4\\b"), "float4x4");
+                code.replace(QRegularExpression("\\bmix\\b"), "lerp");
+                code.replace(QRegularExpression("\\bfract\\b"), "frac");
+                code.replace(QRegularExpression("\\bpow\\b"), "power");
+                code.replace(QRegularExpression("\\batan\\b"), "atan2");
 
-            // Replace for with while
-            code.replace(QRegularExpression("for \\((.*?); ?([a-zA-Z]+)(.*?); ?.*?\\)"), "\\1-1; [loop] while (++\\2\\3)");
+                // Replace for with while
+                code.replace(QRegularExpression("for \\((.*?); ?([a-zA-Z]+)(.*?); ?.*?\\)"), "\\1-1; [loop] while (++\\2\\3)");
 
-            return code;
-        };
+                return code;
+            };
 
         vsCode = processCode(vsCode, true);
         fsCode = processCode(fsCode, false);
@@ -345,64 +345,64 @@ namespace CppProject
 
         Heap<char> vsData, fsData;
         QString vsCacheName, fsCacheName;
-    #if DEBUG_MODE
+#if DEBUG_MODE
         vsCacheName = ASSETS_DIR"/Shaders/Compiled/" + name + ".vsh.d3d";
         fsCacheName = ASSETS_DIR"/Shaders/Compiled/" + name + ".fsh.d3d";
-    #else
+#else
         vsCacheName = ":/Shaders/Compiled/" + name + ".vsh.d3d";
         fsCacheName = ":/Shaders/Compiled/" + name + ".fsh.d3d";
-    #endif
+#endif
 
         if (!useCache || !QFile::exists(vsCacheName) || !QFile::exists(fsCacheName))
         {
-        #if DEBUG_MODE
+#if DEBUG_MODE
             // Compile code and store in assets
             auto compileCode = [&](QString code, BoolType isVertex, Heap<char>& dst)
-            {
-                ID3DBlob* data;
-                ID3DBlob* errMsgs;
-                DWORD flags = D3DCOMPILE_PACK_MATRIX_COLUMN_MAJOR | D3DCOMPILE_ENABLE_STRICTNESS;
-            #if 0
-                flags |= D3DCOMPILE_DEBUG;
-            #else
-                flags |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
-            #endif
-                std::string codeStd = code.toStdString();
-                std::string target = isVertex ? "vs_4_0" : "ps_4_0";
-                if (FAILED(D3DCompile(codeStd.c_str(), code.length(), nullptr, nullptr, nullptr, "main", target.c_str(), flags, 0, &data, &errMsgs)))
                 {
-                    std::string errMsg((const char*)errMsgs->GetBufferPointer(), errMsgs->GetBufferSize());
-                    WARNING("Loading " + name + (isVertex ? " vertex" : " fragment") + " shader failed\n\t" + QString(errMsg.c_str()));
-                    DEBUG(code);
-                    errMsgs->Release();
-                    return false;
-                }
+                    ID3DBlob* data;
+                    ID3DBlob* errMsgs;
+                    DWORD flags = D3DCOMPILE_PACK_MATRIX_COLUMN_MAJOR | D3DCOMPILE_ENABLE_STRICTNESS;
+#if 0
+                    flags |= D3DCOMPILE_DEBUG;
+#else
+                    flags |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
+#endif
+                    std::string codeStd = code.toStdString();
+                    std::string target = isVertex ? "vs_4_0" : "ps_4_0";
+                    if (FAILED(D3DCompile(codeStd.c_str(), code.length(), nullptr, nullptr, nullptr, "main", target.c_str(), flags, 0, &data, &errMsgs)))
+                    {
+                        std::string errMsg((const char*)errMsgs->GetBufferPointer(), errMsgs->GetBufferSize());
+                        WARNING("Loading " + name + (isVertex ? " vertex" : " fragment") + " shader failed\n\t" + QString(errMsg.c_str()));
+                        DEBUG(code);
+                        errMsgs->Release();
+                        return false;
+                    }
 
-                // Write to output heap
-                dst.Alloc(data->GetBufferSize());
-                memcpy(dst.data, data->GetBufferPointer(), data->GetBufferSize());
-                data->Release();
+                    // Write to output heap
+                    dst.Alloc(data->GetBufferSize());
+                    memcpy(dst.data, data->GetBufferPointer(), data->GetBufferSize());
+                    data->Release();
 
-                // Write to file
-                QFile file(isVertex ? vsCacheName : fsCacheName);
-                AddPerms(file);
-                if (!file.open(QFile::WriteOnly))
-                {
-                    WARNING("Could not open file: " + file.errorString());
-                    return false;
-                }
-                file.write(dst.Data(), dst.Size());
+                    // Write to file
+                    QFile file(isVertex ? vsCacheName : fsCacheName);
+                    AddPerms(file);
+                    if (!file.open(QFile::WriteOnly))
+                    {
+                        WARNING("Could not open file: " + file.errorString());
+                        return false;
+                    }
+                    file.write(dst.Data(), dst.Size());
 
-                return true;
-            };
+                    return true;
+                };
 
             if (!compileCode(vsCode, true, vsData))
                 return;
             if (!compileCode(fsCode, false, fsData))
                 return;
-        #else
+#else
             WARNING("No cache found for shader: " + name);
-        #endif
+#endif
         }
         else
         {
@@ -433,33 +433,33 @@ namespace CppProject
             QVector<D3D11_INPUT_ELEMENT_DESC> elements;
             IntType offset = 0;
             auto addElement = [&](DXGI_FORMAT format, IntType size)
-            {
-                char* name = new char[2]{ (char)((int)'A' + elements.size()), '\0'};
-                elements.append({ name, 0, format, 0, (UINT)offset, D3D11_INPUT_PER_VERTEX_DATA, 0});
-                offset += size;
-            };
+                {
+                    char* name = new char[2] { (char)((int)'A' + elements.size()), '\0'};
+                    elements.append({ name, 0, format, 0, (UINT)offset, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+                    offset += size;
+                };
 
             switch (vertexFormat)
             {
-                case PRIMITIVE:
-                    addElement(DXGI_FORMAT_R32G32B32_FLOAT, sizeof(float) * 3);
-                    addElement(DXGI_FORMAT_R32G32B32A32_FLOAT, sizeof(float) * 4);
-                    addElement(DXGI_FORMAT_R32G32_FLOAT, sizeof(float) * 2);
-                    break;
+            case PRIMITIVE:
+                addElement(DXGI_FORMAT_R32G32B32_FLOAT, sizeof(float) * 3);
+                addElement(DXGI_FORMAT_R32G32B32A32_FLOAT, sizeof(float) * 4);
+                addElement(DXGI_FORMAT_R32G32_FLOAT, sizeof(float) * 2);
+                break;
 
-                case VERTEX_BUFFER:
-                    addElement(DXGI_FORMAT_R32G32B32_FLOAT, sizeof(float) * 3);
-                    addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
-                    addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
-                    addElement(DXGI_FORMAT_R32G32_FLOAT, sizeof(float) * 2);
-                    addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
-                    addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
-                    break;
+            case VERTEX_BUFFER:
+                addElement(DXGI_FORMAT_R32G32B32_FLOAT, sizeof(float) * 3);
+                addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
+                addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
+                addElement(DXGI_FORMAT_R32G32_FLOAT, sizeof(float) * 2);
+                addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
+                addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
+                break;
 
-                case WORLD:
-                    addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
-                    addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
-                    break;
+            case WORLD:
+                addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
+                addElement(DXGI_FORMAT_R32_UINT, sizeof(uint32_t));
+                break;
             }
 
             D3DCheckError(D3DDevice->CreateInputLayout(elements.data(), elements.size(), vsData.Data(), vsData.Size(), &d3dInputLayout[vertexFormat]));
@@ -494,6 +494,6 @@ namespace CppProject
             samplerRepeatDataSize = (numSamplers - 1) * 4 + 1;
             samplerRepeatData = new int32_t[samplerRepeatDataSize];
         }
-	}
+    }
 }
 #endif

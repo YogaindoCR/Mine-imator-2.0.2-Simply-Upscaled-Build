@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Point",
-    "path": "folders/Scripts/Utility/Math/Point.yy",
+    "path": "folders/Shaders/Utility/Math/Point.yy",
   },
 }

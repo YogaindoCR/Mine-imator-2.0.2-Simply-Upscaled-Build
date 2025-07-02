@@ -36,6 +36,9 @@ function app_startup_interface_settings_menus()
 	tbx_grid_rows = new_textbox_integer()
 	tbx_grid_columns = new_textbox_integer()
 	
+	tbx_setting_view_scaling = new_textbox_decimals()
+	tbx_setting_view_scaling.suffix = "x"
+	
 	tbx_snap_position = new_textbox_decimals()
 	tbx_snap_rotation = new_textbox_decimals()
 	tbx_snap_scale = new_textbox_decimals()

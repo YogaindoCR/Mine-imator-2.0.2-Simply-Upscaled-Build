@@ -47,6 +47,7 @@ function action_tl_inherit_visibility(enable)
 			update_matrix = true
 		}
 	}
+	render_low_drawing = 0
 	
 	tl_update_matrix()
 }

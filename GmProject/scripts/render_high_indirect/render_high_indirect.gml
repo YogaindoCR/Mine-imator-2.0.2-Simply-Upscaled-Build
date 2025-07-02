@@ -10,7 +10,12 @@ function render_high_indirect()
 		gpu_set_texrepeat(false)
 		draw_clear_alpha(c_black, 1)
 		
-		render_shader_obj = shader_map[?shader_high_raytrace]
+		if(project_render_engine){
+			render_shader_obj = shader_map[?shader_high_raytrace_EX]
+		} else {
+			render_shader_obj = shader_map[?shader_high_raytrace]
+		}
+		
 		with (render_shader_obj)
 		{
 			shader_set(shader)
@@ -31,7 +36,12 @@ function render_high_indirect()
 	{
 		draw_clear_alpha(c_black, 0)
 			
-		render_shader_obj = shader_map[?shader_high_raytrace_resolve]
+		if(project_render_engine){
+			render_shader_obj = shader_map[?shader_high_raytrace_resolve_EX]
+		} else {
+			render_shader_obj = shader_map[?shader_high_raytrace_resolve]
+		}
+		
 		with (render_shader_obj)
 		{
 			shader_set(shader)
@@ -52,7 +62,12 @@ function render_high_indirect()
 		{
 			draw_clear_alpha(c_black, 0)
 			
-			render_shader_obj = shader_map[?shader_high_indirect_blur]
+			if(project_render_engine){
+				render_shader_obj = shader_map[?shader_high_indirect_blur_EX]
+			} else {
+				render_shader_obj = shader_map[?shader_high_indirect_blur]
+			}
+			
 			with (render_shader_obj)
 			{
 				shader_set(shader)
@@ -68,6 +83,41 @@ function render_high_indirect()
 	}
 	
 	var indirectsurf = (app.project_render_indirect_blur_radius > 0 ? render_surface_hdr[0] : render_surface_hdr[1]);
+	
+	// Apply Bilateral Denoiser (optional final pass)
+	if (app.project_render_indirect_denoiser)
+	{
+		// Denoise from whatever is currently in indirectsurf to the other buffer
+		render_surface_hdr[1] = surface_require(render_surface_hdr[1], render_width, render_height, true, true)
+
+		surface_set_target(render_surface_hdr[1])
+		{
+			draw_clear_alpha(c_black, 0)
+
+			render_shader_obj = shader_map[?shader_bilateral_blur]
+
+			with (render_shader_obj)
+			{
+				shader_set(shader)
+				shader_bilateral_blur_set()
+			}
+
+			draw_surface(render_surface_hdr[0], 0, 0) // Source: render_surface_hdr[0]
+
+			with (render_shader_obj)
+				shader_clear()
+		}
+		surface_reset_target()
+
+		// Final indirect output is now hdr[1]
+		indirectsurf = render_surface_hdr[1];
+	}
+	else
+	{
+		// No denoiser; use the usual surface
+		indirectsurf = (app.project_render_indirect_blur_radius > 0 ? render_surface_hdr[0] : render_surface_hdr[1]);
+	}
+
 	
 	// Add
 	surface_set_target(render_surface_shadows)

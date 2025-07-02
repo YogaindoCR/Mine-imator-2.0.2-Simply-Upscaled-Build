@@ -135,7 +135,7 @@ function res_load_scenery()
 			{
 				if (mc_builder.sch_timeline_amount > 512) // More than 512 timelines, always skip
 					scenery_tl_add = false
-				else if (mc_builder.sch_timeline_amount > 20) // More than 20 possible timelines, ask the user
+				else if (mc_builder.sch_timeline_amount > 0) // Always ask the user now
 					scenery_tl_add = question(text_get("loadsceneryaddtimelines", mc_builder.sch_timeline_amount))
 				else // Less, always add
 					scenery_tl_add = true

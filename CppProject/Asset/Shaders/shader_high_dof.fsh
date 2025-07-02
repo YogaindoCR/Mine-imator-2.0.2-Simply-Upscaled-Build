@@ -5,6 +5,10 @@ uniform float uBlurSize;
 uniform float uBias;
 uniform float uThreshold;
 uniform float uGain;
+uniform float uDesaturation;
+
+uniform bool uGhostingFix;
+uniform float uGhostingFixThreshold;
 
 uniform int uFringe;
 uniform vec3 uFringeAngle;
@@ -50,17 +54,24 @@ vec4 getFringe(vec2 coord, float blur, vec4 color)
 
 vec4 getColor(vec2 coord, float blur)
 {
-	vec4 baseColor = texture2D(gm_BaseTexture, coord);
-	
-	baseColor = getFringe(coord, blur, baseColor);
-	
-	// Boost brightness using threshold and gain strengthen Bokeh highlights
-	vec3 lumCo = vec3(0.299,0.587,0.114);
-	float lum = dot(baseColor.rgb, lumCo);
-	float thresh = max((lum - uThreshold) * uGain, 0.0);
-	baseColor.rgb = baseColor.rgb + mix(vec3(0.0), baseColor.rgb, vec3(thresh * blur));
-	
-	return baseColor;
+    vec4 baseColor = texture2D(gm_BaseTexture, coord);
+    baseColor = getFringe(coord, blur, baseColor);
+
+    float lum = dot(baseColor.rgb, vec3(0.299, 0.587, 0.114));
+    float highlight = max((lum - uThreshold) * uGain, 0.0);
+    vec3 boostedColor = baseColor.rgb + baseColor.rgb * highlight * blur;
+
+	if (uDesaturation != 0.0) {
+	    // Smooth desaturation based on blur
+	    float desatAmount = smoothstep(0.0, 1.0, blur);
+	    desatAmount *= uDesaturation;  // Scale with user control
+
+	    float desat = dot(boostedColor, vec3(0.333));
+	    boostedColor = mix(vec3(desat), boostedColor, 1.0 - desatAmount);
+	}
+
+    baseColor.rgb = boostedColor;
+    return baseColor;
 }
 
 void main()
@@ -93,6 +104,16 @@ void main()
 			vec2 tex = vTexCoord + texelSize * offset;
 			
 			float sampleBlur = getBlur(tex);
+			
+			// Ghosting Fix
+			if (uGhostingFix) {
+				// Compare difference between current blur and sample blur
+				float blurDiff = abs(sampleBlur - myBlur);
+
+				// Reject samples too different (ghosting source)
+				if (blurDiff > uGhostingFixThreshold) continue;
+			}
+			
 			float bias = mix(1.0, smoothstep(0.0, 1.0, uWeightSamples[i]), uBias);
 			
 			float mul = (1.0 - (1.0 - sampleBlur) * myBlur) * bias;	

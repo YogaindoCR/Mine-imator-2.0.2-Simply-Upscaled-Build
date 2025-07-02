@@ -40,6 +40,7 @@ function tl_value_default(valueid)
 		case e_value.CAM_EXPOSURE: return 1
 		case e_value.CAM_GAMMA: return 2.2
 		case e_value.CAM_BLADE_AMOUNT:
+		case e_value.CAM_SHAKE_OFFSET:
 		case e_value.CAM_BLADE_ANGLE: return 0
 		case e_value.CAM_ROTATE_DISTANCE: return 100
 		case e_value.CAM_SHAKE_MODE:
@@ -55,6 +56,7 @@ function tl_value_default(valueid)
 		case e_value.CAM_DOF_BLUR_RATIO:
 		case e_value.CAM_DOF_BIAS:
 		case e_value.CAM_DOF_THRESHOLD:
+		case e_value.CAM_DOF_DESATURATION:
 		case e_value.CAM_DOF_GAIN: return 0
 		case e_value.CAM_DOF_FRINGE_RED:
 		case e_value.CAM_DOF_FRINGE_GREEN:
@@ -170,6 +172,14 @@ function tl_value_default(valueid)
 		case e_value.EASE_OUT_X: return 0
 		case e_value.EASE_IN_X:
 		case e_value.EASE_OUT_Y: return 1
+		case e_value.MODIFIER_SHAKE:
+		case e_value.MODIFIER_SHAKE_POSITION:
+		case e_value.MODIFIER_FRAMESKIP:
+		case e_value.MODIFIER_SHAKE_ROTATION: return false
+		case e_value.MODIFIER_SHAKE_SPEED:
+		case e_value.MODIFIER_SHAKE_INTENSITY:
+		case e_value.MODIFIER_FRAMESKIP_VALUE: return 1
+		case e_value.MODIFIER_SHAKE_OFFSET: return 0
 	}
 	
 	return 0

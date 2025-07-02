@@ -1191,15 +1191,23 @@ function list_init(name)
 		case "rendershadowsspotbuffersize":
 		case "rendershadowspointbuffersize":
 		{
+			menu_add_item(128, text_get("rendershadowsbuffersize128") + " (128x128)")
 			menu_add_item(256, text_get("rendershadowsbuffersize256") + " (256x256)")
+			menu_add_item(384, text_get("rendershadowsbuffersize384") + " (384x384)")
 			menu_add_item(512, text_get("rendershadowsbuffersize512") + " (512x512)")
+			menu_add_item(768, text_get("rendershadowsbuffersize768") + " (768x768)")
 			menu_add_item(1024, text_get("rendershadowsbuffersize1024") + " (1024x1024)")
+			menu_add_item(1536, text_get("rendershadowsbuffersize1536") + " (1536x1536)")
 			menu_add_item(2048, text_get("rendershadowsbuffersize2048") + " (2048x2048)")
+			menu_add_item(3072, text_get("rendershadowsbuffersize3072") + " (3072x3072)")
 			menu_add_item(4096, text_get("rendershadowsbuffersize4096") + " (4096x4096)")
+			menu_add_item(6144, text_get("rendershadowsbuffersize6144") + " (6144x6144)")
 			
 			// 8192 is too big, creates a 24576*16384 atlas for shadow depth (also buggy anyways?)
-			if (name != "rendershadowspointbuffersize")
+			if (name != "rendershadowspointbuffersize") {
 				menu_add_item(8192, text_get("rendershadowsbuffersize8192") + " (8192x8192)")
+				menu_add_item(12288, text_get("rendershadowsbuffersize12288") + " (12288x12288)")
+			}
 			
 			break
 		}
@@ -1407,6 +1415,8 @@ function list_init(name)
 			menu_add_item(e_tonemapper.NONE, text_get("rendertonemappernone"))
 			menu_add_item(e_tonemapper.REINHARD, text_get("rendertonemapperreinhard"))
 			menu_add_item(e_tonemapper.ACES, text_get("rendertonemapperaces"))
+			menu_add_item(e_tonemapper.FILMIC, text_get("rendertonemapperfilmic"))
+			menu_add_item(e_tonemapper.ACES_APPROX, text_get("rendertonemapperacesapprox"))
 			
 			break
 		}

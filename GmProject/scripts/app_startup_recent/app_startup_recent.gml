@@ -25,5 +25,7 @@ function app_startup_recent()
 	
 	recent_add_wait = 0
 	
+	project_thumbnail_image = null
+	
 	recent_load()
 }

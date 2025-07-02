@@ -58,6 +58,8 @@ function tl_event_create()
 	keyframe_current_values = null
 	keyframe_next_values = null
 	
+	frameskip_before = -1
+	
 	world_pos = point3D(0, 0, 0)
 	world_pos_rotate = point3D(0, 0, 0)
 	world_pos_2d = point2D(0, 0)

@@ -13,8 +13,24 @@ namespace CppProject
 		if (!srcBuf || !dstBuf)
 			return;
 
-		dstBuf->data.Copy(srcBuf->data, size, srcOffset, dstOffset);
+		const int threadCount = std::thread::hardware_concurrency();
+		int chunkSize = size / threadCount;
+
+		std::vector<std::thread> workers;
+		for (int i = 0; i < threadCount; ++i)
+		{
+			int chunkStart = i * chunkSize;
+			int chunkEnd = (i == threadCount - 1) ? size : (i + 1) * chunkSize;
+			int chunkLength = chunkEnd - chunkStart;
+
+			workers.emplace_back([=]() {
+				dstBuf->data.Copy(srcBuf->data, chunkLength, srcOffset + chunkStart, dstOffset + chunkStart);
+			});
+		}
+
+		for (auto& t : workers) t.join();
 	}
+
 
 	IntType buffer_create(IntType size, IntType type, IntType align)
 	{
@@ -35,13 +51,32 @@ namespace CppProject
 
 	void buffer_fill(IntType id, IntType offset, IntType type, VarType value, IntType size)
 	{
-		if (Buffer* buf = FindBuffer(id))
+		Buffer* buf = FindBuffer(id);
+		if (!buf) return;
+
+		const int threadCount = std::thread::hardware_concurrency();
+		int chunkSize = size / threadCount;
+
+		std::vector<std::thread> workers;
+		for (int i = 0; i < threadCount; ++i)
 		{
-			IntType pos = offset;
-			while (pos < offset + size && buf->WriteVar(type, value, pos))
-				continue;
+			int chunkStart = offset + i * chunkSize;
+			int chunkEnd = (i == threadCount - 1) ? offset + size : chunkStart + chunkSize;
+
+			workers.emplace_back([=]() {
+				IntType pos = chunkStart;
+				while (pos < chunkEnd)
+				{
+					if (!buf->WriteVar(type, value, pos))
+						break;
+					++pos;
+				}
+			});
 		}
+
+		for (auto& t : workers) t.join();
 	}
+
 
 	IntType buffer_get_size(IntType id)
 	{

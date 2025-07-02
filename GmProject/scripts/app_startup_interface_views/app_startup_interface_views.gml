@@ -25,6 +25,8 @@ function app_startup_interface_views()
 	view_split = setting_view_split
 	
 	view_main = new_obj(obj_view)
+	view_main.scaling = setting_view_main_scaling
+	view_main.before = e_view_mode.SHADED
 	view_main.overlays = setting_view_main_overlays
 	view_main.aspect_ratio = setting_view_main_aspect_ratio
 	view_main.grid = setting_view_main_grid
@@ -38,6 +40,8 @@ function app_startup_interface_views()
 	
 	view_second = new_obj(obj_view)
 	view_second.show = setting_view_second_show
+	view_second.scaling = setting_view_second_scaling
+	view_second.before = e_view_mode.SHADED
 	view_second.overlays = setting_view_second_overlays
 	view_second.aspect_ratio = setting_view_second_aspect_ratio
 	view_second.grid = setting_view_second_grid

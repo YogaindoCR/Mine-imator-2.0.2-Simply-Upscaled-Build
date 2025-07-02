@@ -19,7 +19,7 @@ function render_update_camera()
 		cam_up[Y] = cy * xx - cx * yy * zz
 		cam_up[Z] = cx * (xx * xx + yy * yy)
 		
-		cam_fov = 45
+		cam_fov = setting_cam_work_pov
 	}
 	else
 	{
@@ -30,9 +30,9 @@ function render_update_camera()
 		if (render_camera.value[e_value.CAM_SHAKE])
 		{			
 			var shake = vec3(
-				simplex_lib((app.timeline_marker/app.project_tempo) * render_camera.value[e_value.CAM_SHAKE_SPEED_X]) * render_camera.value[e_value.CAM_SHAKE_STRENGTH_X],
-				simplex_lib((app.timeline_marker/app.project_tempo) * render_camera.value[e_value.CAM_SHAKE_SPEED_Y], 1000) * render_camera.value[e_value.CAM_SHAKE_STRENGTH_Y],
-				simplex_lib((app.timeline_marker/app.project_tempo) * render_camera.value[e_value.CAM_SHAKE_SPEED_Z], 2000) * render_camera.value[e_value.CAM_SHAKE_STRENGTH_Z],
+				simplex_lib((app.timeline_marker/app.project_tempo) * render_camera.value[e_value.CAM_SHAKE_SPEED_X], 0, render_camera.value[e_value.CAM_SHAKE_OFFSET]) * render_camera.value[e_value.CAM_SHAKE_STRENGTH_X],
+				simplex_lib((app.timeline_marker/app.project_tempo) * render_camera.value[e_value.CAM_SHAKE_SPEED_Y], 1000,  render_camera.value[e_value.CAM_SHAKE_OFFSET]) * render_camera.value[e_value.CAM_SHAKE_STRENGTH_Y],
+				simplex_lib((app.timeline_marker/app.project_tempo) * render_camera.value[e_value.CAM_SHAKE_SPEED_Z], 2000,  render_camera.value[e_value.CAM_SHAKE_OFFSET]) * render_camera.value[e_value.CAM_SHAKE_STRENGTH_Z],
 			);
 			
 			// Create matrix

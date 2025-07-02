@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Draw",
-    "path": "folders/Scripts/Utility/Draw.yy",
+    "path": "folders/Shaders/Utility/Draw.yy",
   },
 }

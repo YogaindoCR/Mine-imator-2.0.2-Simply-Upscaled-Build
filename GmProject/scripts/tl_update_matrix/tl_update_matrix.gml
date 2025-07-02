@@ -18,7 +18,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false)
 	
 	if (start = -1)
 		return 0
-	
+		
 	for (var i = start; i < tlamount; i++)
 	{
 		curtl = app.project_timeline_list[|i]
@@ -28,10 +28,29 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false)
 			for (var t = 0; t < ds_list_size(curtl.tree_list); t++)
 				if (curtl.tree_list[|t].inherit_pose)
 					array_add(app.project_inherit_pose_array, curtl.tree_list[|t])
+			
+		
+		
+		// Force update for shake modifier check
+		if (curtl.value[e_value.MODIFIER_SHAKE]) {
+			curtl.update_matrix = true
+		}
+	
+		// Frame Skip modifier check
+		if (curtl.value[e_value.MODIFIER_FRAMESKIP] && (!curtl.selected && !curtl.parent_is_selected)) {
+			if (curtl.value[e_value.MODIFIER_FRAMESKIP_VALUE] > 0) {
+				curtl.frameskip_before = round(curtl.frameskip_before / curtl.value[e_value.MODIFIER_FRAMESKIP_VALUE])
+				
+				if (round(app.timeline_marker / curtl.value[e_value.MODIFIER_FRAMESKIP_VALUE]) == curtl.frameskip_before)
+					curtl.update_matrix = false
+					
+				curtl.frameskip_before = app.timeline_marker
+			}
+		}
 		
 		if (!curtl.update_matrix)
 			continue
-		
+			
 		// Delay timeline update if we inherit pose
 		if (updateik && !updatepose && (array_length(app.project_inherit_pose_array) > 0) && array_contains(app.project_inherit_pose_array, curtl))
 		{
@@ -112,9 +131,38 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false)
 					matrix_parent = matrix_multiply(matrix_create(point3D(0, 0, 0), model_part.rotation, vec3(1)), matrix_parent)
 			}
 			
+			// Create shake modifier value
+			var shakespeeds, shakestrength, shakepos, shakerot, shakeoffset
+			
+			shakespeeds = value[e_value.MODIFIER_SHAKE_SPEED]
+			shakestrength = value[e_value.MODIFIER_SHAKE_INTENSITY]
+			shakeoffset = value[e_value.MODIFIER_SHAKE_OFFSET]
+			
+			shakepos = vec3(0)
+			shakerot = vec3(0)
+			
+			// Shake Modifier
+			if (value[e_value.MODIFIER_SHAKE]) {
+				if (value[e_value.MODIFIER_SHAKE_POSITION]) {
+					shakepos = vec3(
+						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 0, shakeoffset) * shakestrength / 10,
+						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 1000, shakeoffset) * shakestrength / 10,
+						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 2000, shakeoffset) * shakestrength / 10,
+					);
+				}
+				
+				if (value[e_value.MODIFIER_SHAKE_ROTATION]){
+					shakerot = vec3(
+						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 0, 1000 + shakeoffset) * shakestrength * 2,
+						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 1000, 1000 + shakeoffset) * shakestrength * 2,
+						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 2000, 1000 + shakeoffset) * shakestrength * 2,
+					);
+				}
+			}
+			
 			// Create main matrix
-			pos = point3D(value[e_value.POS_X], value[e_value.POS_Y], value[e_value.POS_Z])
-			rot = vec3(value[e_value.ROT_X], value[e_value.ROT_Y], value[e_value.ROT_Z])
+			pos = point3D(value[e_value.POS_X] + shakepos[0], value[e_value.POS_Y] + shakepos[1], value[e_value.POS_Z] + shakepos[2])
+			rot = vec3(value[e_value.ROT_X] + shakerot[0], value[e_value.ROT_Y] + shakerot[1], value[e_value.ROT_Z] + shakerot[2])
 			sca = vec3(value[e_value.SCA_X], value[e_value.SCA_Y], value[e_value.SCA_Z])
 			
 			matrix_local = matrix_create(pos, rot, sca)

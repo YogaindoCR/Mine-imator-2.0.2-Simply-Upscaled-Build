@@ -48,6 +48,7 @@ function app_startup_keybinds()
 		FRAME_NEXT,
 		
 		// Viewport
+		RENDER_SCALING,
 		RENDER_MODE,
 		SECONDARY_VIEW,
 		PARTICLES_SPAWN,
@@ -112,6 +113,7 @@ function app_startup_keybinds()
 	keybind_register("framenext", e_keybind.FRAME_NEXT, keybind_new(vk_right, false, true))
 	
 	// Viewport
+	keybind_register("renderscaling", e_keybind.RENDER_SCALING, keybind_new(vk_f4))
 	keybind_register("rendermode", e_keybind.RENDER_MODE, keybind_new(vk_f5))
 	keybind_register("secondaryview", e_keybind.SECONDARY_VIEW, keybind_new(vk_f6))
 	keybind_register("particlesspawn", e_keybind.PARTICLES_SPAWN, keybind_new("X"))

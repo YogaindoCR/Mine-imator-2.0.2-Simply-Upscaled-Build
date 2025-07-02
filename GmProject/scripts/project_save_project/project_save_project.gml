@@ -15,6 +15,7 @@ function project_save_project()
 		json_save_var("tempo", project_tempo)
 		json_save_var("grid_rows", project_grid_rows)
 		json_save_var("grid_columns", project_grid_columns)
+		json_save_var("time_elapsed", project_time_elapsed)
 		
 		if (view_main.camera = -4 || view_main.camera = -5)
 			json_save_var("view_main_camera", view_main.camera)

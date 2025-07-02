@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Update",
-    "path": "folders/Scripts/App/Update.yy",
+    "path": "folders/Scripts/App/Interface/Timeline/Update.yy",
   },
 }

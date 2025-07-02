@@ -22,4 +22,7 @@ function action_tl_hide(timeline)
 		var hobj = history_save_var_start(action_tl_hide, false);
 		action_tl_hide_tree(timeline, !timeline.hide, hobj)
 	}
+	
+	if (app.setting_viewport_optimization)
+		app_update_animate(true)
 }

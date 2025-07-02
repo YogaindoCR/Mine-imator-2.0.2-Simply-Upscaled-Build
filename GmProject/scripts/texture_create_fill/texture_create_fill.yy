@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Texture",
-    "path": "folders/Scripts/Utility/Texture.yy",
+    "path": "folders/Shaders/Utility/Texture.yy",
   },
 }

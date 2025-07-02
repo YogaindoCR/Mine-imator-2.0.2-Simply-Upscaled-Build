@@ -20,19 +20,19 @@ function render_generate_sample_kernel(samples)
 		
 		// Exponentiate scale
 		scale = i / samples
-		scale = lerp(0.1, 1.0, scale * scale)
+		scale = lerp(0.01, 1.0, scale * scale)
 		xx *= scale
 		yy *= scale
 		zz *= scale
 		
-		if (abs(xx) < 0.01)
-			xx = 0.01
+		if (abs(xx) < 0.001)
+			xx = 0.001
 		
-		if (abs(yy) < 0.01)
-			yy = 0.01
+		if (abs(yy) < 0.001)
+			yy = 0.001
 		
-		if (abs(zz) < 0.01)
-			zz = 0.01
+		if (abs(zz) < 0.001)
+			zz = 0.001
 		
 		// Store in array
 		arr[i * 3] = xx

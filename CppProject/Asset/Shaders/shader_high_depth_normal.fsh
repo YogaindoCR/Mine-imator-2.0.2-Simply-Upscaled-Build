@@ -14,7 +14,7 @@ varying mat3 vTBN;
 
 vec4 packDepth(float f)
 {
-	return vec4(floor(f * 255.0) / 255.0, fract(f * 255.0), fract(f * 255.0 * 255.0), 1.0);
+	return vec4(floor(f * 255.0) / 255.0, fract(f * 255.0), fract(f * 255.0 * (255.0 - ((sin(uSampleIndex * 28.1223)) * 144.173))), 1.0);
 }
 
 vec4 packNormal(vec3 n)

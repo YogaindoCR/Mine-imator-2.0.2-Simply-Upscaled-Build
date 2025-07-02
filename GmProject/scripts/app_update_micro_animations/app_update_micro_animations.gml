@@ -2,15 +2,16 @@
 
 function app_update_micro_animations()
 {
-	var constantspeed;
+	var constantspeed, deltaspeed;
 	constantspeed = 0.1
+	deltaspeed = ((app.setting_reduced_motion) ? 2.3 : 4) / clamp((room_speed / fps), 1, 3)
 	
 	// Timeline zoom
 	if (window_state = "")
 	{
 		if (timeline_zoom != timeline_zoom_goal)
 		{
-			timeline_zoom += (timeline_zoom_goal - timeline_zoom) / max(1, 4 / delta)
+			timeline_zoom += (timeline_zoom_goal - timeline_zoom) / max(1, deltaspeed)
 			timeline.hor_scroll.value_goal = max(0, timeline.hor_scroll.value_goal)
 			timeline.hor_scroll.value = max(0, timeline.hor_scroll.value)
 		}
@@ -25,7 +26,7 @@ function app_update_micro_animations()
 		if (!value_ease)
 			value = value_goal
 		else
-			value += (value_goal - value) / max(1, 4 / delta)
+			value += (value_goal - value) / max(1, deltaspeed)
 		
 		mousenear.update(constantspeed)
 	}

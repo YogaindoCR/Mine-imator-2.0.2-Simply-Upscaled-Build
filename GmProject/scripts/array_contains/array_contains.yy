@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Array",
-    "path": "folders/Scripts/Utility/Array.yy",
+    "path": "folders/Shaders/Utility/Array.yy",
   },
 }

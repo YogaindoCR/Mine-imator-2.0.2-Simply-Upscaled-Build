@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "Vector",
-    "path": "folders/Scripts/Utility/Math/Vector.yy",
+    "path": "folders/Shaders/Utility/Math/Vector.yy",
   },
 }

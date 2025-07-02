@@ -96,7 +96,7 @@ function render_update_cascades(dir)
 		
 		// Set projection for cascade
 		cascade.near = orthoMin[Z]
-		cascade.far = orthoMax[Z]
+		cascade.far = orthoMax[Z] 
 		cascade.matView = sunmatV
 		cascade.matProj = matrix_create_ortho(orthoMin[X], orthoMax[X], orthoMax[Y], orthoMin[Y], -orthoMin[Z], -orthoMax[Z]);
 		

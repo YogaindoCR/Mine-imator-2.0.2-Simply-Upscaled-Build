@@ -77,6 +77,8 @@ function tab_get_title(tab)
 	}
 	else if (tab = settings)
 		return text_get("tabsettings")
+	else if (tab = settings)
+		return text_get("tabfilepath")
 	
 	return ""
 }
