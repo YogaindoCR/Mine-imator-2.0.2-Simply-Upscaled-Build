@@ -137,8 +137,13 @@ function tab_settings_program()
 	draw_switch("settingssceneryremoveedges", dx, dy, setting_scenery_remove_edges, action_setting_scenery_remove_edges)
 	tab_next()
 	
-	// Viewport optimization by disabling when unfocus
+	// Viewport optimization
 	tab_control_switch()
 	draw_switch("settingsviewportoptimization", dx, dy, setting_viewport_optimization, action_setting_viewport_optimization)
+	tab_next()
+	
+	// Unstable features
+	tab_control_switch()
+	draw_switch("settingsunstablefeatures", dx, dy, setting_unstable_features, action_setting_unstable_features)
 	tab_next()
 }

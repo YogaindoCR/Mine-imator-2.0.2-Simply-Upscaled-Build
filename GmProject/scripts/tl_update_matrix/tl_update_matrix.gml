@@ -8,8 +8,11 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false)
 {
 	var start, curtl, tlamount, bend, pos, rot, sca, par, matrixnoscale, hasik, lasttex, ikblend, posebend;
 	var inhalpha, inhcolor, inhglowcolor, inhvis, inhbend, inhtex, inhsurf, inhsubsurf;
+	var shakestrength, shakepos, shakerot, shakebend, shakeoffset;
+	var isframeskip;
 	tlamount = ds_list_size(app.project_timeline_list)
 	posebend = [0, 0, 0]
+	isframeskip = false
 	
 	if (object_index = obj_timeline)
 		start = ds_list_find_index(app.project_timeline_list, id)
@@ -29,10 +32,8 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false)
 				if (curtl.tree_list[|t].inherit_pose)
 					array_add(app.project_inherit_pose_array, curtl.tree_list[|t])
 			
-		
-		
 		// Force update for shake modifier check
-		if (curtl.value[e_value.MODIFIER_SHAKE]) {
+		if (curtl.value[e_value.MODIFIER_SHAKE] && curtl.value[e_value.MODIFIER_SHAKE_INTENSITY] != 0) {
 			curtl.update_matrix = true
 		}
 	
@@ -42,6 +43,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false)
 				curtl.frameskip_before = round(curtl.frameskip_before / curtl.value[e_value.MODIFIER_FRAMESKIP_VALUE])
 				
 				if (round(app.timeline_marker / curtl.value[e_value.MODIFIER_FRAMESKIP_VALUE]) == curtl.frameskip_before)
+					isframeskip = true
 					curtl.update_matrix = false
 					
 				curtl.frameskip_before = app.timeline_marker
@@ -50,7 +52,27 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false)
 		
 		if (!curtl.update_matrix)
 			continue
+		
+		// Create shake modifier value
+		shakestrength = curtl.value[e_value.MODIFIER_SHAKE_INTENSITY]
+		shakeoffset = curtl.value[e_value.MODIFIER_SHAKE_OFFSET]
 			
+		shakepos = vec3(0)
+		shakerot = vec3(0)
+		shakebend = vec3(0)
+			
+		// Shake Modifier
+		if (shakestrength != 0) {
+			if (curtl.value[e_value.MODIFIER_SHAKE_POSITION])
+				shakepos = generate_shake_value(curtl.modifier_step, shakestrength, shakeoffset)
+				
+			if (curtl.value[e_value.MODIFIER_SHAKE_ROTATION])
+				shakerot = generate_shake_value(curtl.modifier_step, shakestrength, shakeoffset + 100)
+				
+			if (curtl.value[e_value.MODIFIER_SHAKE_BEND])
+				shakebend = generate_shake_value(curtl.modifier_step, shakestrength, shakeoffset + 200)
+		}
+		
 		// Delay timeline update if we inherit pose
 		if (updateik && !updatepose && (array_length(app.project_inherit_pose_array) > 0) && array_contains(app.project_inherit_pose_array, curtl))
 		{
@@ -129,35 +151,6 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false)
 					matrix_parent = matrix_multiply(matrix_create(model_part.position, model_part.rotation, vec3(1)), matrix_parent)
 				else
 					matrix_parent = matrix_multiply(matrix_create(point3D(0, 0, 0), model_part.rotation, vec3(1)), matrix_parent)
-			}
-			
-			// Create shake modifier value
-			var shakespeeds, shakestrength, shakepos, shakerot, shakeoffset
-			
-			shakespeeds = value[e_value.MODIFIER_SHAKE_SPEED]
-			shakestrength = value[e_value.MODIFIER_SHAKE_INTENSITY]
-			shakeoffset = value[e_value.MODIFIER_SHAKE_OFFSET]
-			
-			shakepos = vec3(0)
-			shakerot = vec3(0)
-			
-			// Shake Modifier
-			if (value[e_value.MODIFIER_SHAKE]) {
-				if (value[e_value.MODIFIER_SHAKE_POSITION]) {
-					shakepos = vec3(
-						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 0, shakeoffset) * shakestrength / 10,
-						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 1000, shakeoffset) * shakestrength / 10,
-						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 2000, shakeoffset) * shakestrength / 10,
-					);
-				}
-				
-				if (value[e_value.MODIFIER_SHAKE_ROTATION]){
-					shakerot = vec3(
-						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 0, 1000 + shakeoffset) * shakestrength * 2,
-						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 1000, 1000 + shakeoffset) * shakestrength * 2,
-						simplex_lib((app.timeline_marker/app.project_tempo) * shakespeeds, 2000, 1000 + shakeoffset) * shakestrength * 2,
-					);
-				}
 			}
 			
 			// Create main matrix
@@ -334,7 +327,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false)
 			tl = id
 			
 			for (var j = X; j <= Z; j++)
-				value_inherit[e_value.BEND_ANGLE_X + j] += posebend[j]
+				value_inherit[e_value.BEND_ANGLE_X + j] += posebend[j] + shakebend[j]
 			
 			while (true)
 			{
@@ -420,7 +413,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false)
 				
 				if (inhvis)
 					value_inherit[e_value.VISIBLE] *= par.value[e_value.VISIBLE]
-				
+					
 				if (inhbend)
 				{
 					value_inherit[e_value.BEND_ANGLE_X] += par.value[e_value.BEND_ANGLE_X]

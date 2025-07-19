@@ -30,7 +30,10 @@ function tl_update_values()
 		keyframe_next_values = keyframe_next.value
 	
 	keyframe_progress_ease = 0
-		
+	
+	// Modifier step
+	modifier_step += (app.timeline_marker - app.timeline_marker_previous) * value[e_value.MODIFIER_SHAKE_SPEED] / 25
+	
 	// Visible
 	tl_update_values_ease(e_value.VISIBLE)
 	
@@ -113,12 +116,13 @@ function tl_update_values()
 		tl_update_values_ease(e_value.PATH_POINT_SCALE)
 	}
 	
-	// Shake Modifier
+	// Modifier
 	if (value_type[e_value_type.MODIFIER])
 	{
 		tl_update_values_ease(e_value.MODIFIER_SHAKE)
 		tl_update_values_ease(e_value.MODIFIER_SHAKE_POSITION)
 		tl_update_values_ease(e_value.MODIFIER_SHAKE_ROTATION)
+		tl_update_values_ease(e_value.MODIFIER_SHAKE_BEND)
 		tl_update_values_ease(e_value.MODIFIER_SHAKE_SPEED)
 		tl_update_values_ease(e_value.MODIFIER_SHAKE_INTENSITY)
 		tl_update_values_ease(e_value.MODIFIER_SHAKE_OFFSET)

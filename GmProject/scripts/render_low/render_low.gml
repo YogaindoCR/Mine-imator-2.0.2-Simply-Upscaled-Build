@@ -3,14 +3,14 @@
 
 function render_low()
 {
-	if (render_low_drawing < 2){
-		
-	    var surf, finalsurf;
-	    render_surface[0] = surface_require(render_surface[0], render_width, render_height);
-	    surf = render_surface[0];
-    
-	    render_alpha_hash = false;
-	    render_alpha_hash_force = true;
+	var surf, finalsurf;
+	render_surface[0] = surface_require(render_surface[0], render_width, render_height);
+	surf = render_surface[0];
+	
+	render_alpha_hash = false;
+	render_alpha_hash_force = true;
+	
+	if (render_low_drawing < 3) {
         surface_set_target(surf);
         {
             draw_clear_alpha(c_black, 0);
@@ -50,6 +50,14 @@ function render_low()
             draw_surface_exists(finalsurf, 0, 0);
         }
         surface_reset_target();
-		render_alpha_hash_force = false;
+	} else {
+		surface_set_target(surf);
+        {
+            // World
+            render_world_start();
+            render_world_done();
+		}
+        surface_reset_target();
 	}
+	render_alpha_hash_force = false;
 }

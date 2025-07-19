@@ -7,6 +7,9 @@
 
 function render_world_start_light(from, to, offset, tl)
 {
+	var scale = 1.0 + (app.project_render_buffer_scale / ((app.project_render_engine) ? 1000 : 1600))
+	var scaleMatrix = matrix_build(0, 0, 0, 0, 0, 0, scale, scale, scale)
+
 	render_light_from = from
 	render_light_to = to
 	render_light_offset = offset
@@ -47,7 +50,10 @@ function render_world_start_light(from, to, offset, tl)
 	render_shadow_from = render_proj_from
 	light_proj_matrix = matrix_get(matrix_projection)
 	light_view_matrix = matrix_get(matrix_view)
-	light_view_proj_matrix = matrix_multiply(light_view_matrix, light_proj_matrix)
+	
+	var scaled_view = matrix_multiply(light_view_matrix, scaleMatrix);
+	light_view_proj_matrix = matrix_multiply(scaled_view, light_proj_matrix);
+
 	
 	proj_depth_near = render_light_near
 	proj_depth_far = render_light_far

@@ -5,7 +5,7 @@
 function view_update_surface(view, cam)
 {
 	//check to render
-	check_to_render()
+	check_to_render(view)
 	
 	if (window_scroll_focus_prev = "" || render_low_drawing < 2 || view.quality = e_view_mode.RENDER) 
 	{
@@ -22,24 +22,21 @@ function view_update_surface(view, cam)
 	render_view_scaling = view.scaling
 	
 	if (view.quality = e_view_mode.RENDER) {
-		
-		
 		if (render_view_scaling) {
-			render_samples_done = 0 // Force re render for fixing the scaling issue
 			content_width = ceil(content_width * setting_view_scaling_value)
 			content_height = ceil(content_height * setting_view_scaling_value)
 		}
 		
 		render_start(view.surface, cam, content_width, content_height)
-		
 		render_high()
 	}
 	else
 	{
 		render_start(view.surface, cam, content_width, content_height)
-		
 		render_low()
-		render_low_drawing++;
+		
+		if (view == view_main)
+			render_low_drawing++
 	}
 	
 	if (view.gizmos)
@@ -149,11 +146,10 @@ function view_update_surface(view, cam)
 	render_lights = true
 	render_particles = true
 	
-	}
-	
 	//scale back up
-	if (render_quality = e_view_mode.RENDER && render_view_scaling) {
+	if (view.quality = e_view_mode.RENDER && render_view_scaling) {
 		content_width /= setting_view_scaling_value
 		content_height /= setting_view_scaling_value
+		}
 	}
 }

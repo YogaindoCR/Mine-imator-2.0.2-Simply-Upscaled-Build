@@ -67,6 +67,8 @@ function project_save_render()
 		json_save_var_bool("render_motionblur", project_render_motionblur)
 		json_save_var("render_motionblur_power", project_render_motionblur_power)
 		
+		json_save_var("render_buffer_scale", project_render_buffer_scale)
+		
 		json_save_var("bend_style", project_bend_style)
 		json_save_var_bool("opaque_leaves", project_render_opaque_leaves)
 		json_save_var_bool("liquid_animation", project_render_liquid_animation)

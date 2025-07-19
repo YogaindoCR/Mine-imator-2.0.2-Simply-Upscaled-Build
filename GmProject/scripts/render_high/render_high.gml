@@ -9,31 +9,24 @@ function render_high()
 	// Prepare sampling
 	render_update_samples();
 	render_alpha_hash = project_render_alpha_mode;
-
-	var sample_start, sample_end;
-
-	if (render_samples_done)
-	{
-		sample_start = 0;
-		sample_end = 0;
-	}
-	else
-	{
-		sample_start = render_samples - 1;
-		sample_end = render_samples;
-	}
-
+	
 	// Main rendering loop
-	for (var s = sample_start; s < sample_end; s++)
+	if (!render_samples_done)
 	{
-		render_sample_current = s;
-		random_set_seed(s); // consistent sample noise
+		render_sample_current = render_samples;
+		random_set_seed(render_sample_current); // consistent sample noise
 
 		render_high_update_taa();
 		render_high_passes();
 
-		if (render_shadows)
+		if (render_shadows) {
+			if (render_sample_current > 0)
+				render_shadow_blur_kernel = vec2(random_range(44.0, 1.0), random_range(0.6, 1.4))
+			else
+				render_shadow_blur_kernel = vec2(0.0, 1.0)
+				
 			render_high_shadows();
+		}
 
 		if (render_indirect)
 			render_high_indirect();

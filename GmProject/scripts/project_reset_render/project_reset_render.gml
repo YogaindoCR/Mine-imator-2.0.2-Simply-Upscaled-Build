@@ -66,6 +66,8 @@ function project_reset_render()
 	project_render_motionblur = false
 	project_render_motionblur_power = 0.35
 	
+	project_render_buffer_scale = 0
+	
 	project_render_texture_filtering = true
 	project_render_transparent_block_texture_filtering = false
 	project_render_texture_filtering_level = 1

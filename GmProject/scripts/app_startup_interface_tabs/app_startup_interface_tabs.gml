@@ -111,6 +111,8 @@ function app_startup_interface_tabs()
 			tbx_motionblur_power = new_textbox_integer()
 			tbx_motionblur_power.suffix = "%"
 			
+			tbx_buffer_scale = new_textbox_decimals()
+			
 			tbx_texture_filtering_level = new_textbox_integer()
 			
 			tbx_exposure = new_textbox_decimals()
@@ -485,6 +487,9 @@ function app_startup_interface_tabs()
 		
 		// Audio
 		audio = tab_add_category("timelineeditoraudio", icons.NOTE_SMALL, tab_timeline_editor_audio, true)
+		
+		// Lights
+		light = tab_add_category("timelineeditorlight", icons.LIGHT_POINT_SMALL, tab_timeline_editor_light, true)
 		
 		// Path
 		path = tab_add_category("timelineeditorpath", icons.PATH_SMALL, tab_timeline_editor_path, true)

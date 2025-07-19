@@ -12,6 +12,7 @@ function particle_spawner_init()
 	fire = false
 	single_fire_count = 0
 	
+	thread_list = ds_list_create()
 	particle_list = ds_list_create()
 	is_timeline = (object_index = obj_timeline)
 }

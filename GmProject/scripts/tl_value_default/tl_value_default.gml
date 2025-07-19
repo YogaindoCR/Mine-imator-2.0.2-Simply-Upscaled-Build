@@ -174,8 +174,9 @@ function tl_value_default(valueid)
 		case e_value.EASE_OUT_Y: return 1
 		case e_value.MODIFIER_SHAKE:
 		case e_value.MODIFIER_SHAKE_POSITION:
+		case e_value.MODIFIER_SHAKE_ROTATION:
 		case e_value.MODIFIER_FRAMESKIP:
-		case e_value.MODIFIER_SHAKE_ROTATION: return false
+		case e_value.MODIFIER_SHAKE_BEND: return false
 		case e_value.MODIFIER_SHAKE_SPEED:
 		case e_value.MODIFIER_SHAKE_INTENSITY:
 		case e_value.MODIFIER_FRAMESKIP_VALUE: return 1

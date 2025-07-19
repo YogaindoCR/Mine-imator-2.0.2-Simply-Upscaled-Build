@@ -448,36 +448,40 @@ function tab_properties_render()
 	}
 	
 	//Extra Settings
-	if (project_render_engine){
-		tab_control_switch()
-		draw_button_collapse("extrasettings", collapse_map[?"extrasettings"], null, true, "renderextrasettings")
+	tab_control_switch()
+	draw_button_collapse("extrasettings", collapse_map[?"extrasettings"], null, true, "renderextrasettings")
 		
-		tab_next()
-		if (collapse_map[?"extrasettings"])
-			{
+	tab_next()
+	if (collapse_map[?"extrasettings"])
+		{
+			tab_collapse_start()
+		
+			tab_control_meter()
+			draw_meter("renderextrasettingsdofsample", dx, dy, dw, project_render_dof_sample, 1, 6, 3, 1, tab.render.tbx_dof_sample, action_project_render_dof_sample)
+			tab_next()
+		
+			tab_control_switch()
+			draw_switch("renderextrasettingsdofghostingfix", dx, dy, project_render_dof_ghostingfix, action_project_render_dof_ghostingfix, "renderextrasettingsdofghostingfixtip")
+			tab_next()
+				
+			if (project_render_dof_ghostingfix) {
 				tab_collapse_start()
-		
-				tab_control_meter()
-				draw_meter("renderextrasettingsdofsample", dx, dy, dw, project_render_dof_sample, 1, 6, 3, 1, tab.render.tbx_dof_sample, action_project_render_dof_sample)
-				tab_next()
-		
-				tab_control_switch()
-				draw_switch("renderextrasettingsdofghostingfix", dx, dy, project_render_dof_ghostingfix, action_project_render_dof_ghostingfix, "renderextrasettingsdofghostingfixtip")
-				tab_next()
-				
-				if (project_render_dof_ghostingfix) {
-					tab_collapse_start()
 					
-					tab_control_dragger()
-					draw_dragger("renderextrasettingsdofghostingfixthreshold", dx, dy, dragger_width, round(project_render_dof_ghostingfix_threshold * 100), 1, 0, 100, 75, 0.1, tab.render.tbx_dof_ghostingfix_threshold, action_project_render_dof_ghostingfix_threshold)
-					tab_next()
-				
-					tab_collapse_end()
-				}
+				tab_control_dragger()
+				draw_dragger("renderextrasettingsdofghostingfixthreshold", dx, dy, dragger_width, round(project_render_dof_ghostingfix_threshold * 100), 1, 0, 100, 75, 0.1, tab.render.tbx_dof_ghostingfix_threshold, action_project_render_dof_ghostingfix_threshold)
+				tab_next()
 				
 				tab_collapse_end()
 			}
-	}
+
+			if (setting_unstable_features) {
+				tab_control_dragger()
+				draw_dragger("renderextrasettingsspotdepthscale", dx, dy, dragger_width, project_render_buffer_scale, 0.01, 0, 3.5, 0, 0.01, tab.render.tbx_buffer_scale, action_project_render_buffer_scale)
+				tab_next()
+			}
+				
+			tab_collapse_end()
+		}
 	
 	//Motion Blur
 	tab_control_switch()

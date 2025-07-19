@@ -69,6 +69,8 @@ function project_load_render(map)
 	project_render_motionblur = value_get_real(map[?"render_motionblur"], project_render_motionblur)
 	project_render_motionblur_power = value_get_real(map[?"render_motionblur_power"], project_render_motionblur_power)
 	
+	project_render_buffer_scale = value_get_real(map[?"render_buffer_scale"], project_render_buffer_scale)
+	
 	project_bend_style = value_get_string(map[?"bend_style"], project_bend_style)
 	project_render_opaque_leaves = value_get_real(map[?"opaque_leaves"], project_render_opaque_leaves)
 	project_render_liquid_animation = value_get_real(map[?"liquid_animation"], project_render_liquid_animation)

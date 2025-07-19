@@ -1,3 +1,4 @@
+#define DIVIDE 65025.0
 uniform sampler2D uSamplesExp;
 uniform sampler2D uSamplesDec;
 uniform sampler2D uSamplesAlpha;
@@ -20,14 +21,14 @@ void main()
 	
 	vec4 result = vec4(0.0, 0.0, 0.0, 1.0);
 	
-	result.r = (unpackSamples(samplesExp.r, samplesDec.r) * uSamplesStrength) / (255.0 * 255.0);
-	result.g = (unpackSamples(samplesExp.g, samplesDec.g) * uSamplesStrength) / (255.0 * 255.0);
-	result.b = (unpackSamples(samplesExp.b, samplesDec.b) * uSamplesStrength) / (255.0 * 255.0);
+	result.r = (unpackSamples(samplesExp.r, samplesDec.r) * uSamplesStrength) / DIVIDE;
+	result.g = (unpackSamples(samplesExp.g, samplesDec.g) * uSamplesStrength) / DIVIDE;
+	result.b = (unpackSamples(samplesExp.b, samplesDec.b) * uSamplesStrength) / DIVIDE;
 	
 	if (uRenderBackground < 1)
 	{
 		vec4 sampleAlpha = texture2D(uSamplesAlpha, vTexCoord);
-		result.a = (unpackSamples(sampleAlpha.r, sampleAlpha.g) * uSamplesStrength) / (255.0 * 255.0);
+		result.a = (unpackSamples(sampleAlpha.r, sampleAlpha.g) * uSamplesStrength) / DIVIDE;
 	}
 	
 	gl_FragColor = result;

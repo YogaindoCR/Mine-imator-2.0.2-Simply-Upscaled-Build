@@ -5,6 +5,7 @@ function settings_startup()
 	trial_startup()
 	
 	setting_advanced_mode = dev_mode_advanced
+	setting_unstable_features = dev_mode
 	
 	setting_minecraft_assets_version = minecraft_version
 	setting_minecraft_assets_new_version = ""
@@ -143,6 +144,7 @@ function settings_startup()
 	setting_overlay_show_light = true
 	setting_overlay_show_particle = true
 	setting_overlay_show_path = true
+	setting_overlay_show_guides = true
 	
 	setting_tool_select = false
 	setting_tool_move = true

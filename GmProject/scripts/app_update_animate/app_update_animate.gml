@@ -27,7 +27,6 @@ function app_update_animate(force)
 	if ((background_time_prev != background_time || app.history_resource_update) || app.timeline_playing)
 		if (window_state != "export_movie")
 		render_samples = -1
-		
 	
 	with (obj_timeline)
 	{

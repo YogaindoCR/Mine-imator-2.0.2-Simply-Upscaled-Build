@@ -11,7 +11,7 @@ function shader_bilateral_blur_set() {
 
 	render_set_uniform("uDepthSigma", 120.0);
 	render_set_uniform("uNormalSigma", 32.0);
-	render_set_uniform("uBilateralRadius", app.project_render_indirect_denoiser_strength * 0.02);
+	render_set_uniform("uBilateralRadius", app.project_render_indirect_denoiser_strength * 0.021 * (render_height / 480.0) * random_range(0.9, 1.1));
 	render_set_uniform("uNormalBufferScale", is_cpp() ? normal_buffer_scale : 1);
 	render_set_uniform_vec2("uScreenSize", render_width, render_height);
 }

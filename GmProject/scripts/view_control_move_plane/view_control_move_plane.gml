@@ -130,7 +130,7 @@ function view_control_move_plane(view, control, axes, color, mat, normal, corner
 	view_shape_line_draw(corner42D, corner12D)
 	
 	// Draw square
-	if (render_low_drawing < 3){
+	if (render_low_drawing < 4) {
 	
 	draw_set_alpha(.35)
 	

@@ -55,7 +55,7 @@ function window_draw_load_assets()
 	draw_label(string(string_upper(mineimator_version_sub)), xoff + 95, yoff + 289 + 12, fa_middle, fa_bottom, c_text_secondary, a_text_secondary, font_subheading)
 	draw_label(string(string_upper(mineimator_version_extra)), xoff + 95, yoff + 289 + (mineimator_version_sub = "" ? 16 : 26), fa_middle, fa_bottom, c_text_tertiary, a_text_tertiary, font_subheading)
 	draw_label(text_get("startuploadingassets", app.setting_minecraft_assets_version, floor(load_assets_progress * 100)), xoff + 95, yoff + 437, fa_middle, fa_bottom, c_text_tertiary, a_text_tertiary, font_caption)
-	draw_label("AVE-X", xoff + 95, yoff + 50, fa_middle, fa_bottom, c_text_secondary, a_text_secondary, font_heading)
+	draw_label("AVE-X", xoff + 95, yoff + 50, fa_middle, fa_bottom, c_text_secondary, a_text_secondary + 0.2, font_heading)
 	
 	draw_gradient(xoff + 190, yoff, shadow_size * 2, screenhei, c_black, shadow_alpha * 2, 0, 0, shadow_alpha * 2)
 	draw_gradient(xoff + 190, yoff, screenwid - 190, shadow_size * 2, c_black, shadow_alpha * 2, shadow_alpha * 2, 0, 0)

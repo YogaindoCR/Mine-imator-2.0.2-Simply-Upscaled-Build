@@ -38,18 +38,19 @@ function export_update()
 			}
 			
 			// Update animations
-			app_update_animate(false)
+			if (!project_render_motionblur)
+				app_update_animate(false)
 		}
 		
-		if (project_render_motionblur){
-		timeline_marker += project_render_motionblur_power / (project_render_samples * (popup_exportmovie.framespersecond / project_tempo))
+		if (project_render_motionblur) {
 
-		app_update_animate(false)
-		if (timeline_marker > exportmovie_marker_end)
-			{
-				export_done_movie()
-				return 0
-			}
+			if (timeline_marker > exportmovie_marker_end)
+				{
+					export_done_movie()
+					return 0
+				}
+			app_update_animate(false)
+			timeline_marker += project_render_motionblur_power / (project_render_samples * (popup_exportmovie.framespersecond / project_tempo))
 		}
 	}
 	

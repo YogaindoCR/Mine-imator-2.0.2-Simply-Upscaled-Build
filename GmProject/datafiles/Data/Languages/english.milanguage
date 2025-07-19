@@ -387,7 +387,8 @@
 		"unlimitedvalues": "WARNING: Values will be able to be set outside of their normal limits, which could crash the program, cause project corruption or other undefined behaviour depending on the value being changed.\nContinue?",
 		"restorecontrols": "Are you sure you want to restore all controls?",
 		"setasdefault": "Are you sure you want to set these settings as the default? This cannot be undone.",
-		"resetrender": "Are you sure you want to reset all render settings?"
+		"resetrender": "Are you sure you want to reset all render settings?",
+		"unstablefeatures": "WARNING: These features are somewhat broken in some scenarios.\nContinue?"
 	},
 	"filedialog/": {
 		"open/": {
@@ -882,6 +883,7 @@
 			"light": "Light overlays",
 			"particle": "Particle overlays",
 			"path": "Path overlays",
+			"guides": "Guides overlays",
 			"enable": "Enable overlays",
 			"disable": "Disable overlays"
 		},
@@ -2731,7 +2733,8 @@
 			"dofsample": "DOF Sample",
 			"dofghostingfix": "DOF Ghosting Fix",
 			"dofghostingfixtip": "Fix DOF edge ghosting issue on near objects",
-			"dofghostingfixthreshold": "Threshold"
+			"dofghostingfixthreshold": "Threshold",
+			"spotdepthscale": "Spotlight Depth Scale"
 		},
 		"motionblurtip": "Add sample based motion blur to the scene, Only Works When Exporting",
 		"motionblur": "Motion Blur",
@@ -3511,6 +3514,12 @@
 				"texhmirror": "Mirror horizontally",
 				"texvmirror": "Mirror vertically"
 			}
+		},
+		"light": "Light",
+		"light/": {
+			"point" : "Point light",
+			"spot" : "Spot light",
+			"type" : "Light type"
 		}
 	},
 	"frameeditor/": {
@@ -3564,6 +3573,7 @@
 			"shaketip": "Add a randomized noise value",
 			"shakeposition": "Position",
 			"shakerotation": "Rotation",
+			"shakebend": "Bend",
 			"shakeintensity": "Intensity",
 			"shakespeed": "Speed",
 			"shakeoffset": "Offset",
@@ -3863,6 +3873,7 @@
 		"unlimitedvalues": "Allow unlimited values",
 		"sceneryremoveedges": "Remove edges of large scenery",
 		"viewportoptimization": "Viewport optimization",
+		"unstablefeatures": "Unstable features",
 		"interface": "INTERFACE",
 		"appearance": "Appearance",
 		"theme": "Theme",

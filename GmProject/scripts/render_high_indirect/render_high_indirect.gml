@@ -112,12 +112,6 @@ function render_high_indirect()
 		// Final indirect output is now hdr[1]
 		indirectsurf = render_surface_hdr[1];
 	}
-	else
-	{
-		// No denoiser; use the usual surface
-		indirectsurf = (app.project_render_indirect_blur_radius > 0 ? render_surface_hdr[0] : render_surface_hdr[1]);
-	}
-
 	
 	// Add
 	surface_set_target(render_surface_shadows)

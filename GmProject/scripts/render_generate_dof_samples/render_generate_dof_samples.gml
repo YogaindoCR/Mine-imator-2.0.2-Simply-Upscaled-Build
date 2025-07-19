@@ -6,8 +6,15 @@
 function render_generate_dof_samples(blades, rotation, ratio)
 {
 	var rings, samples, rotoff;
-	rings = 7
-	samples = (app.project_render_engine) ? app.project_render_dof_sample : 3
+	
+	if (render_quality > 1 || !app.setting_viewport_optimization) {
+		samples = (app.project_render_engine) ? app.project_render_dof_sample : 3
+		rings = 7
+	} else {
+		samples = 2
+		rings = 5
+	}
+		
 	rotoff = (pi*2) / (360/270)
 	
 	// Clear previous data

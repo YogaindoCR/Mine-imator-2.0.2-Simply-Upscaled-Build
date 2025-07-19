@@ -21,7 +21,7 @@ function debug_info_draw()
 	{
 		str += "Performance: \n"
 		str += "======================================= \n"
-		str += "FPS: " + string(fps / delta) + " \n"
+		str += "FPS: " + string(fps) + " \n"
 		str += "FPS real: " + string(fps_real) + " \n"
 		str += "delta: " + string(delta) + " \n"
 		str += "\n"

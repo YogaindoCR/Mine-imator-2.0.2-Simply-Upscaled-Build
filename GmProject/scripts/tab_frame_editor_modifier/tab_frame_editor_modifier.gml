@@ -2,9 +2,6 @@
 
 function tab_frame_editor_modifier()
 {
-	if (tl_edit.type == e_tl_type.CAMERA || tl_edit.type == e_tl_type.PARTICLE_SPAWNER)
-		return 0
-	
 	// Modifier
 	tab_control_switch()
 	draw_button_collapse("modifier", collapse_map[?"modifier"], null, true, "frameeditormodifier")
@@ -45,6 +42,10 @@ function tab_frame_editor_modifier()
 		
 				tab_control_switch()
 				draw_switch("frameeditormodifiershakerotation", dx, dy, tl_edit.value[e_value.MODIFIER_SHAKE_ROTATION], action_tl_frame_modifier_shake_rotation)
+				tab_next()
+		
+				tab_control_switch()
+				draw_switch("frameeditormodifiershakebend", dx, dy, tl_edit.value[e_value.MODIFIER_SHAKE_BEND], action_tl_frame_modifier_shake_bend)
 				tab_next()
 				
 				tab_control_dragger()
