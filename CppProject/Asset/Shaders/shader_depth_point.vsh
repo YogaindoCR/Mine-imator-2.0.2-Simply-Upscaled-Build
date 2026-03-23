@@ -13,6 +13,10 @@ varying vec2 vTexCoord;
 varying vec4 vColor;
 
 uniform vec4 uBlendColor;
+uniform bool uParaboloid;
+uniform vec3 uLightPos;
+uniform float uLightRange;
+uniform int uHemisphere;
 
 // Texture
 uniform vec2 uTextureOffset;
@@ -66,6 +70,31 @@ void main()
 	else
 		vPosition = (gm_Matrices[MATRIX_WORLD] * vec4(in_Position, 1.0)).xyz;
 	
-	gl_Position = uTAAMatrix * gm_Matrices[MATRIX_PROJECTION] * (gm_Matrices[MATRIX_VIEW] * vec4(vPosition, 1.0));
+	if (uParaboloid)
+	{
+	    vec3 L = vPosition - uLightPos;
+	    float dist = length(L);
+	    L /= dist;
+
+	    // Flip for back hemisphere
+	    if (uHemisphere == 1)  // 0 front 1 back
+	        L.z = -L.z;
+
+	    // Paraboloid warp
+	    float m = 2.0 / (L.z + 1.0);
+	    vec2 uv = L.xy * m;
+
+	    // Convert to clip space (-1 to 1)
+	    uv = clamp(uv, -1.0, 1.0);
+
+	    // Depth stored in Z
+	    float depth = dist / uLightRange;
+
+	    gl_Position = vec4(uv, depth * 2.0 - 1.0, 1.0);
+	}
+	else
+	{
+	    gl_Position = uTAAMatrix * gm_Matrices[MATRIX_PROJECTION] * (gm_Matrices[MATRIX_VIEW] * vec4(vPosition, 1.0));
+	}
 	vColor = uBlendColor * in_Colour;
 }

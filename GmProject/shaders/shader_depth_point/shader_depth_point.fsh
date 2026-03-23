@@ -6,14 +6,26 @@ uniform int uAlphaHash;
 uniform vec3 uEye; // static
 uniform float uNear; // static
 uniform float uFar; // static
+uniform bool uParaboloid;
+uniform vec3 uLightPos;
 
 varying vec3 vPosition;
 varying vec2 vTexCoord;
 varying vec4 vColor;
 
-vec4 packDepth(float f)
+vec4 packDepth(float depth)
 {
-	 return vec4(floor(f * 255.0) / 255.0, fract(f * 255.0), fract(f * 255.0 * 255.0), 1.0);
+    vec4 enc = vec4(depth, fract(depth * vec3(255.0, 65025.0, 16581375.0)));
+
+    enc -= enc.yzww * vec4(
+        1.0/255.0,
+        1.0/255.0,
+        1.0/255.0,
+        0.0
+    );
+	
+	enc.a = 1.0; // opaque
+    return enc;
 }
 
 float hash(vec2 c)
@@ -29,9 +41,24 @@ void main()
 	if (col.a < 0.001)
 		discard;
 	
-	if (uAlphaHash > 0 && (col.a < hash(vec2(hash(vPosition.xy + (uSampleIndex / 255.0)), vPosition.z + (uSampleIndex / 255.0)))))
-		discard;
+	vec4 depth;
+	if (!uParaboloid)
+		depth = packDepth((distance(vPosition, uEye) - uNear) / (uFar - uNear));
+	else
+	{
+		float dist = length(vPosition - uLightPos);
+		float depthNorm = dist / uFar;
+		depth = packDepth(depthNorm);
+	}
 	
-	gl_FragColor = packDepth((distance(vPosition, uEye) - uNear) / (uFar - uNear));
+	if (uAlphaHash > 0 && (col.a < hash(vec2(hash(vPosition.xy + (uSampleIndex / 255.0)), vPosition.z + (uSampleIndex / 255.0)))))
+		depth.a = 0.0;
+	else
+		col.a = 1.0;
+	
+	if (col.a <= 0.011)
+		depth.a = 0.0;
+	
+	gl_FragColor = depth;
 }
 

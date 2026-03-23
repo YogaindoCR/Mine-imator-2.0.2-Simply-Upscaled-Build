@@ -14,14 +14,19 @@ function view_control_rotate(view)
 			zrot = array_copy_1d(tl_edit.value[e_value.ROT_TARGET].matrix) // Copy Rotation Matrix
 		else
 			zrot = array_copy_1d(matrix_parent) // Object Rotation
-		
+			
+		if (tl_edit.value[e_value.LOOK_AT_TARGET] != null)
+			zrot = array_copy_1d(matrix)
+			
 		zrot[MAT_X] = matrix[MAT_X]
 		zrot[MAT_Y] = matrix[MAT_Y]
 		zrot[MAT_Z] = matrix[MAT_Z]
 		matrix_remove_scale(zrot)
 	}
 	
-	if (tl_edit.value[e_value.ROT_TARGET] != null) {
+	if (tl_edit.value[e_value.LOOK_AT_TARGET] != null) {
+		objrot = vec3(tl_edit.value[e_value.LOOK_AT_OFFSET_X], tl_edit.value[e_value.LOOK_AT_OFFSET_Y], tl_edit.value[e_value.LOOK_AT_OFFSET_Z])
+	} else if (tl_edit.value[e_value.ROT_TARGET] != null) {
 		xrotcopy = tl_edit.value[e_value.COPY_ROT_X] ? tl_edit.value[e_value.COPY_ROT_OFFSET_X] : tl_edit.value[e_value.ROT_X]
 		yrotcopy = tl_edit.value[e_value.COPY_ROT_Y] ? tl_edit.value[e_value.COPY_ROT_OFFSET_Y] : tl_edit.value[e_value.ROT_Y]
 		zrotcopy = tl_edit.value[e_value.COPY_ROT_Z] ? tl_edit.value[e_value.COPY_ROT_OFFSET_Z] : tl_edit.value[e_value.ROT_Z]
@@ -34,10 +39,18 @@ function view_control_rotate(view)
 	yrot = matrix_multiply(matrix_build(0, 0, 0, tl_edit.value[tl_edit.value[e_value.COPY_ROT_X] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_X : e_value.ROT_X] + 90, 0, tl_edit.value[tl_edit.value[e_value.COPY_ROT_Z] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_Z : e_value.ROT_Z], 1, 1, 1), zrot)
 	
 	// Draw each axis
-	view_control_rotate_axis(view, e_view_control.ROT_X, tl_edit.value[e_value.COPY_ROT_X] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_X : e_value.ROT_X, c_control_red, xrot, len)
-	view_control_rotate_axis(view, e_view_control.ROT_Y, tl_edit.value[e_value.COPY_ROT_Y] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_Y : e_value.ROT_Y, (setting_z_is_up ? c_control_green : c_control_blue), yrot, len)
-	view_control_rotate_axis(view, e_view_control.ROT_Z, tl_edit.value[e_value.COPY_ROT_Z] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_Z : e_value.ROT_Z, (setting_z_is_up ? c_control_blue : c_control_green), zrot, len)
-	
+	if (tl_edit.value[e_value.LOOK_AT_TARGET] != null) {
+		xrot = matrix_multiply(matrix_build(0, 0, 0, 0, -90, tl_edit.value[e_value.LOOK_AT_OFFSET_Z], 1, 1, 1), zrot)
+		yrot = matrix_multiply(matrix_build(0, 0, 0, tl_edit.value[e_value.LOOK_AT_OFFSET_X] + 90, 0,tl_edit.value[e_value.LOOK_AT_OFFSET_Z], 1, 1, 1), zrot)
+
+		view_control_rotate_axis(view, e_view_control.ROT_X, e_value.LOOK_AT_OFFSET_X, c_control_red, xrot, len)
+		view_control_rotate_axis(view, e_view_control.ROT_Y, e_value.LOOK_AT_OFFSET_Y, (setting_z_is_up ? c_control_green : c_control_blue), yrot, len)
+		view_control_rotate_axis(view, e_view_control.ROT_Z, e_value.LOOK_AT_OFFSET_Z, (setting_z_is_up ? c_control_blue : c_control_green), zrot, len)
+	} else {
+		view_control_rotate_axis(view, e_view_control.ROT_X, tl_edit.value[e_value.COPY_ROT_X] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_X : e_value.ROT_X, c_control_red, xrot, len)
+		view_control_rotate_axis(view, e_view_control.ROT_Y, tl_edit.value[e_value.COPY_ROT_Y] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_Y : e_value.ROT_Y, (setting_z_is_up ? c_control_green : c_control_blue), yrot, len)
+		view_control_rotate_axis(view, e_view_control.ROT_Z, tl_edit.value[e_value.COPY_ROT_Z] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_Z : e_value.ROT_Z, (setting_z_is_up ? c_control_blue : c_control_green), zrot, len)	
+	}
 	// Is dragging
 	if (window_busy = "rendercontrol" && view_control_edit_view = view && view_control_edit >= e_view_control.ROT_X && view_control_edit <= e_view_control.ROT_Z)
 	{
@@ -70,16 +83,25 @@ function view_control_rotate(view)
 				axesang = snap(axesang, snapval)
 			
 			newval = view_control_value + axesang
-			newval = tl_value_clamp((tl_edit.value[e_value.COPY_ROT_X + axis_edit] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_X : e_value.ROT_X) + axis_edit, newval)
+			if (tl_edit.value[e_value.LOOK_AT_TARGET] != null)
+				newval = tl_value_clamp(e_value.LOOK_AT_OFFSET_X + axis_edit, newval)
+			else
+				newval = tl_value_clamp((tl_edit.value[e_value.COPY_ROT_X + axis_edit] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_X : e_value.ROT_X) + axis_edit, newval)
 			
 			if (setting_snap_absolute || !dragger_snap)
 				newval = snap(newval, snapval)
 			
-			newval -= tl_edit.value[(tl_edit.value[e_value.COPY_ROT_X + axis_edit] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_X : e_value.ROT_X) + axis_edit]
+			if (tl_edit.value[e_value.LOOK_AT_TARGET] != null)
+				newval -= tl_edit.value[e_value.LOOK_AT_OFFSET_X + axis_edit]
+			else
+				newval -= tl_edit.value[(tl_edit.value[e_value.COPY_ROT_X + axis_edit] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_X : e_value.ROT_X) + axis_edit]
 			
 			// Update
 			tl_value_set_start(action_tl_frame_rot, true)
-			tl_value_set((tl_edit.value[e_value.COPY_ROT_X + axis_edit] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_X : e_value.ROT_X) + axis_edit, newval, true)
+			if (tl_edit.value[e_value.LOOK_AT_TARGET] != null)
+				tl_value_set(e_value.LOOK_AT_OFFSET_X + axis_edit, newval, true)
+			else
+				tl_value_set((tl_edit.value[e_value.COPY_ROT_X + axis_edit] && tl_edit.value[e_value.ROT_TARGET] != null ? e_value.COPY_ROT_OFFSET_X : e_value.ROT_X) + axis_edit, newval, true)
 			tl_value_set_done()
 		}
 		

@@ -41,6 +41,7 @@ function tl_value_is_bool(vid)
 			vid = e_value.CAM_SIZE_KEEP_ASPECT_RATIO ||
 			vid = e_value.CAM_OUTLINE ||
 			vid = e_value.CAM_OUTLINE_NORMAL ||
+			vid = e_value.IK_TARGET_OFFSET ||
 			vid = e_value.MODIFIER_SHAKE ||
 			vid = e_value.MODIFIER_SHAKE_POSITION ||
 			vid = e_value.MODIFIER_SHAKE_ROTATION ||

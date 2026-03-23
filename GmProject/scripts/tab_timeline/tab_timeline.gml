@@ -187,7 +187,7 @@ function tab_timeline()
 	buttonsx += 24 + 6
 	
 	draw_divide_vertical(buttonsx, buttonsy + 2, 20)
-	buttonsx += 4 + 6
+	buttonsx += 4
 	
 	// Transition quick buttons (only show when keyframes are selected)
 	if (setting_advanced_mode)
@@ -270,10 +270,13 @@ function tab_timeline()
 		buttonsx += 24 + 6
 		
 		draw_divide_vertical(buttonsx, buttonsy + 2, 20)
-		buttonsx += 4
-	}
+		buttonsx += 6
 	
-	buttonsx += 6
+		// Record keyframes
+		if (draw_button_icon("timelinerecordkeyframes", buttonsx, buttonsy, 24, 24, timeline_record_keyframes, icons.RECORDKEY, null, false, timeline_record_keyframes ? "tooltiptlrecordkeyframesdisable" : "tooltiptlrecordkeyframesenable"))
+			action_tl_record_keyframes()
+		buttonsx += 24 + 6
+	}
 	
 	timeline_settings_w = (buttonsx - buttonsxstart)
 	
@@ -1712,6 +1715,7 @@ function tab_timeline()
 		{
 			window_focus = "timeline"
 			window_busy = "timelinemarker"
+			timeline_record_keyframes = false
 		}
 		
 		// Create region

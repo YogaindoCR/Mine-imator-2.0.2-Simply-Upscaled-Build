@@ -74,7 +74,7 @@ void main()
 	vTangent = normalize(vTangent - dot(vTangent, vNormal) * vNormal);
 	vTBN = mat3(vTangent, cross(vTangent, vNormal), vNormal);
 	
-	vColor = in_Colour;
+	vColor = in_Colour * uBlendColor;
 	vTexCoord = in_TextureCoord + uTextureOffset;
 	vCustom = in_Wave;
 	

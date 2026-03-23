@@ -20,6 +20,8 @@ function render_update_camera()
 		cam_up[Z] = cx * (xx * xx + yy * yy)
 		
 		cam_fov = setting_cam_work_pov
+		
+		cam_near = clip_near
 	}
 	else
 	{
@@ -61,13 +63,17 @@ function render_update_camera()
 		cam_up[Y] = mat[9]
 		cam_up[Z] = mat[10]
 		cam_fov = max(1, render_camera.value[e_value.CAM_FOV])
-	}
 	
-	cam_near = clip_near
+		cam_near = clip_near * render_camera.value[e_value.CAM_CLIP_NEAR]
+	}
 	cam_far = app.project_render_distance
 	
 	// Render modes can vary in zfar, keep original zfar
 	cam_far_prev = cam_far
+	
+	// Depth offset
+	depth_near = cam_near
+	depth_far_custom = depth_far + (depth_near - 1)
 	
 	background_sky_update()
 }

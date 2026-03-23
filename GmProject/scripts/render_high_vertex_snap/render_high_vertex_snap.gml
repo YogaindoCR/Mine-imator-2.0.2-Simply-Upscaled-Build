@@ -23,6 +23,8 @@ function render_high_vertex_snap(prevsurf)
 	var scale_x = snap_width  / render_width;
 	var scale_y = snap_height / render_height;
 	
+	var gpufilterprev = gpu_get_tex_filter()
+	
 	// Downscale accurately
 	surface_set_target(temp_surf);
 	{
@@ -50,6 +52,8 @@ function render_high_vertex_snap(prevsurf)
 	surface_reset_target();
 	
 	surface_free(temp_surf);
+	
+	gpu_set_tex_filter(gpufilterprev);
 	
 	return resultsurf;
 }

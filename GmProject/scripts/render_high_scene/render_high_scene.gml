@@ -44,7 +44,7 @@ function render_high_scene()
 		render_pass_surf = surface_duplicate(masksurf)
 	
 	// Render lighting mask for background
-	if ((!app.project_render_performance_mode_skipsky || !app.project_render_performance_mode) || !app.project_render_legacy_rendering) {
+	if (!app.project_render_performance_mode_skipsky || !app.project_render_performance_mode || app.project_render_legacy_rendering) {
 		surface_set_target(masksurf)
 		{
 			draw_clear(c_black)
@@ -54,6 +54,7 @@ function render_high_scene()
 				render_world(e_render_mode.SCENE_TEST)
 				render_world_done()
 			} else {
+				gpu_set_blendmode_ext(bm_src_color, bm_one) 
 				draw_surface(render_surface_scene_test, 0, 0)
 			}
 		

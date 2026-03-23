@@ -38,4 +38,5 @@ function shader_material_uniforms()
 	new_shader_uniform("uIsWater")
 	new_shader_uniform("uUseNormalMap")
 	new_shader_uniform("uIgnore")
+	new_shader_uniform("uIgnoreInt")
 }

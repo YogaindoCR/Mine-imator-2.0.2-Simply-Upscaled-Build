@@ -66,7 +66,7 @@ function tl_copy(to)
 	to.blend_mode = blend_mode
 	to.alpha_mode = alpha_mode
 	to.object_tag = object_tag
-	to.volume_mode = volume_mode
+	to.object_tag_int = object_tag_int
 	to.depth_ignore = depth_ignore
 	
 	to.path_update = true

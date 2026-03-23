@@ -12,6 +12,13 @@ function tab_frame_editor_light()
 	draw_dragger("frameeditorlightsize", dx, dy, dragger_width, tl_edit.value[e_value.LIGHT_SIZE], .05, 0, no_limit, 2, .05, tab.light.tbx_size, action_tl_frame_light_size)
 	tab_next()
 	
+	if (project_render_engine)
+	{
+		tab_control_dragger()
+		draw_dragger("frameeditorlightshadowblur", dx, dy, dragger_width, tl_edit.value[e_value.LIGHT_SHADOW_BLUR], .05, 0, no_limit, 1, .05, tab.light.tbx_shadow_blur, action_tl_frame_light_shadow_blur)
+		tab_next()
+	}
+	
 	tab_control_dragger()
 	draw_dragger("frameeditorlightrange", dx, dy, dragger_width, tl_edit.value[e_value.LIGHT_RANGE], tl_edit.value[e_value.LIGHT_RANGE] / 100, 0, no_limit, 250, 0, tab.light.tbx_range, action_tl_frame_light_range)
 	tab_next()

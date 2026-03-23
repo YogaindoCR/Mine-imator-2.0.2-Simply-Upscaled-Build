@@ -17,8 +17,14 @@ vec3 unpackNormal(vec4 c) {
     return (c.rgb / uNormalBufferScale) * 2.0 - 1.0;
 }
 
-float unpackDepth(vec4 c) {
-    return dot(c.rgb, vec3(1.0, 1.0/255.0, 1.0/65025.0));
+float unpackDepth(vec4 enc)
+{
+    return dot(enc, vec4(
+        1.0,
+        1.0/255.0,
+        1.0/65025.0,
+        1.0/16581375.0
+    ));
 }
 
 void main()
@@ -31,8 +37,8 @@ void main()
     vec3 finalColor = vec3(0.0);
     float totalWeight = 0.0;
 
-    for (int y = -4; y <= 4; y++) {
-        for (int x = -4; x <= 4; x++) {
+    for (int y = -5; y <= 5; y++) {
+        for (int x = -5; x <= 5; x++) {
             vec2 offset = vec2(float(x), float(y)) * texelSize;
             vec2 sampleCoord = vTexCoord + offset;
 

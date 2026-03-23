@@ -27,4 +27,9 @@ function shader_reset_uniforms()
 	shader_uniform_glow = null
 	shader_uniform_glow_texture = null
 	shader_uniform_glow_color = null
+	shader_uniform_color = null
+	shader_uniform_alpha = null
+	shader_uniform_ignore = null
+	shader_uniform_ignore_int = default_object_tag_int
+	shader_uniform_replace_color = null
 }

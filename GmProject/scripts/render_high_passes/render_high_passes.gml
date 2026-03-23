@@ -71,14 +71,10 @@ function render_high_passes()
 			surface_set_target_ext(0, render_surface_depth)
 			surface_set_target_ext(1, render_surface_normal)
 			{
-				gpu_set_blendmode_ext(bm_one, bm_zero)
-		
 				draw_clear_alpha(c_black, 0)
 				render_world_start(depth_far)
 				render_world(e_render_mode.HIGH_DEPTH_NORMAL)
 				render_world_done()
-		
-				gpu_set_blendmode(bm_normal)
 			}
 			surface_reset_target()
 		}
@@ -161,8 +157,6 @@ function render_high_passes()
 			surface_set_target_ext(2, render_surface_depth)
 			surface_set_target_ext(3, render_surface_normal)
 			{
-				gpu_set_blendmode_ext(bm_one, bm_zero)
-				
 				draw_clear_alpha(c_black, 0)
 				
 				// World
@@ -171,7 +165,7 @@ function render_high_passes()
 				render_world_done()
 			}
 			surface_reset_target()
-	
+			
 			// Glint rendered manually
 			surface_set_target(render_surface_glint)
 			{
@@ -219,6 +213,8 @@ function render_high_passes()
 		
 				// 2D mode
 				render_set_projection_ortho(0, 0, render_width, render_height, 0)
+		
+				// Alpha fix
 				gpu_set_blendmode_ext(bm_src_color, bm_one)
 				if (render_background)
 					draw_box(0, 0, render_width, render_height, false, c_black, 1)
@@ -242,19 +238,13 @@ function render_high_passes()
 			surface_set_target_ext(4, render_surface_normal)
 			surface_set_target_ext(5, render_surface_glint)
 			{
-				draw_clear(c_black)
+				draw_clear_alpha(c_black, 0)
 				
 				// World
-				render_world_start()
+				render_world_start(depth_far)
 				render_world(e_render_mode.WOLVIZA)
 				render_world_done()
-		
-				// 2D mode
-				render_set_projection_ortho(0, 0, render_width, render_height, 0)
-				gpu_set_blendmode_ext(bm_src_color, bm_one)
-				if (render_background)
-					draw_box(0, 0, render_width, render_height, false, c_black, 1)
-				gpu_set_blendmode(bm_normal)
+				
 				// Alpha fix
 				/*
 				gpu_set_blendmode_ext(bm_src_color, bm_one) 

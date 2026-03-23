@@ -28,6 +28,16 @@ float unpackValue(vec4 c) {
     return dot(c.rgb, vec3(1.0, 0.003921569, 0.00001538));
 }
 
+float unpackDepth32(vec4 enc)
+{
+    return dot(enc, vec4(
+        1.0,
+        1.0/255.0,
+        1.0/65025.0,
+        1.0/16581375.0
+    ));
+}
+
 vec3 unpackNormal(vec4 c) {
     return (c.rgb / uNormalBufferScale) * 2.0 - 1.0;
 }
@@ -46,12 +56,12 @@ void main()
 	// Base Color
 	vec4 baseColor = texture2D(gm_BaseTexture, vTexCoord);
 	float edge;
+	float centerDepth = unpackDepth32(texture2D(uDepthBuffer, vTexCoord));
 	
     // Skip background
-    if (texture2D(uDepthBuffer, vTexCoord).a == 1.0)
+    if (centerDepth != 0.0)
 	{
 	    // Base data
-	    float centerDepth = unpackValue(texture2D(uDepthBuffer, vTexCoord));
 	    vec3 centerNormal = unpackNormal(texture2D(uNormalBuffer, vTexCoord));
 
 	    // Edge accumulation
@@ -77,7 +87,7 @@ void main()
 	    {
 	        vec2 uv = vTexCoord + offsets[i] * 0.001 * uRadius * texel;
 
-	        float d = transformDepth(unpackValue(texture2D(uDepthBuffer, uv)));
+	        float d = transformDepth(unpackDepth32(texture2D(uDepthBuffer, uv)));
 			float centerD = transformDepth(centerDepth);
 			vec3 n = unpackNormal(texture2D(uNormalBuffer, uv));
 			float depthDiff = abs(d - centerD);
@@ -100,7 +110,7 @@ void main()
 	    edge = clamp((edgeDepth + edgeNormal) * uPower, 0.0, 1.0);
 	
 	    // Apply emissive/mask influence (reuse from SSAO)
-	    float emissive = unpackValue(texture2D(uEmissiveBuffer, vTexCoord)) * 255.0;
+	    float emissive = unpackDepth32(texture2D(uEmissiveBuffer, vTexCoord)) * 255.0;
 	    float strength = 1.0 - clamp(emissive, 0.0, 1.0);
 
 	    edge *= strength;

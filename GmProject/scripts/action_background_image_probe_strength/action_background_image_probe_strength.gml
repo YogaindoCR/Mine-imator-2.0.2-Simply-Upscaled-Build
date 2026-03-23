@@ -14,7 +14,7 @@ function action_background_image_probe_strength(val, add)
 			return 0
 		}
 		
-		history_set_var(action_background_image_probe_strength, background_image_probe_strength, background_image_probe_strength * add + val / 100, true)
+		history_set_var(action_background_image_probe_strength, background_image_probe_strength, background_image_probe_strength * add + val, true)
 	}
 	
 	background_image_probe_strength = background_image_probe_strength * add + val / 100

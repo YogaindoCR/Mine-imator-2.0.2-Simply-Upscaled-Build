@@ -59,6 +59,21 @@
             "file": "AVE-X12.png",
             "credits": "Nirwandra",
 			"description": "X-SPI 211? It's more like a courrier than a exploration"
+        },
+        {
+            "file": "AVE-X13.png",
+            "credits": "Wolviza",
+			"description": "Faster than the speed of light"
+        },
+        {
+            "file": "AVE-X14.png",
+            "credits": "Wolviza",
+			"description": "Dude stop spinning"
+        },
+        {
+            "file": "AVE-X15.png",
+            "credits": "Wolviza",
+			"description": "When the color achieves richness, the form attains its fullness also"
         }
     ]
 }

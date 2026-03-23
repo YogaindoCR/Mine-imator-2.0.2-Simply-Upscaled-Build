@@ -169,7 +169,6 @@ function project_save_timeline()
 			json_save_var("alpha_mode", alpha_mode)
 			json_save_var("object_tag", object_tag)
 			json_save_var_bool("depth_ignore", depth_ignore)
-			json_save_var_bool("volume_mode", volume_mode)
 		}
 		
 		if (value_type[e_value_type.PATH])

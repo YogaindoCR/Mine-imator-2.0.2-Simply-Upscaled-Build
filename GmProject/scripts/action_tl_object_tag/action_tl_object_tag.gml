@@ -12,6 +12,7 @@ function action_tl_object_tag(text)
 				with (save_id_find(save_var_save_id[t]))
 				{
 					object_tag = other.save_var_old_value[t]
+					object_tag_int = string_hash_to_int(other.save_var_old_value[t])
 				}
 			}
 		}
@@ -25,6 +26,7 @@ function action_tl_object_tag(text)
 				with (save_id_find(save_var_save_id[t]))
 				{
 					object_tag = other.save_var_new_value[t]
+					object_tag_int = string_hash_to_int(other.save_var_new_value[t])
 				}
 			}
 		}
@@ -42,6 +44,7 @@ function action_tl_object_tag(text)
 				history_save_var(other.id, other.object_tag, text)
 			
 			object_tag = text
+			object_tag_int = string_hash_to_int(text)
 		}
 	}
 }

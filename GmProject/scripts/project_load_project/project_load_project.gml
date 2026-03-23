@@ -23,8 +23,8 @@ function project_load_project(map)
 	project_grid_alpha = value_get_real(map[?"grid_alpha"], project_grid_alpha)
 	view_main.camera = value_get_save_id(map[?"view_main_camera"], -4)
 	view_second.camera = value_get_save_id(map[?"view_second_camera"], -5)
-	
 	project_time_elapsed = value_get_real(map[?"time_elapsed"], project_time_elapsed)
+		time_record_keyframes = value_get_real(map[?"time_record_keyframes"], time_record_keyframes)
 	
 	// If render settings file doesn't exists, set to custom
 	if (project_render_settings != "" && !file_exists_lib(render_directory + project_render_settings + ".mirender"))
@@ -52,6 +52,7 @@ function project_load_project(map)
 		timeline_region_start = value_get_real(tlmap[?"region_start"], timeline_region_start)
 		timeline_region_end = value_get_real(tlmap[?"region_end"], timeline_region_end)
 		timeline_hide_color_tag = value_get_array(tlmap[?"hide_color_tag"], timeline_hide_color_tag)
+		timeline_record_keyframes = value_get_real(tlmap[?"record_keyframes"], timeline_record_keyframes)
 	}
 	
 	var cammap = map[?"work_camera"];

@@ -33,11 +33,13 @@ function tl_value_default(valueid)
 		case e_value.LIGHT_STRENGTH:
 		case e_value.LIGHT_SPECULAR_STRENGTH: return 1
 		case e_value.LIGHT_SIZE: return 2
+		case e_value.LIGHT_SHADOW_BLUR: return 1
 		case e_value.LIGHT_RANGE: return 250
 		case e_value.LIGHT_FADE_SIZE: return 0.5
 		case e_value.LIGHT_SPOT_RADIUS: return 50
 		case e_value.LIGHT_SPOT_SHARPNESS: return 0.5
 		case e_value.CAM_FOV: return 45
+		case e_value.CAM_CLIP_NEAR:
 		case e_value.CAM_EXPOSURE: return 1
 		case e_value.CAM_GAMMA: return 2.2
 		case e_value.CAM_BLADE_AMOUNT:
@@ -192,6 +194,7 @@ function tl_value_default(valueid)
 		case e_value.LOOK_AT_TARGET:
 		case e_value.POS_TARGET:
 		case e_value.SCALE_TARGET: return null
+		case e_value.IK_TARGET_OFFSET: return false
 		case e_value.COPY_POS_OFFSET_X:
 		case e_value.COPY_POS_OFFSET_Y:
 		case e_value.COPY_POS_OFFSET_Z:

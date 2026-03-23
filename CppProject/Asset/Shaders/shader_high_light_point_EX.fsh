@@ -1,6 +1,7 @@
 #define SQRT05 0.707106781
 #define PI 3.14159265
 #define NOISE_SAMPLES 16.0
+#define GOLDEN_ANGLE 2.399963
 
 uniform sampler2D uTexture; // static
 uniform int uIsSky;
@@ -19,8 +20,10 @@ uniform vec3 uShadowPosition; // static
 uniform float uLightSpecular;
 uniform float uLightSize;
 uniform float uNormalStrength;
+uniform float uBias;
 uniform vec2 uKernel2D;
 uniform bool uIgnore;
+uniform bool uParaboloid;
 
 uniform sampler2D uDepthBuffer; // static
 uniform float uDepthBufferSize; // static
@@ -122,9 +125,14 @@ vec3 getMappedNormal(vec2 uv)
 }
 
 // Depth buffer handling
-float unpackDepth(vec4 c)
+float unpackDepth(vec4 enc)
 {
-    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
+    return dot(enc, vec4(
+        1.0,
+        1.0/255.0,
+        1.0/65025.0,
+        1.0/16581375.0
+    ));
 }
 
 vec2 getShadowMapCoord(vec3 look)
@@ -154,8 +162,15 @@ vec4 getFilteredDepth(vec2 uv, vec2 uvMin)
     float samples = 0.0;
     vec2 sampleuv, uvMax, texelOffset;
     vec4 color = vec4(0.0);
-    texelOffset = vec2((1.0/vec2(uDepthBufferSize * 3.0, uDepthBufferSize * 2.0)) * 0.5);
-    uvMax = uvMin + vec2(1.0/3.0, 0.5);
+	if (!uParaboloid) {
+		texelOffset = vec2((1.0/vec2(uDepthBufferSize * 3.0, uDepthBufferSize * 2.0)) * 0.5);
+		uvMax = uvMin + vec2(1.0/3.0, 0.5);
+	}
+	else
+	{
+		texelOffset = vec2(1.0 / uDepthBufferSize, 1.0 / (uDepthBufferSize * 2.0)) * 0.5;
+		uvMax = uvMin + vec2(1.0, 0.5);
+	}
     
     // Top left
     sampleuv = uv - texelOffset.x;
@@ -202,16 +217,21 @@ float calculateShadow(vec2 fragCoord, vec2 bufferMin, float fragDepth, float bia
     subsurf = vec3(0.0);
     subsurfHighlight = vec3(0.0);
     
-	if (!uIgnore) {
-	    if (uLightSize > 0.0001) {
+	if (!uIgnore)
+	{
+	    if (uLightSize > 0.0001)
+		{
 	        float texelsize = uLightSize / uKernel2D[1] / 3.0;
 		
-	        for (int i = 0; i < 128; i++) {
+	        for (int i = 0; i < 128; i++)
+			{
 				if (i > int(uShadowBlurSample))
 					break;
-				
-	            float angle = float(i) * (360.0 / uShadowBlurSample) + uKernel2D[0];
-	            vec2 sampleOffset = vec2(cos(angle), sin(angle)) * texelsize;
+				// Golden Sampling
+				float r = sqrt(float(i)+0.5) / sqrt(float(uShadowBlurSample));
+				float theta = float(i) * GOLDEN_ANGLE + uKernel2D[0];
+
+				vec2 sampleOffset = vec2(cos(theta), sin(theta)) * r * texelsize;
 	            vec2 sampleCoord = fragCoord + sampleOffset;
 
 	            vec2 clampedCoord = clamp(
@@ -223,7 +243,7 @@ float calculateShadow(vec2 fragCoord, vec2 bufferMin, float fragDepth, float bia
 	            float sampleDepth = uLightNear + (uLightFar - uLightNear) *
 	                              unpackDepth(getFilteredDepth(clampedCoord, bufferMin));
 
-	            float shadowTest = smoothstep(bias * 0.5, bias * 1.5, fragDepth - sampleDepth);
+	            float shadowTest = smoothstep(bias * 0.5, bias * 1.25, fragDepth - sampleDepth);
 	            float weight = 1.0 - smoothstep(0.0, uLightSize, length(sampleOffset));
             
 	            shadow += (1.0 - shadowTest) * weight;
@@ -321,6 +341,40 @@ float CSPhase(float dotView, float scatter)
     return result;
 }
 
+vec2 getParaboloidCoord(vec3 worldPos, out vec2 bufferMin)
+{
+    vec3 L = worldPos - uShadowPosition;
+    float dist = length(L);
+    L /= dist;
+
+    int hemisphere = 0;
+
+    if (L.z < 0.0)
+    {
+        hemisphere = 1;
+        L.z = -L.z;
+    }
+
+    float denom = max(L.z + 1.0, 0.0001);
+    float m = 2.0 / denom;
+
+    vec2 uv = L.xy * m;
+    uv = uv * 0.5 + 0.5;
+
+    if (hemisphere == 0)
+    {
+        bufferMin = vec2(0.0, 0.0);
+        uv.y *= 0.5;
+    }
+    else
+    {
+        bufferMin = vec2(0.0, 0.5);
+        uv.y = uv.y * 0.5 + 0.5;
+    }
+
+    return clamp(uv, bufferMin + 0.001, bufferMin + vec2(1.0, 0.5) - 0.001);
+}
+
 void main()
 {
     vec3 light, spec = vec3(0.0);
@@ -362,45 +416,54 @@ void main()
         
         if (dif > 0.0 || sss > 0.0) {
             vec2 fragCoord, bufferMin;
-            vec3 toLight = vPosition - uShadowPosition;
-            vec4 lookDir = vec4(
-                toLight.x / distance(vPosition.xy, uShadowPosition.xy),
-                toLight.y / distance(vPosition.xy, uShadowPosition.xy),
-                toLight.z / distance(vPosition.xz, uShadowPosition.xz),
-                toLight.z / distance(vPosition.yz, uShadowPosition.yz)
-            );
+			
+			if (uParaboloid)
+			{
+				fragCoord = getParaboloidCoord(vPosition, bufferMin);
+			}
+			else
+			{
+				vec3 toLight = vPosition - uShadowPosition;
+	            
+				vec4 lookDir = vec4(
+	                toLight.x / distance(vPosition.xy, uShadowPosition.xy),
+	                toLight.y / distance(vPosition.xy, uShadowPosition.xy),
+	                toLight.z / distance(vPosition.xz, uShadowPosition.xz),
+	                toLight.z / distance(vPosition.yz, uShadowPosition.yz)
+	            );
             
-            // Determine shadow map face
-            if (lookDir.z > SQRT05 && lookDir.w > SQRT05) { // Z+
-                fragCoord = getShadowMapCoord(vec3(0.0, -0.0001, 1.0));
-                fragCoord.x += 1.0/3.0;
-                fragCoord.y += 0.5;
-                bufferMin = vec2(1.0/3.0, 0.5);
-            } else if (lookDir.z < -SQRT05 && lookDir.w < -SQRT05) { // Z-
-                fragCoord = getShadowMapCoord(vec3(0.0, -0.0001, -1.0));
-                fragCoord.x += 2.0/3.0;
-                fragCoord.y += 0.5;
-                bufferMin = vec2(2.0/3.0, 0.5);
-            } else if (lookDir.x > SQRT05) { // X+
-                fragCoord = getShadowMapCoord(vec3(1.0, 0.0, 0.0));
-                bufferMin = vec2(0.0);
-            } else if (lookDir.x < -SQRT05) { // X-
-                fragCoord = getShadowMapCoord(vec3(-1.0, 0.0, 0.0));
-                fragCoord.x += 1.0/3.0;
-                bufferMin = vec2(1.0/3.0, 0.0);
-            } else if (lookDir.y > SQRT05) { // Y+
-                fragCoord = getShadowMapCoord(vec3(0.0, 1.0, 0.0));
-                fragCoord.x += 2.0/3.0;
-                bufferMin = vec2(2.0/3.0, 0.0);
-            } else { // Y-
-                fragCoord = getShadowMapCoord(vec3(0.0, -1.0, 0.0));
-                fragCoord.y += 0.5;
-                bufferMin = vec2(0.0, 0.5);
-            }
+	            // Determine shadow map face
+	            if (lookDir.z > SQRT05 && lookDir.w > SQRT05) { // Z+
+	                fragCoord = getShadowMapCoord(vec3(0.0, -0.0001, 1.0));
+	                fragCoord.x += 1.0/3.0;
+	                fragCoord.y += 0.5;
+	                bufferMin = vec2(1.0/3.0, 0.5);
+	            } else if (lookDir.z < -SQRT05 && lookDir.w < -SQRT05) { // Z-
+	                fragCoord = getShadowMapCoord(vec3(0.0, -0.0001, -1.0));
+	                fragCoord.x += 2.0/3.0;
+	                fragCoord.y += 0.5;
+	                bufferMin = vec2(2.0/3.0, 0.5);
+	            } else if (lookDir.x > SQRT05) { // X+
+	                fragCoord = getShadowMapCoord(vec3(1.0, 0.0, 0.0));
+	                bufferMin = vec2(0.0);
+	            } else if (lookDir.x < -SQRT05) { // X-
+	                fragCoord = getShadowMapCoord(vec3(-1.0, 0.0, 0.0));
+	                fragCoord.x += 1.0/3.0;
+	                bufferMin = vec2(1.0/3.0, 0.0);
+	            } else if (lookDir.y > SQRT05) { // Y+
+	                fragCoord = getShadowMapCoord(vec3(0.0, 1.0, 0.0));
+	                fragCoord.x += 2.0/3.0;
+	                bufferMin = vec2(2.0/3.0, 0.0);
+	            } else { // Y-
+	                fragCoord = getShadowMapCoord(vec3(0.0, -1.0, 0.0));
+	                fragCoord.y += 0.5;
+	                bufferMin = vec2(0.0, 0.5);
+	            }
+			}
             
             // Calculate bias and shadow
             float cosTheta = clamp(dot(normal, normalize(uLightPosition - vPosition)), 0.0, 1.0);
-			float bias = mix(uLightSize * 10.0, 1.6, cosTheta);
+			float bias = (mix(3.6, 0.1, cosTheta) + (uLightSize * 100.0)) * uBias + (dist / 356.0);
 
             float fragDepth = distance(vPosition, uShadowPosition);
             

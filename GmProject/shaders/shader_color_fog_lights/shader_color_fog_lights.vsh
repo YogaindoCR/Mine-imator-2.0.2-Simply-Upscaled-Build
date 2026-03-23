@@ -15,6 +15,7 @@ uniform int uIsGround;
 uniform int uLightAmount; // static
 uniform vec3 uSunDirection; // static
 uniform vec4 uLightData[128]; // static
+uniform int uIgnoreInt; // static
 
 varying vec3 vPosition;
 varying vec3 vNormal;
@@ -92,13 +93,20 @@ void main()
 			vec4 data2 = uLightData[i * 2 + 1];
 			vec3 lightPosition = data1.xyz;
 			float lightRange = data1.w, dis, att;
+			float isignored;
 			
+			// Light linking
+			if (int(data2.a) != -1)
+				isignored = float((int(data2.a) == uIgnoreInt));
+			else
+				isignored = 1.0;
+				
 			dis = distance(vPosition, lightPosition);
 			att = (i > 0) ? max(0.0, 1.0 - dis / lightRange) : 1.0; // Attenuation factor
 			
 			vec3 toLight = (i > 0) ? normalize(lightPosition - vPosition) : uSunDirection;
 			float dif = max(0.0, dot(vNormal, toLight)) * att; // Diffuse factor
-			vDiffuse += data2.rgb * dif;
+			vDiffuse += data2.rgb * dif * isignored;
 		}
 	}
 	

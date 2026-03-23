@@ -34,6 +34,16 @@ float unpackValue(vec4 c)
     return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
 }
 
+float unpackDepth32(vec4 enc)
+{
+    return dot(enc, vec4(
+        1.0,
+        1.0/255.0,
+        1.0/65025.0,
+        1.0/16581375.0
+    ));
+}
+
 vec3 unpackNormal(vec4 c)
 {
     return (c.rgb / uNormalBufferScale) * 2.0 - 1.0;
@@ -68,11 +78,12 @@ float getSSAOstrength(vec2 uv)
 
 void main()
 {
-	// Perform alpha test to ignore background
-	if (texture2D(uDepthBuffer, vTexCoord).a < 1.0)
+    float depth = unpackDepth32(texture2D(uDepthBuffer, vTexCoord));
+	
+	// Perform depth test to ignore background
+	if (depth == 0.0)
 		discard;
 		
-    float depth = unpackValue(texture2D(uDepthBuffer, vTexCoord));
     vec3 origin = posFromBuffer(vTexCoord, depth);
     vec3 normal = unpackNormal(texture2D(uNormalBuffer, vTexCoord));
     float sampleRadius = uRadius * (1.0 - depth);
@@ -100,10 +111,11 @@ void main()
 
 	        if (sampleUV.x < 0.0 || sampleUV.x > 1.0 || sampleUV.y < 0.0 || sampleUV.y > 1.0)
 	            continue;
-	        if (texture2D(uDepthBuffer, sampleUV).a < 1.0)
+				
+	        float sampleDepth = unpackDepth32(texture2D(uDepthBuffer, sampleUV));
+	        if (sampleDepth == 0.0)
 	            continue;
-
-	        float sampleDepth = unpackValue(texture2D(uDepthBuffer, sampleUV));
+				
 	        vec3 sampleWorld = posFromBuffer(sampleUV, sampleDepth);
 	        vec3 sampleNormal = unpackNormal(texture2D(uNormalBuffer, sampleUV));
 	        float sampleStrength = getSSAOstrength(sampleUV);
@@ -129,10 +141,11 @@ void main()
 
 	        if (sampleUV.x < 0.0 || sampleUV.x > 1.0 || sampleUV.y < 0.0 || sampleUV.y > 1.0)
 	            continue;
-	        if (texture2D(uDepthBuffer, sampleUV).a < 1.0)
+				
+	        sampleDepth = unpackDepth32(texture2D(uDepthBuffer, sampleUV));
+	        if (sampleDepth == 0.0)
 	            continue;
 
-	        sampleDepth = unpackValue(texture2D(uDepthBuffer, sampleUV));
 	        sampleWorld = posFromBuffer(sampleUV, sampleDepth);
 	        sampleNormal = unpackNormal(texture2D(uNormalBuffer, sampleUV));
 	        sampleStrength = getSSAOstrength(sampleUV);

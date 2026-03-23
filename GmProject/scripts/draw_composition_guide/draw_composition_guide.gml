@@ -240,30 +240,54 @@ function draw_composition_guide(xx, yy, wid, hei, alpha = 0.8)
 			break;
 
         /*
+		
         case e_composition_guide.PYRAMID:
             draw_line_ext(cx, yy, xx, yy + hei, col, a);
             draw_line_ext(cx, yy, xx + wid, yy + hei, col, a);
             draw_line_ext(xx, yy + hei, xx + wid, yy + hei, col, a);
 			break;
-
-        
-        case e_composition_guide.CIRCULAR:
-        {
-            var rx = wid * 0.4;
-            var ry = hei * 0.4;
-            var steps = 64;
-
-            for (var i = 0; i < steps; i++)
-            {
-                var a1 = degtorad((i/steps)*360);
-                var a2 = degtorad(((i+1)/steps)*360);
-
-                draw_line_ext(cx + cos(a1)*rx, cy + sin(a1)*ry,
-                              cx + cos(a2)*rx, cy + sin(a2)*ry,
-                              col, a);
-            }
-        }
-        break;
 		*/
+		
+		case e_composition_guide.TRIANGLE:
+			// Golden triangle
+			// Main diagonal
+			draw_line_ext(xx, yy, xx + wid, yy + hei, col, a);
+			
+			// Perpendicular to (wid, 0)
+			var px = (wid * wid * wid) / (wid * wid + hei * hei);
+			var py = (hei * wid * wid) / (wid * wid + hei * hei);
+			draw_line_ext(xx + wid, yy, xx + px, yy + py, col, a);
+			
+			// Perpendicular to (0, hei)
+			var px2 = (wid * hei * hei) / (wid * wid + hei * hei);
+			var py2 = (hei * hei * hei) / (wid * wid + hei * hei);
+			draw_line_ext(xx, yy + hei, xx + px2, yy + py2, col, a);
+			break;
+
+        case e_composition_guide.CIRCULAR:
+			// Concentric circles/ovals
+			var cnt = project_grid_rows;
+			for (var i = 1; i <= cnt; i++)
+			{
+				var rx = (wid / 2) * (i / cnt);
+				var ry = (hei / 2) * (i / cnt);
+				// We don't have draw_ellipse_ext, but we can use draw_circle_ext if it supports non-uniform scaling or just draw it as a circles.
+				// Actually, draw_circle_ext might not support ellipses easily.
+				// Let's check draw_circle_ext implementation if it exists.
+				// If not, I'll just use 32 segments or so.
+				var detail = 64;
+				var px, py, ox, oy;
+				for (var j = 0; j <= detail; j++)
+				{
+					var angle = (j / detail) * 360;
+					px = cx + lengthdir_x(rx, angle);
+					py = cy + lengthdir_y(ry, angle);
+					if (j > 0)
+						draw_line_ext(ox, oy, px, py, col, a);
+					ox = px;
+					oy = py;
+				}
+			}
+			break;
     }
 }

@@ -228,6 +228,11 @@ function project_load_timeline(map)
 			alpha_mode = value_get_real(map[?"alpha_mode"], alpha_mode)
 			
 		object_tag = value_get_string(map[?"object_tag"], object_tag)
+		if (object_tag = "Main")
+			object_tag_int = default_object_tag_int
+		else
+			object_tag_int = string_hash_to_int(object_tag)
+			
 		depth_ignore = value_get_real(map[?"depth_ignore"], depth_ignore)
 		volume_mode = value_get_real(map[?"volume_mode"], volume_mode)
 		

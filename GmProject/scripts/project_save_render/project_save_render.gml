@@ -30,6 +30,7 @@ function project_save_render()
 		json_save_var("render_shadows_transparent", project_render_shadows_transparent)
 		json_save_var("render_shadows_blur_sample", project_render_shadows_blur_sample)
 		json_save_var("render_shadows_blur", project_render_shadows_blur)
+		json_save_var("render_shadows_bias", project_render_shadows_bias)
 		
 		json_save_var_bool("render_subsurface_quality", project_render_subsurface_quality)
 		json_save_var("render_subsurface_samples", project_render_subsurface_samples)

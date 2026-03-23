@@ -204,6 +204,7 @@ function shader_startup()
 	{
 		new_shader_uniform("uNear")
 		new_shader_uniform("uFar")
+		new_shader_uniform("uIsCamera")
 	}
 	
 	with (shader_map[?shader_depth_point])
@@ -211,6 +212,10 @@ function shader_startup()
 		new_shader_uniform("uEye")
 		new_shader_uniform("uNear")
 		new_shader_uniform("uFar")
+		new_shader_uniform("uParaboloid")
+		new_shader_uniform("uLightPos")
+		new_shader_uniform("uLightRange")
+		new_shader_uniform("uHemisphere")
 	}
 	
 	with (shader_map[?shader_draw_texture])
@@ -325,6 +330,8 @@ function shader_startup()
 		new_shader_uniform("uKernel2D")
 		new_shader_uniform("uAbsorption")
 		new_shader_uniform("uShadowBlurSample")
+		new_shader_uniform("uBias")
+		new_shader_uniform("uParaboloid")
 	}
 	
 	with (shader_map[?shader_high_light_point_shadowless])
@@ -376,6 +383,8 @@ function shader_startup()
 		new_shader_uniform("uResolution")
 		new_shader_uniform("uKernel2D")
 		new_shader_uniform("uShadowBlurSample")
+		new_shader_uniform("uBias")
+		new_shader_uniform("uRenderShadow")
 	}
 	
 	with (shader_map[?shader_high_light_sun])
@@ -416,6 +425,7 @@ function shader_startup()
 		new_shader_uniform("uKernel2D")
 		new_shader_uniform("uAbsorption")
 		new_shader_uniform("uShadowBlurSample")
+		new_shader_uniform("uBias")
 	}
 	
 	with (shader_map[?shader_high_ssao])

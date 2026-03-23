@@ -82,6 +82,11 @@ function tab_frame_editor_camera()
 			tab_control_dragger()
 			draw_dragger("frameeditorcamerabladeangle", dx, dy, dragger_width, tl_edit.value[e_value.CAM_BLADE_ANGLE], 1, -no_limit, no_limit, 0, 0.1, tab.camera.tbx_blade_angle, action_tl_frame_cam_blade_angle)
 			tab_next()
+	
+			// Clip Near
+			tab_control_dragger()
+			draw_dragger("frameeditorcameraclipnear", dx, dy, dragger_width, tl_edit.value[e_value.CAM_CLIP_NEAR], tl_edit.value[e_value.CAM_CLIP_NEAR] / 100, 1, app.project_render_distance, 1, 1, tab.camera.tbx_clip_near, action_tl_frame_cam_clip_near,)
+			tab_next()
 			
 			tab_collapse_end()
 		}
@@ -712,11 +717,11 @@ function tab_frame_editor_camera()
 		tab_control_meter()
 		draw_meter("frameeditorcameravhsdistortion", dx, dy, dw, round(tl_edit.value[e_value.CAM_VHS_DISTORTION] * 100), -100, 100, 50, 1, tab.camera.tbx_vhs_distortion, action_tl_frame_cam_vhs_distortion)
 		tab_next()
-		/*
+		
 		tab_control_meter()
 		draw_meter("frameeditorcameravhsnoise", dx, dy, dw, round(tl_edit.value[e_value.CAM_VHS_NOISE] * 100), -100, 100, 50, 1, tab.camera.tbx_vhs_noise, action_tl_frame_cam_vhs_noise)
 		tab_next()
-		*/
+		
 		tab_control_meter()
 		draw_meter("frameeditorcameravhsscanlines", dx, dy, dw, round(tl_edit.value[e_value.CAM_VHS_SCANLINES] * 100), -100, 100, 50, 1, tab.camera.tbx_vhs_scanlines, action_tl_frame_cam_vhs_scanlines)
 		tab_next()

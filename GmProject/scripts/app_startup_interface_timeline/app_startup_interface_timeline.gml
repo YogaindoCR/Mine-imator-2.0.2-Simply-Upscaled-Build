@@ -51,6 +51,10 @@ function app_startup_interface_timeline()
 	timeline_settings_run_fn = ""
 	timeline_settings_keyframes = false
 	timeline_settings_keyframes_export = false
+	timeline_record_keyframes = false
+	timeline_record_keyframes_balance = 0
+	timeline_record_time_last = 0
+	timeline_record_time_reset = true
 	
 	copy_kf_amount = 0
 	copy_kf_pos[0] = 0

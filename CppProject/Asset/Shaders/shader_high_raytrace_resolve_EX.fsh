@@ -1,5 +1,4 @@
 #define DEPTH_SENSITIVITY 40.0
-#define MIN_WEIGHT_THRESHOLD 0.0001
 
 varying vec2 vTexCoord;
 
@@ -13,9 +12,14 @@ uniform int uIndirect;
 uniform vec2 uScreenSize;
 uniform float uSampleIndex;
 
-float unpackDepth(vec4 c)
+float unpackDepth(vec4 enc)
 {
-    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
+    return dot(enc, vec4(
+        1.0,
+        1.0/255.0,
+        1.0/65025.0,
+        1.0/16581375.0
+    ));
 }
 
 vec3 unpackNormal(vec4 c)
@@ -55,10 +59,7 @@ void main()
         float originDepth = unpackDepth(texture2D(uDepthBuffer, vTexCoord));
 		
 		sampleColor += sampleNeighbor(vTexCoord, originNormal, originDepth, originMat);
-
-        // Only update color if the sample has significant weight
-        if (sampleColor.a > MIN_WEIGHT_THRESHOLD)
-            color.rgb = (sampleColor.rgb) / sampleColor.a;
+        color.rgb = (sampleColor.rgb) / sampleColor.a;
     }
 
     gl_FragColor = color;

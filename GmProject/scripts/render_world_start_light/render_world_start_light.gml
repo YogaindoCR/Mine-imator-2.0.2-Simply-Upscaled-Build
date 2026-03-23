@@ -7,9 +7,6 @@
 
 function render_world_start_light(from, to, offset, tl)
 {
-	var scale = 1.0 + (app.project_render_buffer_scale / ((app.project_render_engine) ? 1000 : 1600))
-	var scaleMatrix = matrix_build(0, 0, 0, 0, 0, 0, scale, scale, scale)
-
 	render_light_from = from
 	render_light_to = to
 	render_light_offset = offset
@@ -19,12 +16,16 @@ function render_world_start_light(from, to, offset, tl)
 	render_light_strength = tl.value[e_value.LIGHT_STRENGTH]
 	render_light_specular_strength = tl.value[e_value.LIGHT_SPECULAR_STRENGTH]
 	render_light_size = tl.value[e_value.LIGHT_SIZE]
+	render_light_shadow_blur = tl.value[e_value.LIGHT_SHADOW_BLUR]
 	render_light_fade_size = tl.value[e_value.LIGHT_FADE_SIZE]
-	render_light_tl = tl
+	render_light_tl = tl.object_tag
 	
 	if (tl.type = e_tl_type.POINT_LIGHT)
 	{
-		render_light_fov = 90
+		if (!proj_depth_paraboloid)
+			render_light_fov = 90
+		else
+			render_light_fov = 180
 	}
 	else if (tl.type = e_tl_type.SPOT_LIGHT)
 	{
@@ -51,10 +52,7 @@ function render_world_start_light(from, to, offset, tl)
 	render_shadow_from = render_proj_from
 	light_proj_matrix = matrix_get(matrix_projection)
 	light_view_matrix = matrix_get(matrix_view)
-	
-	var scaled_view = matrix_multiply(light_view_matrix, scaleMatrix);
-	light_view_proj_matrix = matrix_multiply(scaled_view, light_proj_matrix);
-
+	light_view_proj_matrix = matrix_multiply(light_view_matrix, light_proj_matrix)
 	
 	proj_depth_near = render_light_near
 	proj_depth_far = render_light_far

@@ -174,6 +174,7 @@ function enums()
 		LIGHT_STRENGTH,
 		LIGHT_SPECULAR_STRENGTH,
 		LIGHT_SIZE,
+		LIGHT_SHADOW_BLUR,
 		LIGHT_RANGE,
 		LIGHT_FADE_SIZE,
 		LIGHT_SPOT_RADIUS,
@@ -216,6 +217,7 @@ function enums()
 		CAM_DOF_FRINGE_RED,
 		CAM_DOF_FRINGE_GREEN,
 		CAM_DOF_FRINGE_BLUE,
+		CAM_CLIP_NEAR,
 		CAM_BLOOM,
 		CAM_BLOOM_THRESHOLD,
 		CAM_BLOOM_INTENSITY,
@@ -373,6 +375,7 @@ function enums()
 		PATH_POINT_ANGLE,
 		PATH_POINT_SCALE,
 		IK_TARGET,
+		IK_TARGET_OFFSET,
 		IK_BLEND,
 		IK_TARGET_ANGLE,
 		IK_ANGLE_OFFSET,
@@ -907,7 +910,8 @@ function enums()
 		WORKBENCH,
 		WORLD,
 		WORLD_SMALL,
-		YOUTUBE
+		YOUTUBE,
+		RECORDKEY
 	}
 	
 	// Render modes
@@ -1246,6 +1250,7 @@ function enums()
 		//DIAGONAL,
 		RADIAL,
 		//PYRAMID,
-		//CIRCULAR
+		TRIANGLE,
+		CIRCULAR
 	}	// Update app_startup_lists() when adding types
 }

@@ -28,6 +28,7 @@ function project_reset_render()
 	project_render_shadows_transparent = false
 	project_render_shadows_blur_sample = 20
 	project_render_shadows_blur = 1
+	project_render_shadows_bias = 0.25
 	
 	project_render_subsurface_quality = 1
 	project_render_subsurface_samples = 7

@@ -115,6 +115,7 @@ function tl_update_values(force = true)
 		
 		tl_update_values_ease(e_value.IK_TARGET)
 		if (value[e_value.IK_TARGET] != null || notoptimized) {
+			tl_update_values_ease(e_value.IK_TARGET_OFFSET)
 			tl_update_values_ease(e_value.IK_BLEND)
 			tl_update_values_ease(e_value.IK_TARGET_ANGLE)
 			tl_update_values_ease(e_value.IK_ANGLE_OFFSET)
@@ -245,6 +246,7 @@ function tl_update_values(force = true)
 		tl_update_values_ease(e_value.LIGHT_STRENGTH)
 		tl_update_values_ease(e_value.LIGHT_SPECULAR_STRENGTH)
 		tl_update_values_ease(e_value.LIGHT_SIZE)
+		tl_update_values_ease(e_value.LIGHT_SHADOW_BLUR)
 		tl_update_values_ease(e_value.LIGHT_RANGE)
 		tl_update_values_ease(e_value.LIGHT_FADE_SIZE)
 		
@@ -260,6 +262,7 @@ function tl_update_values(force = true)
 	if (value_type[e_value_type.CAMERA])
 	{
 		tl_update_values_ease(e_value.CAM_FOV)
+		tl_update_values_ease(e_value.CAM_CLIP_NEAR)
 		
 		tl_update_values_ease(e_value.CAM_LIGHT_MANAGEMENT)
 		tl_update_values_ease(e_value.CAM_TONEMAPPER)

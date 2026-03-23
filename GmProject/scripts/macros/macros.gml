@@ -21,9 +21,9 @@ function macros()
 	// Versions
 	#macro mineimator_version			"2.0.2"							// Base Mine-imator version
 	#macro mineimator_version_sub		"Simply Upscaled Build 1.0.12"	// Mod name and version (e.g. "Community Build 1.0.0")
-	#macro mineimator_version_extra		"Build 1"						// Additional suffix (e.g. "Alpha 1" or "Pre-Release 2")
+	#macro mineimator_version_extra		"Personal Build 7"				// Additional suffix (e.g. "Alpha 1" or "Pre-Release 2")
 	#macro mineimator_version_full		(mineimator_version + ((mineimator_version_sub != "") ? " " + mineimator_version_sub : "") + ((mineimator_version_extra != "") ? " (" + mineimator_version_extra + ")" : ""))
-	#macro mineimator_version_date		"2026.1.29"
+	#macro mineimator_version_date		"2026.2.21"
 	#macro minecraft_version			"1.21.11-rc2" // 1.21.11-rc2
 	#macro gm_runtime					GM_runtime_version
 	 
@@ -171,6 +171,7 @@ function macros()
 	#macro particle_sheet				-5
 	#macro particle_template			-6
 	#macro normal_buffer_scale			8
+	#macro default_object_tag_int		string_hash_to_int("Main")
 	
 	// World
 	#macro block_size					16

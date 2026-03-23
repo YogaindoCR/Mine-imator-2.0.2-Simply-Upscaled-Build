@@ -4,7 +4,7 @@
 /// @arg updatepose]
 /// @desc Updates matrixes and positions.
 
-function tl_update_matrix(usepaths = false, updateik = true, updatepose = false, updatecopy = false)
+function tl_update_matrix(usepaths = false, updateik = true, updatepose = false, updatecopy = false, updatemodifier = true)
 {
 	var start, curtl, tlamount, bend, pos, rot, sca, par, matrixnoscale, hasik, lasttex, ikblend, posebend;
 	var inhalpha, inhcolor, inhglowcolor, inhvis, inhbend, inhtex, inhsurf, inhsubsurf, inhmodifierframeskip;
@@ -23,7 +23,10 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 	{
 		curtl = app.project_timeline_list[|i]
 		
-		if(!instance_exists(curtl))
+		if (!instance_exists(curtl))
+			continue
+		
+		if (app.setting_viewport_optimization && (curtl.hide || (!curtl.value_inherit[e_value.VISIBLE] && !curtl.value[e_value.VISIBLE])) && !curtl.selected)
 			continue
 		
 		// Update children
@@ -43,7 +46,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 		}
 			
 		// Force update for shake modifier check
-		if (curtl.modifier_shake && curtl.modifier_shake_update) {
+		if (curtl.value[e_value.MODIFIER_SHAKE] && curtl.modifier_shake_update) {
 			curtl.update_matrix = true
 			curtl.modifier_shake_update = false // Updated in app_update_animate
 		}
@@ -161,7 +164,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 			}
 		
 			// Create modifier value
-			if (!updatepose && !updatecopy) // Avoid creating multiple value
+			if (updatemodifier) // Avoid creating multiple value
 				tl_update_modifier()
 			
 			// Create main matrix
@@ -302,7 +305,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 			
 			if (updatecopy)
 			{
-				if (value[e_value.ROT_TARGET] != null)
+				if (value[e_value.ROT_TARGET] != null && instance_exists(value[e_value.ROT_TARGET]))
 				{
 					var target_rot_mat = array_copy_1d(value[e_value.ROT_TARGET].matrix)
 					var par = value[e_value.ROT_TARGET];
@@ -332,7 +335,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 
 				}
 				
-				if (value[e_value.POS_TARGET] != null)
+				if (value[e_value.POS_TARGET] != null && instance_exists(value[e_value.POS_TARGET]))
 				{
 					if (value[e_value.COPY_POS_CHILD])
 					{
@@ -375,7 +378,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 				}
 				
 				// THIS IS AS CLEAN AS AN UNWIPE BUTT CRACK!!!
-				if (value[e_value.LOOK_AT_TARGET] != null)
+				if (value[e_value.LOOK_AT_TARGET] != null && instance_exists(value[e_value.LOOK_AT_TARGET]))
 				{
  					var mat = array_copy_1d(matrix);
 					var mat2 = matrix_create(vec3(0), vec3(0), vec3(1));
@@ -395,7 +398,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 					
 				}
 			
-				if (value[e_value.SCALE_TARGET] != null)
+				if (value[e_value.SCALE_TARGET] != null && instance_exists(value[e_value.SCALE_TARGET]))
 				{
 					matrix_remove_scale(matrix_parent)
 					var scale = vec3(1);
@@ -611,7 +614,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 			
 			// Add bend angle from IK
 			if (hasik)
-				value_inherit[e_value.BEND_ANGLE_X] += part_joint_bend_angle * ikblend
+				value_inherit[e_value.BEND_ANGLE_X] += (part_joint_bend_angle + ((value[e_value.IK_TARGET_OFFSET]) ? value[e_value.BEND_ANGLE_X] : 0)) * ikblend
 			
 			if ((value_inherit[e_value.ALPHA] * 1000) != 0)
 			{
@@ -674,7 +677,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 			app.project_inherit_pose_array[i].update_matrix = true
 		
 		with (app)
-			tl_update_matrix(false, false, true)
+			tl_update_matrix(false, false, true, false, false)
 		
 		app.project_inherit_pose_array = []
 	}
@@ -686,7 +689,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 			app.project_copy_obj_array[i].update_matrix = true
 		
 		with (app)
-			tl_update_matrix(false, true, false, true)
+			tl_update_matrix(false, true, false, true, false)
 		
 		app.project_copy_obj_array = []
 	}

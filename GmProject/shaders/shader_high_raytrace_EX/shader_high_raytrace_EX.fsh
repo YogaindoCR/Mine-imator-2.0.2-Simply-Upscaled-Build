@@ -62,6 +62,16 @@ float unpackValue(vec4 c)
     return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
 }
 
+float unpackDepth32(vec4 enc)
+{
+    return dot(enc, vec4(
+        1.0,
+        1.0/255.0,
+        1.0/65025.0,
+        1.0/16581375.0
+    ));
+}
+
 // Transforms Z depth with camera data
 float transformDepth(float depth)
 {
@@ -229,9 +239,9 @@ vec3 rayTrace(vec3 rayStart, vec3 rayDir, float rayThickness, vec3 noise)
 		if (rayUv.x < 0.0 || rayUv.y < 0.0 || rayUv.x > 1.0 || rayUv.y > 1.0)
 			break;
 		
-		sampleDepth = unpackValue(texture2D(uDepthBuffer, rayUv));
+		sampleDepth = unpackDepth32(texture2D(uDepthBuffer, rayUv));
 		
-		if (sampleDepth < 0.001)
+		if (sampleDepth == 0.0)
 			continue;
 		
 		// Get ray/scene depth
@@ -275,8 +285,7 @@ vec3 rayTrace(vec3 rayStart, vec3 rayDir, float rayThickness, vec3 noise)
 void main()
 {
 	// Depth quick exit
-	vec4 depthData  = texture2D(uDepthBuffer, vTexCoord);
-	float depth		= unpackValue(depthData);
+	float depth		= unpackDepth32(texture2D(uDepthBuffer, vTexCoord));
 	
 	// Sample material (Specular only)
 	vec3 materialData = vec3(0.0);
@@ -288,10 +297,8 @@ void main()
 	
 	vec3 rayCoord = vec3(-1.0);
 	
-	float pixel = (floor(vTexCoord.x * uScreenSize.x) + floor(vTexCoord.y * uScreenSize.y)) + uSampleIndex;
-	
 	// Don't calculate ray if depth isn't valid
-	if (!(depthData.a < 0.001 || depth > 0.999 || materialData.r > 0.95))
+	if (!(depth == 0.0 || depth > 0.9999999 || materialData.r > 0.95))
 	{
 		// Sample buffers
 		normal	= unpackNormal(texture2D(uNormalBuffer, vTexCoord));

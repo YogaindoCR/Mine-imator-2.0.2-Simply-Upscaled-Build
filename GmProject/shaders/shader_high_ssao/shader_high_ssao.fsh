@@ -69,11 +69,12 @@ float getSSAOstrength(vec2 uv)
 void main()
 {
 	// Perform alpha test to ignore background
-	if (texture2D(uDepthBuffer, vTexCoord).a < 1.0)
+	float originDepth = unpackValue(texture2D(uDepthBuffer,vTexCoord));
+	
+	if (originDepth == 0.0)
 		discard;
 	
 	// Get view space origin
-	float originDepth = unpackValue(texture2D(uDepthBuffer,vTexCoord));
 	vec3 origin = posFromBuffer(vTexCoord, originDepth);
 	
 	// Get scaled radius

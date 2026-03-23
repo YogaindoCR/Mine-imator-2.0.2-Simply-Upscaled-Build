@@ -223,6 +223,13 @@ function draw_recent()
 				hover = areamouseon && app_mouse_box(cardx, cardy, 240, 240) && !popup_mouseon && !toast_mouseon && !context_menu_mouseon;
 				mouseon = hover
 				
+				// Hard reload if not exist
+				if(!instance_exists(item))
+				{
+					recent_load()
+					break
+				}
+				
 				// Animation
 				microani_set("recent" + string(item), null, mouseon, mouseon && mouse_left, false)
 				

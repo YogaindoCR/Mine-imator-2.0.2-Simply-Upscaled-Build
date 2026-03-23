@@ -10,6 +10,7 @@ attribute vec3 in_Tangent;
 
 uniform float uNear; // static
 uniform float uFar; // static
+uniform bool uIsCamera; // static
 
 varying vec3 vPosition;
 varying vec2 vTexCoord;
@@ -70,7 +71,13 @@ void main()
 		vPosition = (gm_Matrices[MATRIX_WORLD] * vec4(in_Position, 1.0)).xyz;
 	
 	gl_Position = uTAAMatrix * gm_Matrices[MATRIX_PROJECTION] * (gm_Matrices[MATRIX_VIEW] * vec4(vPosition, 1.0));
-	vDepth = (gl_Position.z - uNear) / (uFar - uNear);
+	if (uIsCamera)
+	{
+		vec4 depthPos = (gm_Matrices[MATRIX_VIEW] * vec4(vPosition, 1.0));
+		vDepth = ((depthPos.z - uNear) / (uFar - uNear));
+	} else {
+		vDepth = (gl_Position.z - uNear) / (uFar - uNear);
+	}
 	
 	vColor = uBlendColor * in_Colour;
 }

@@ -106,7 +106,7 @@ function app_update_place()
 			update_matrix = true
 		}
 		
-		tl_update_matrix()
+		tl_update_matrix(false, true, false, false, false)
 			
 		app_stop_place()
 	}

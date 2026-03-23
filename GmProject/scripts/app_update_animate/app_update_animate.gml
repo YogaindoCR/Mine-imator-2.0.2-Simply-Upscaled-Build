@@ -32,15 +32,15 @@ function app_update_animate(force = false)
 	with (obj_timeline)
 	{
 		//check if hided
-		if (app.setting_viewport_optimization && hide && parent != app && (app.window_state != "export_movie" || app.popup_exportmovie.optimization) && !selected && type != e_tl_type.CAMERA)
+		if (app.setting_viewport_optimization && hide && parent != app && !selected && type != e_tl_type.CAMERA)
 			continue;
 		
 		// Update values
-		if (updatevalues)
+		if (updatevalues && (!app.timeline_record_keyframes || !selected))
 			tl_update_values(selected)
 			
 		//check if not updated or visible
-		if (app.setting_viewport_optimization && (app.window_state != "export_movie" || app.popup_exportmovie.optimization) && (!value_inherit[e_value.VISIBLE] || hide) && type != e_tl_type.CAMERA)
+		if (app.setting_viewport_optimization && (!value_inherit[e_value.VISIBLE] || hide) && type != e_tl_type.CAMERA)
 			continue;
 		
 		tex_obj = value_inherit[e_value.TEXTURE_OBJ]
@@ -111,16 +111,17 @@ function app_update_animate(force = false)
 			app.background_light_data[app.background_light_amount * 8 + 4] = (color_get_red(value[e_value.LIGHT_COLOR]) / 255) * value[e_value.LIGHT_STRENGTH]
 			app.background_light_data[app.background_light_amount * 8 + 5] = (color_get_green(value[e_value.LIGHT_COLOR]) / 255) * value[e_value.LIGHT_STRENGTH]
 			app.background_light_data[app.background_light_amount * 8 + 6] = (color_get_blue(value[e_value.LIGHT_COLOR]) / 255) * value[e_value.LIGHT_STRENGTH]
-			app.background_light_data[app.background_light_amount * 8 + 7] = 1
+			app.background_light_data[app.background_light_amount * 8 + 7] = (object_tag_int = default_object_tag_int || app.project_render_legacy_rendering) ? -1 : object_tag_int
 			app.background_light_amount++
 		}
 		
-		// Update modifier values
+		// Update Modifier Values
 		if (!updatevalues)
 			continue;
 			
-		modifier_shake = (value[e_value.MODIFIER_SHAKE] && value[e_value.MODIFIER_SHAKE_INTENSITY] != 0)
-		modifier_shake_update = modifier_shake
+		modifier_shake_update = value[e_value.MODIFIER_SHAKE]
+		if (value[e_value.MODIFIER_SHAKE])
+			modifier_step += (app.timeline_marker - app.timeline_marker_previous) * value[e_value.MODIFIER_SHAKE_SPEED] / 25
 	}
 	
 	if (updatevalues)

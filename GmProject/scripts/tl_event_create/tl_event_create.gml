@@ -65,10 +65,10 @@ function tl_event_create()
 	
 	modifier_frameskipped = false
 	modifier_step = 0
+	modifier_step_prev = vec2(0) // Modifier_step + ShakeStrength
 	modifier_shake_pos = vec3(0)
 	modifier_shake_rot = vec3(0)
 	modifier_shake_bend = vec3(0)
-	modifier_shake = false
 	modifier_shake_update = false
 	modifier_shake_auto_offset = random_range(-1000.0, 1000.0)
 	modifier_physc_pos = vec3(0)
@@ -132,6 +132,7 @@ function tl_event_create()
 	blend_mode = "normal"
 	alpha_mode = e_alpha_mode.DEFAULT
 	object_tag = "Main"
+	object_tag_int = default_object_tag_int
 	depth_ignore = false
 	volume_mode = false
 	

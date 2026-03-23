@@ -35,15 +35,9 @@ function render_high()
 		render_high_passes()
 		
 		// Shadows
-		if (render_shadows) {
-			if (render_sample_current > 1)
-				render_shadow_blur_kernel = vec2(random_range(45.0, 1.0), random_range(0.6, 1.4))
-			else
-				render_shadow_blur_kernel = vec2(0.0, 1.0)
-				
+		if (render_shadows)
 			render_high_shadows();
-		}
-		
+			
 		// Indirect lighting
 		if (render_indirect)
 			render_high_indirect()

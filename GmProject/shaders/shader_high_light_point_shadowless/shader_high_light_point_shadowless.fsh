@@ -17,7 +17,7 @@ uniform float uSSS;
 uniform float uDefaultSubsurface;
 uniform float uDefaultEmissive;
 uniform float uLightSpecular;
-uniform bool uIgnore;
+uniform int uIgnoreInt;
 
 uniform float uSampleIndex;
 uniform int uAlphaHash;
@@ -127,24 +127,25 @@ void main()
 	vec3 lightResult = vec3(0.0);
 	vec3 specResult = vec3(0.0);
 	
-    // Alpha hashing
-    if (uAlphaHash > 0)
-        if (baseColor.a < hash(vec2(hash(vPosition.xy + (uSampleIndex / 255.0)), vPosition.z + (uSampleIndex / 255.0))))
-            discard;
-	
 	if (baseColor.a == 0.0)
 		discard;
-	
-	if (uIsSky > 0 || uIgnore)
+		
+    // Alpha hashing
+    if (uAlphaHash > 0)
 	{
-		if (uIgnore) {
-			lightResult = vec3(0.0);
-			specResult = vec3(0.0);
-		}
-		else {
-			lightResult = vec3(1.0);
-			specResult = vec3(uLightSpecular);
-		}
+        if (baseColor.a < hash(vec2(hash(vPosition.xy + (uSampleIndex / 255.0)), vPosition.z + (uSampleIndex / 255.0))))
+            discard;
+		else
+			baseColor.a = 1.0;
+	}
+	
+	if (baseColor.a <= 0.011)
+		baseColor.a = 0.0;
+	
+	if (uIsSky > 0)
+	{
+		lightResult = vec3(0.0);
+		specResult = vec3(0.0);
 	}
 	else
 	{
@@ -165,38 +166,49 @@ void main()
 			// No use in shading a pixel if it's not in range
 			if (distance(vPosition, lightPosition) > lightRange)
 				continue;
+				
+			float isignored;
 			
-			// Diffuse factor
-			float dif = max(0.0, dot(normal, normalize(lightPosition - vPosition)));
+			// Light linking
+			if (int(data3.b) != -1)
+				isignored = float((int(data3.b) == uIgnoreInt));
+			else
+				isignored = 1.0;
 			
-			// Attenuation factor
-			float att = 1.0 - clamp((distance(vPosition, lightPosition) - lightRange * (1.0 - lightFadeSize)) / (lightRange * lightFadeSize), 0.0, 1.0);
-			dif *= att;
+			if (isignored == 1.0)
+			{
+				// Diffuse factor
+				float dif = max(0.0, dot(normal, normalize(lightPosition - vPosition)));
 			
-			vec3 light = vec3(0.0);
-			vec3 spec = vec3(0.0);
+				// Attenuation factor
+				float att = 1.0 - clamp((distance(vPosition, lightPosition) - lightRange * (1.0 - lightFadeSize)) / (lightRange * lightFadeSize), 0.0, 1.0);
+				dif *= att;
 			
-			// Diffuse light
-			light = data2.rgb * data3.r * dif;
+				vec3 light = vec3(0.0);
+				vec3 spec = vec3(0.0);
+				
+				// Diffuse light
+				light = data2.rgb * data3.r * dif;
 			
-			lightResult.rgb += light;
+				lightResult.rgb += light;
 			
-			// Calculate specular
-			vec3 N = normal;
-			vec3 V = normalize(uCameraPosition - vPosition);
-			vec3 L = normalize(lightPosition - vPosition);
-			vec3 H = normalize(V + L);
-			float NDF = distributionGGX(N, H, roughness);
-			float G = geometrySmith(N, V, L, roughness);
+				// Calculate specular
+				vec3 N = normal;
+				vec3 V = normalize(uCameraPosition - vPosition);
+				vec3 L = normalize(lightPosition - vPosition);
+				vec3 H = normalize(V + L);
+				float NDF = distributionGGX(N, H, roughness);
+				float G = geometrySmith(N, V, L, roughness);
 			
-			float F = fresnelSchlickRoughness(max(dot(H, V), 0.0), F0, roughness);
+				float F = fresnelSchlickRoughness(max(dot(H, V), 0.0), F0, roughness);
 			
-			float numerator = NDF * G * F;
-			float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
-			float specular = numerator / denominator;
+				float numerator = NDF * G * F;
+				float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
+				float specular = numerator / denominator;
 			
-			spec = data2.rgb * specular * mix(vec3(1.0), baseColor.rgb * vColor.rgb, metallic) * data3.g * uLightSpecular * dif;
-			specResult.rgb += spec;
+				spec = data2.rgb * specular * mix(vec3(1.0), baseColor.rgb * vColor.rgb, metallic) * data3.g * uLightSpecular * dif;
+				specResult.rgb += spec;
+			}
 		}
 	}
 	

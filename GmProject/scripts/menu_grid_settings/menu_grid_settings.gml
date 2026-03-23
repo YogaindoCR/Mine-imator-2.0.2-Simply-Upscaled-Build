@@ -25,6 +25,13 @@ function menu_grid_settings()
         tab_next()
     }
 	
+	if (project_composition_guide = e_composition_guide.CIRCULAR)
+    {
+        tab_control_dragger()
+        draw_dragger("viewgridrows", dx, dy, dragger_width, project_grid_rows, 0.05, 1, 10, 3, 1, tbx_grid_rows, action_project_grid_rows, null, true)
+        tab_next()
+	}
+	
     tab_control_meter()
     draw_meter("viewgridalpha", dx, dy, dw, round(project_grid_alpha * 100), 0, 100, 80, 1, tbx_grid_alpha, action_project_grid_alpha)
     tab_next()

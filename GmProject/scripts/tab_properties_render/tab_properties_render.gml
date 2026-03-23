@@ -164,6 +164,10 @@ function tab_properties_render()
 			tab_control_switch()
 			draw_dragger("rendershadowsblur", dx, dy, dragger_width, project_render_shadows_blur, (project_render_shadows_blur / 500) + 0.001, 0, 10.000, 1.000, 0.001, tab.render.tbx_shadows_blur, action_project_render_shadows_blur)
 			tab_next()
+			
+			tab_control_switch()
+			draw_dragger("rendershadowsbias", dx, dy, dragger_width, project_render_shadows_bias, 0.01, 0.0, 3.0, 1.0, 0.001, tab.render.tbx_shadows_bias, action_project_render_shadows_bias)
+			tab_next()
 		}
 		
 		tab_collapse_end()

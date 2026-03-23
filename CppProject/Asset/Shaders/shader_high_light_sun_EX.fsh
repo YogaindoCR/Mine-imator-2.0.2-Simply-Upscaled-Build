@@ -1,5 +1,6 @@
 #define PI 3.14159265
 #define NUM_CASCADES 3
+#define GOLDEN_ANGLE 2.399963
 
 uniform int uIsSky;
 
@@ -36,6 +37,7 @@ uniform bool uSSSHighQuality;
 uniform float uLightSpecular;
 uniform float uLightSize;
 uniform float uShadowBlurSample;
+uniform float uBias;
 
 uniform float uDefaultSubsurface;
 uniform float uDefaultEmissive;
@@ -89,9 +91,14 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
            geometrySchlickGGX(max(dot(N, L), 0.0), roughness);
 }
 
-float unpackDepth(vec4 c)
+float unpackDepth(vec4 enc)
 {
-    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
+    return dot(enc, vec4(
+        1.0,
+        1.0/255.0,
+        1.0/65025.0,
+        1.0/16581375.0
+    ));
 }
 
 vec4 cascadeDepthBuffer(int index, vec2 coord)
@@ -217,19 +224,25 @@ void main()
         
 	        if (fragCoord.x >= 0.0 && fragCoord.y >= 0.0 && fragCoord.x <= 1.0 && fragCoord.y <= 1.0) {
 	            fragDepth = mix(uSunNear[cascadeIndex], uSunFar[cascadeIndex], fragDepth);
-	            float bias = mix(1.6, uLightSize * 10.0, dot(normal, uLightDirection));
+	            float bias = (mix(3.6, 0.1, dot(normal, uLightDirection)) + (uLightSize * 10.0)) * uBias;
 
-	            if (uLightSize > 0.005) {
+	            if (uLightSize > 0.005)
+				{
 	                float blurAmount = uLightSize * (0.01 + (float(cascadeIndex) * -0.004)) * uKernel2D[1];
-	                bias += float(cascadeIndex) * (float(cascadeIndex) / 1.2);
+	                bias += (float(cascadeIndex) * (float(cascadeIndex) / 1.2) * 1.5);
 					shadow = 0.0;
+					float goldenAngle = 2.399963;
                 
-	                for (int i = 0; i < 128; i++) {
+	                for (int i = 0; i < 128; i++)
+					{
 						if (i > int(uShadowBlurSample))
 							break;
-					
-	                    float angle = float(i) * (360.0 / uShadowBlurSample) + uKernel2D[0];
-	                    vec2 sampleCoord = fragCoord + vec2(cos(angle), sin(angle)) * blurAmount;
+						// Golden Sampling
+						float r = sqrt(float(i)+0.5) / sqrt(float(uShadowBlurSample));
+						float theta = float(i) * GOLDEN_ANGLE + uKernel2D[0];
+
+						vec2 sampleOffset = vec2(cos(theta), sin(theta)) * r * blurAmount;
+	                    vec2 sampleCoord = fragCoord + sampleOffset;
                     
 	                    if (sampleCoord.x >= 0.0 && sampleCoord.y >= 0.0 && sampleCoord.x <= 1.0 && sampleCoord.y <= 1.0) {
 	                        float sampleDepth = mix(uSunNear[cascadeIndex], uSunFar[cascadeIndex], 

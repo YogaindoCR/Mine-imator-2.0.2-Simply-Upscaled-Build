@@ -33,6 +33,8 @@ function tl_keyframe_save(kf)
 	
 	if (kf.value[e_value.SCALE_TARGET] != null)
 		with (kf.value[e_value.SCALE_TARGET])
+			tl_save()
+	
 	
 	if (kf.value[e_value.TEXTURE_OBJ] > 0)
 	{

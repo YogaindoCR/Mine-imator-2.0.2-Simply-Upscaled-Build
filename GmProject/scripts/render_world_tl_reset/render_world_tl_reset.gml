@@ -86,6 +86,12 @@ function render_world_tl_reset()
 	// Glint
 	render_set_uniform_int("uGlintEnabled", 0)
 	
+	// Ignore depth (Decals)
+	shader_uniform_ignore = false
+	shader_uniform_ignore_int = default_object_tag_int
+	render_set_uniform("uIgnore", shader_uniform_ignore)
+	render_set_uniform_int("uIgnoreInt", shader_uniform_ignore_int)
+	
 	render_blend_prev = null
 	render_alpha_prev = null
 }

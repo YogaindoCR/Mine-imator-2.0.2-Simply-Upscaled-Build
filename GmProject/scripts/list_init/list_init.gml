@@ -1442,7 +1442,8 @@ function list_init(name)
 			//menu_add_item(e_composition_guide.DIAGONAL, text_get("viewcompositionguidetypediagonal"))
 			menu_add_item(e_composition_guide.RADIAL, text_get("viewcompositionguidetyperadial"))
 			//menu_add_item(e_composition_guide.PYRAMID, text_get("viewcompositionguidetypepyramid"))
-			//menu_add_item(e_composition_guide.CIRCULAR, text_get("viewcompositionguidetypecircular"))
+			menu_add_item(e_composition_guide.TRIANGLE, text_get("viewcompositionguidetypetriangle"))
+			menu_add_item(e_composition_guide.CIRCULAR, text_get("viewcompositionguidetypecircular"))
 			
 			break
 		}

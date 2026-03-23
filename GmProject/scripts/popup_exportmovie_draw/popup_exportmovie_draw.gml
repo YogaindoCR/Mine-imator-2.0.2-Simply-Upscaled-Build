@@ -134,11 +134,14 @@ function popup_exportmovie_draw()
 	tab_next()
 	
 	// Enable optimization
-	if (setting_viewport_optimization) {
+	/*
+	if (setting_viewport_optimization)
+	{
 		tab_control_checkbox()
 		draw_checkbox("exportmovieoptimization", dx, dy, popup.optimization, action_toolbar_exportmovie_optimization)
 		tab_next()
 	}
+	*/
 	
 	// Save
 	tab_control_button_label()

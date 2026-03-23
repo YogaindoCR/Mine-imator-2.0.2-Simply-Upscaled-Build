@@ -23,9 +23,23 @@ varying float vDepth;
 varying vec4 vColor;
 varying mat3 vTBN;
 
-vec4 packDepth(float f)
+vec4 packDepth(float depth)
 {
-	return vec4(floor(f * 255.0) / 255.0, fract(f * 255.0), fract(f * 255.0 * (255.0 - ((sin(uSampleIndex * 28.1223)) * 144.173))), 1.0);
+    vec4 enc = fract(depth * vec4(
+        1.0,
+        255.0,
+        65025.0,
+        16581375.0
+    ));
+
+    enc -= enc.yzww * vec4(
+        1.0/255.0,
+        1.0/255.0,
+        1.0/255.0,
+        0.0
+    );
+
+    return enc;
 }
 
 vec4 packNormal(vec3 n)
@@ -59,35 +73,6 @@ void main()
 {
 	vec2 tex = vTexCoord;
 	vec4 baseColor = vColor * texture2D(uTexture, tex);
-	vec4 Depthresult, Normalresult, Glintresult;
-	Depthresult = vec4(0.0);
-	Normalresult = vec4(0.0);
-	Glintresult = vec4(0.0);
 	
-	// ======== DEPTH & NOTMAL ========
-	
-	if (baseColor.a == 0.0)
-		discard;
-	
-	if (uAlphaHash > 0 && (baseColor.a < hash(vec2(hash(vPosition.xy + (uSampleIndex / 255.0)), vPosition.z + (uSampleIndex / 255.0)))))
-		discard;
-	
-	// Depth
-	Depthresult = packDepth(vDepth);
-	
-	// Normal
-	Normalresult = packNormal(getMappedNormal(tex));
-	
-	// ======== GLINT ========
-	
-	if (uGlintEnabled > 0 && baseColor.a > 0.0)
-		baseColor.rgb = pow(texture2D(uGlintTexture, (tex * ((uTextureSize / uGlintSize))) + uGlintOffset).rgb * baseColor.a * uGlintStrength, vec3(uGamma));
-	else
-		baseColor.rgb = vec3(0.0);
-	
-	Glintresult = vec4(baseColor.rgb, 1.0);
-	
-	gl_FragData[0] = Depthresult;
-	gl_FragData[1] = Normalresult;
-	gl_FragData[2] = Glintresult;
+	gl_FragData[0] = baseColor;
 }

@@ -174,10 +174,21 @@ function tab_timeline_editor_appearance()
 	}
 	
 	// Object Tags
-	var tagmaincheck = (tl_edit.type = e_tl_type.POINT_LIGHT || tl_edit.type = e_tl_type.SPOT_LIGHT)
-	var boxenabled = tl_edit.type = e_tl_type.POINT_LIGHT && !tl_edit.shadows && tl_edit.object_tag != "Main"
-	tab_control_textfield(true, ui_small_height + 4)
-	tab.appearance.tbx_object_tag.text = tl_edit.object_tag
-	draw_textfield(tagmaincheck ? "timelineeditorobjecttagmain" : "timelineeditorobjecttagarray", dx, dy, dw, ui_small_height + 4, tab.appearance.tbx_object_tag, action_tl_object_tag, tl_edit.object_tag, "top", boxenabled)
-	tab_next()
+	if (!app.project_render_legacy_rendering)
+	{
+		var tagmaincheck = (tl_edit.type = e_tl_type.POINT_LIGHT || tl_edit.type = e_tl_type.SPOT_LIGHT)
+		
+		tab_control_textfield(true, ui_small_height + 4)
+		tab.appearance.tbx_object_tag.text = tl_edit.object_tag
+		draw_textfield(tagmaincheck ? "timelineeditorobjecttagmain" : "timelineeditorobjecttagarray", dx, dy, dw, ui_small_height + 4, tab.appearance.tbx_object_tag, action_tl_object_tag, tl_edit.object_tag, "top")
+		tab_next()
+	}
+	else
+	{
+		// Warn users
+		dy -= 3
+		draw_button_label("settingslegacyrenderingwarning", dx, dy, dw, icons.WARNING_TRIANGLE, e_button.LABEL, action_filepath_mineimator, null, true)
+		tab_next()
+		dy -= 10
+	}
 }

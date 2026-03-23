@@ -86,6 +86,8 @@
 		"tl/": {
 			"previouskeyframe": "Previous keyframe",
 			"nextkeyframe": "Next keyframe",
+			"recordkeyframesenable": "Enable record keyframes mode",
+			"recordkeyframesdisable": "Disable record keyframes mode",
 			"previousframe": "Back 1 frame",
 			"nextframe": "Forward 1 frame",
 			"stop": "Stop",
@@ -173,6 +175,7 @@
 				"export": "Export keyframes",
 				"select": "Select keyframes...",
 				"select/": {
+					"current": "Current marker",
 					"before": "Before marker",
 					"after": "After marker",
 					"first": "First in timelines",
@@ -850,7 +853,7 @@
 			"pass": "Render pass",
 			"pass/": {
 				"combined": "Combined",
-				"depth": "Depth (24bit)",
+				"depth": "Depth (32bit)",
 				"normal": "Normal",
 				"material": "Material",
 				"diffuse": "Diffuse",
@@ -886,6 +889,7 @@
 			"diagonal": "Diagonal",
 			"radial": "Radial",
 			"pyramid": "Pyramid",
+			"triangle": "Triangle",
 			"circular": "Circular"
 		},
 		"snap/": {
@@ -2765,6 +2769,7 @@
 			"spotbuffersize": "Spot light buffer size",
 			"pointbuffersize": "Point light buffer size",
 			"blur": "Shadows blur markiplier",
+			"bias": "Shadows Bias",
 			"blursample": "Shadows Blur Sample",
 			"transparent": "Transparent shadows",
 			"buffersize128": "Tiny",
@@ -3720,6 +3725,7 @@
 		"ik/": {
 			"tip": "Allows the limb to rotate and bend towards another timeline or position.",
 			"target": "Target",
+			"targetoffset": "Bend X as Offset",
 			"blend": "Blend",
 			"angletarget": "Angle target",
 			"angleoffset": "Angle offset"
@@ -3864,6 +3870,7 @@
 			"strength": "Strength",
 			"specularstrength": "Specular strength",
 			"size": "Size",
+			"shadowblur": "Blur Size",
 			"range": "Range",
 			"fadesize": "Fade size",
 			"spotsharpness": "Spot sharpness",
@@ -3872,6 +3879,7 @@
 		"camera": "CAMERA",
 		"camera/": {
 			"fov": "Field of view",
+			"clipnear": "Near Clip",
 			"lightmanagement": "Light management",
 			"tonemapper": "Tonemapper",
 			"tonemapper/": {
@@ -4144,6 +4152,7 @@
 		"viewportoptimization": "Viewport optimization",
 		"unstablefeatures": "Unstable features",
 		"unstablefeatureslabelwarning": "Unstable Features is Enabled",
+		"legacyrenderingwarning": "Legacy Rendering is Enabled",
 		"performancemodewarning": "Performance mode is Enabled",
 		"interface": "INTERFACE",
 		"appearance": "Appearance",

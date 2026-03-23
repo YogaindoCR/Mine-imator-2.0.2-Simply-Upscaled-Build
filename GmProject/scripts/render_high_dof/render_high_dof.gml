@@ -4,25 +4,35 @@
 function render_high_dof(prevsurf)
 {
 	var depthsurf, cocsurf, resultsurf;
+	render_surface[0] = surface_require(render_surface[0], render_width, render_height)
+	depthsurf = render_surface[0]
 	
 	// Get depth
-	if (render_mode != 2) {
-		render_surface[0] = surface_require(render_surface[0], render_width, render_height)
-		depthsurf = render_surface[0]
+	if (render_quality != e_view_mode.RENDER)
+	{
 		surface_set_target(depthsurf)
 		{
 			gpu_set_blendmode_ext(bm_one, bm_zero)
-		
+			
+			render_use_camera_depth = true
+			
 			draw_clear(c_white)
-			render_world_start()
+			render_world_start(depth_far)
 			render_world(e_render_mode.DEPTH)
 			render_world_done()
-		
+			
+			render_use_camera_depth = false
+			
 			gpu_set_blendmode(bm_normal)
 		}
 		surface_reset_target()
 	} else {
-		depthsurf = surface_duplicate(render_surface_depth)
+		surface_set_target(depthsurf)
+		{
+			cam_far = depth_far_custom // Cam far fix
+			draw_surface(render_surface_depth, 0, 0)
+		}
+		surface_reset_target()
 	}
 
 	// Create CoC buffer from depth

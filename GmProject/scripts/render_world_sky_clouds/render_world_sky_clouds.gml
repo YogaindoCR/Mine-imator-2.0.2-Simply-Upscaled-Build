@@ -15,6 +15,7 @@ function render_world_sky_clouds()
 	
 	// Shading
 	render_set_uniform_int("uIsSky", 1)
+	render_set_uniform_int("uAlphaHash", 0)
 	render_set_uniform_color("uBlendColor", background_sky_clouds_final, background_clouds_alpha)
 	render_set_uniform_color("uGlowColor", c_black, 1)
 	render_set_uniform_int("uGlowTexture", 0)
@@ -44,4 +45,6 @@ function render_world_sky_clouds()
 	render_set_uniform("uLightSpecular", render_light_specular_strength)
 	if (!background_fog_show || !background_fog_sky)
 		render_set_uniform("uFogShow", app.background_fog_show)
+		
+	render_set_uniform_int("uAlphaHash", render_alpha_hash)
 }

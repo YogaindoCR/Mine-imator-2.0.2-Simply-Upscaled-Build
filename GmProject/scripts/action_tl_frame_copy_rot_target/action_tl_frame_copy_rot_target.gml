@@ -3,6 +3,7 @@
 
 function action_tl_frame_copy_rot_target(target)
 {
+	render_low_drawing = -1
 	tl_value_set_start(action_tl_frame_copy_rot_target, true)
 	tl_value_set(e_value.ROT_TARGET, target, false)
 	

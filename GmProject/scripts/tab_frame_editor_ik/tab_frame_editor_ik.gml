@@ -45,6 +45,10 @@ function tab_frame_editor_ik()
 		draw_meter("frameeditorikblend", dx, dy, dw, round(tl_edit.value[e_value.IK_BLEND] * 100), 0, 100, 100, 1, tab.constraints.tbx_ik_blend, action_tl_frame_ik_blend)
 		tab_next()
 		
+		tab_control_switch()
+		draw_switch("frameeditoriktargetoffset", dx, dy, tl_edit.value[e_value.IK_TARGET_OFFSET], action_tl_frame_ik_target_offset)
+		tab_next()
+		
 		tab_collapse_end()
 	}
 }

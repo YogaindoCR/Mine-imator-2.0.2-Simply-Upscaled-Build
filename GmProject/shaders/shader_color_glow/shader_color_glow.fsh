@@ -83,6 +83,9 @@ void main()
 	vec2 tex = vTexCoord;
 	vec4 baseColor = vColor * texture2D(uTexture, tex); // Get base
 	
+	if (baseColor.a == 0.0)
+		discard;
+	
 	// Glow using base texture and color settings
 	if (uGlowTexture > 0)
 	{
@@ -110,8 +113,8 @@ void main()
 			baseColor.a = 1.0;
 	}
 	
-	if ((baseColor.a <= 0.98 && uGlow < 1) || baseColor.a == 0.0)
-		discard;
-	
+	if (texture2D(uTexture, tex).a <= 0.011)
+		baseColor.a = 0.0;
+		
 	gl_FragColor = baseColor;
 }

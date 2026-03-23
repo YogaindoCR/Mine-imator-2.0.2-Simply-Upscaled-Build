@@ -11,7 +11,7 @@ function shader_high_outline_set()
 	gpu_set_texrepeat_ext(sampler_map[?"uEmissiveBuffer"], false)
 	
 	render_set_uniform("uNormalBufferScale", is_cpp() ? normal_buffer_scale : 1)
-	render_set_uniform("uNear", depth_near)
+	render_set_uniform("uNear", clip_near)
 	render_set_uniform("uFar", depth_far)
 	render_set_uniform("uProjMatrixInv", matrix_inverse(proj_matrix))
 	render_set_uniform_vec2("uScreenSize", render_width, render_height)

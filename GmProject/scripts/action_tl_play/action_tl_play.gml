@@ -15,6 +15,7 @@ function action_tl_play(stop = false)
 	else
 	{
 		timeline_marker = stop ? timeline_playing_start_marker : round(timeline_marker)
+		timeline_record_keyframes = false
 		action_tl_play_break()
 	}
 }

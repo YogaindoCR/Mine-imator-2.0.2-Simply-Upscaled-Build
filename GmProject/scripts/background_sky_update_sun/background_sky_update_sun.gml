@@ -17,5 +17,5 @@ function background_sky_update_sun()
 	background_light_data[4] = (color_get_red(background_sunlight_color_final) / 255) * background_sunlight_strength
 	background_light_data[5] = (color_get_green(background_sunlight_color_final) / 255) * background_sunlight_strength
 	background_light_data[6] = (color_get_blue(background_sunlight_color_final) / 255) * background_sunlight_strength
-	background_light_data[7] = range * 2
+	background_light_data[7] = default_object_tag_int
 }

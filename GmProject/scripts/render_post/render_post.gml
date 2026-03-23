@@ -9,6 +9,37 @@ function render_post(finalsurf, sceneeffects = true, posteffects = true)
 	finalsurf = render_high_post_start(finalsurf)
 	render_post_kernel = (render_samples < 2 || render_quality != 2) ? 1 : random_range(0.85, 1.15)
 	
+	// Fill in the depth & normal surface blank
+	if (sceneeffects && render_quality == e_view_mode.RENDER) 
+	{
+		var depthtemp = null
+	
+		depthtemp = surface_require(depthtemp, render_width, render_height)
+	
+		surface_set_target(depthtemp)
+		{
+			draw_clear(c_white)
+			draw_surface(render_surface_depth, 0, 0)
+		}
+		surface_reset_target()
+	
+		surface_copy(render_surface_depth, 0, 0, depthtemp)
+		
+		if (render_camera_outline && render_camera.value[e_value.CAM_OUTLINE_NORMAL]) // Initiate when needed
+		{
+			surface_set_target(depthtemp)
+			{
+				draw_clear(c_white)
+				draw_surface(render_surface_normal, 0, 0)
+			}
+			surface_reset_target()
+	
+			surface_copy(render_surface_normal, 0, 0, depthtemp)
+		}
+	
+		surface_free(depthtemp)
+	}
+	
 	if (render_glow && sceneeffects)
 		render_surface_glow_cache = surface_require(render_surface_glow_cache, render_width, render_height)
 	

@@ -9,6 +9,7 @@ function render_low()
 	
 	render_alpha_hash = false;
 	render_alpha_hash_force = true;
+	render_light_tl = "Main"
 	
 	if (render_low_drawing < 3 + (string(render_view_current) != string(view_main))) {
         surface_set_target(surf);

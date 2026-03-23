@@ -7,9 +7,14 @@ uniform float uFar;
 
 varying vec2 vTexCoord;
 
-float unpackDepth(vec4 c)
+float unpackDepth(vec4 enc)
 {
-    return dot(c.rgb, vec3(1.0, 0.003921569, 0.00001538));
+    return dot(enc, vec4(
+        1.0,
+        1.0/255.0,
+        1.0/65025.0,
+        1.0/16581375.0
+    ));
 }
 
 float getDepth(vec2 coord)

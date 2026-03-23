@@ -55,6 +55,8 @@ function app_startup_interface_tabs()
 			tbx_shadows_blur_sample = new_textbox_decimals()
 			tbx_shadows_blur = new_textbox_decimals()
 			tbx_shadows_blur.suffix = "x"
+			tbx_shadows_bias = new_textbox_decimals()
+			tbx_shadows_bias.suffix = "x"
 			
 			tbx_subsurface_samples = new_textbox_integer()
 			tbx_subsurface_strength = new_textbox_integer()
@@ -672,6 +674,8 @@ function app_startup_interface_tabs()
 		{
 			has_spotlight = false
 			tbx_size = new_textbox_decimals()
+			tbx_shadow_blur = new_textbox_decimals()
+			tbx_shadow_blur.suffix = "x"
 			tbx_range = new_textbox_decimals()
 			tbx_strength = new_textbox_integer()
 			tbx_strength.suffix = "%"
@@ -693,6 +697,7 @@ function app_startup_interface_tabs()
 			tbx_video_size_custom_height = new_textbox_integer()
 			tbx_fov = new_textbox_decimals()
 			tbx_fov.suffix = "°"
+			tbx_clip_near = new_textbox_integer()
 			
 			tbx_blade_amount = new_textbox_integer()
 			tbx_blade_angle = new_textbox_ndecimals()

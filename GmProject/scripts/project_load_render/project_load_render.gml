@@ -31,6 +31,7 @@ function project_load_render(map)
 	project_render_shadows_transparent = value_get_real(map[?"render_shadows_transparent"], project_render_shadows_transparent)
 	project_render_shadows_blur_sample = value_get_real(map[?"render_shadows_blur_sample"], project_render_shadows_blur_sample)
 	project_render_shadows_blur = value_get_real(map[?"render_shadows_blur"], project_render_shadows_blur)
+	project_render_shadows_bias = value_get_real(map[?"render_shadows_bias"], project_render_shadows_bias)
 	
 	project_render_subsurface_quality = value_get_real(map[?"render_subsurface_quality"], project_render_subsurface_quality)
 	project_render_subsurface_samples = value_get_real(map[?"render_subsurface_samples"], project_render_subsurface_samples)

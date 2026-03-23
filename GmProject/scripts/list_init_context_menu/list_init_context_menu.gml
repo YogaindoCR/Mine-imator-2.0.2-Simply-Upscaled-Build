@@ -206,6 +206,7 @@ function list_init_context_menu(name)
 			list_item_add(text_get("contextmenutlkeyframesselectafter"), null, "", null, null, null, action_tl_select_keyframes_after_marker)
 			list_item_add(text_get("contextmenutlkeyframesselectfirst"), null, "", null, null, null, action_tl_select_keyframes_first)
 			list_item_add(text_get("contextmenutlkeyframesselectlast"), null, "", null, null, null, action_tl_select_keyframes_last)
+			list_item_add(text_get("contextmenutlkeyframesselectcurrent"), null, "", null, null, null, action_tl_select_keyframes_current_marker)
 			
 			list_item_add(text_get("contextmenutlkeyframesselectregion"), null, "", null, null, null, action_tl_select_keyframes_region)
 			list_item_last.disabled = (timeline_region_start = null)

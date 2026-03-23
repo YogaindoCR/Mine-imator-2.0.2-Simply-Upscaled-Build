@@ -1,5 +1,6 @@
 #define PI 3.141592653589793
 #define INV_PI 0.3183098861837907
+#define GOLDEN_ANGLE 2.399963
 
 uniform sampler2D uTexture; // static
 uniform int uIsSky;
@@ -23,6 +24,8 @@ uniform float uNormalStrength;
 uniform vec2 uKernel2D;
 uniform float uShadowBlurSample;
 uniform bool uIgnore;
+uniform float uBias;
+uniform bool uRenderShadow;
 
 uniform sampler2D uDepthBuffer; // static
 
@@ -112,9 +115,14 @@ vec3 getMappedNormal(vec2 uv)
 }
 
 // Faster depth unpacking using bit manipulation emulation
-float unpackDepth(vec4 c)
+float unpackDepth(vec4 enc)
 {
-    return c.r + c.g * (1.0/255.0) + c.b * (1.0/65025.0);
+    return dot(enc, vec4(
+        1.0,
+        1.0/255.0,
+        1.0/65025.0,
+        1.0/16581375.0
+    ));
 }
 
 // Better hash function with less artifacts
@@ -216,31 +224,33 @@ void main()
 				}
                 
                 dif *= difMask;
-                
                 // PCSS shadow calculation
-				if (difMask > 0.0) {
-				    vec2 shadowCoord = (vec2(vShadowCoord.x, -vShadowCoord.y) / vShadowCoord.w + 1.0) * 0.5;
-    
+				if (difMask > 0.0 && uRenderShadow)
+				{
+					vec2 shadowCoord = (vec2(vShadowCoord.x, -vShadowCoord.y) / vShadowCoord.w + 1.0) * 0.5;
 				    if (shadowCoord.x > 0.0 && shadowCoord.y > 0.0 && shadowCoord.x < 1.0 && shadowCoord.y < 1.0) {
-				        float fragDepth = min(vShadowCoord.z, uLightFar);
+						float fragDepth = min(vShadowCoord.z, uLightFar);
 				        float cosTheta = clamp(dot(normal, normalize(uLightPosition - vPosition)), 0.0, 1.0);
-				        float bias = mix(uLightSize / 100.0, 1.6, cosTheta);
+				        float bias = mix(1.6, uLightSize / 100.0 + 0.1, cosTheta) * uBias;
         
 				        // PCSS parameters
 				        float lightSizeUV = uLightSize * 0.01 * uKernel2D[1]; // Convert light size to UV space
-				        float searchWidth = lightSizeUV * (fragDepth - uLightNear) / fragDepth;
+						float searchWidth = lightSizeUV * (fragDepth - uLightNear) / fragDepth;
 				        float blockerDistance = 0.0;
 				        float numBlockers = 0.0;
         
 				        // Blocker search
-				        if (uLightSize > 0.1) {
+				        if (uLightSize > 0.1)
+						{
 				            float sumDepth = 0.0;
             
 				            for (float i = 0.0; i < 64.0; i++) {
-				                if (i > (uShadowBlurSample / 2.0)) break;
-                
-				                float angle = i * (360.0 / (uShadowBlurSample / 2.0)) + uKernel2D[0];
-				                vec2 offset = vec2(sin(angle), cos(angle)) * searchWidth;
+				                if (i > (uShadowBlurSample)) break;
+								// Golden Sampling
+								float r = sqrt(float(i)+0.5) / sqrt(float(uShadowBlurSample));
+								float theta = float(i) * GOLDEN_ANGLE + uKernel2D[0];
+								
+								vec2 offset = vec2(cos(theta), sin(theta)) * r * searchWidth;
 				                float sampleDepth = uLightNear + unpackDepth(texture2D(uDepthBuffer, shadowCoord + offset)) * (uLightFar - uLightNear);
                 
 				                if (sampleDepth < fragDepth - bias) {
@@ -258,16 +268,24 @@ void main()
 				        float penumbraWidth = 0.0;
 				        if (numBlockers > 0.0) {
 				            penumbraWidth = (fragDepth - blockerDistance) * lightSizeUV / blockerDistance / 2.0;
-				        }
-        
+				        } else {
+							penumbraWidth = lightSizeUV / 30.0;
+						}
+						
+						// float penumbraWidth = lightSizeUV / 20.0;
+						
 				        // PCSS filtering
 				        shadow = 0.0;
-				        if (uLightSize > 0.1) {
-				            for (float i = 0.0; i < 128.0; i++) {
+				        if (uLightSize > 0.1)
+						{
+				            for (float i = 0.0; i < 128.0; i++)
+							{
 				                if (i > uShadowBlurSample) break;
-                
-				                float angle = i * (360.0 / uShadowBlurSample) + uKernel2D[0];
-				                vec2 offset = vec2(sin(angle), cos(angle)) * penumbraWidth;
+								// Golden Sampling
+								float r = sqrt(float(i)+0.5) / sqrt(float(uShadowBlurSample));
+								float theta = float(i) * GOLDEN_ANGLE + uKernel2D[0];
+
+								vec2 offset = vec2(cos(theta), sin(theta)) * r * penumbraWidth;
 				                float sampleDepth = uLightNear + unpackDepth(texture2D(uDepthBuffer, shadowCoord + offset)) * (uLightFar - uLightNear);
 				                shadow += step(fragDepth - bias, sampleDepth);
                 

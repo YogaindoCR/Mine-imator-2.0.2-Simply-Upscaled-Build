@@ -507,8 +507,10 @@ function view_draw(view)
 			view_update(view, cam)
 		else if (window_focus = string(view) && !mouse_left && !mouse_right) // Freeze on slow renders bugfix
 			window_busy = ""
-		
+			
+		gpu_set_tex_filter(setting_view_scaling_value > 1.0)
 		draw_surface_size(view.surface, content_x, content_y, content_width, content_height)
+		gpu_set_tex_filter(false)
 		
 		if (view.grid)
 		{

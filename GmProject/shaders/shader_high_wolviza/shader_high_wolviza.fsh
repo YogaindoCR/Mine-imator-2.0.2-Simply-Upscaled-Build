@@ -94,9 +94,19 @@ vec3 getMappedNormal2(vec2 uv)
 	return normalize(vTBN2 * smoothNormal);
 }
 
-vec4 packDepth(float f)
+vec4 packDepth(float depth)
 {
-	return vec4(floor(f * 255.0) / 255.0, fract(f * 255.0), fract(f * 255.0 * (255.0 - ((sin(uSampleIndex * 28.1223)) * 144.173))), 1.0);
+    vec4 enc = vec4(depth, fract(depth * vec3(255.0, 65025.0, 16581375.0)));
+
+    enc -= enc.yzww * vec4(
+        1.0/255.0,
+        1.0/255.0,
+        1.0/255.0,
+        0.0
+    );
+	
+	enc.a = 1.0; // opaque
+    return enc;
 }
 
 vec4 packNormal(vec3 n)
@@ -319,6 +329,15 @@ void main()
 	} else {
 		Glowsurfaceresult = vec4(0.0, 0.0, 0.0, 1.0);
 	} */
+	if (baseColor.a <= 0.011)
+	{
+		Scenetestresult.a = 0.0;
+		MaterialsResult.a = 0.0;
+		EmmisivesResult.a = 0.0;
+		DepthResult.a = 0.0;
+		NormalsResult.a = 0.0;
+		Glintresult.a = 0.0;
+	}
 	
 	gl_FragData[0] = Scenetestresult;
 	gl_FragData[1] = MaterialsResult;

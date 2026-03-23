@@ -67,6 +67,9 @@ function shader_use()
 	if (!is_undefined(uniform_map[?"uShadowBlurSample"]) && uniform_map[?"uShadowBlurSample"] > -1)
 		render_set_uniform("uShadowBlurSample", app.project_render_shadows_blur_sample)
 	
+	if (!is_undefined(uniform_map[?"uBias"]) && uniform_map[?"uBias"] > -1)
+		render_set_uniform("uBias", app.project_render_shadows_bias)
+	
 	// Subsurface
 	if (!is_undefined(uniform_map[?"uSSSHighQuality"]) && uniform_map[?"uSSSHighQuality"] > -1)
 		render_set_uniform("uSSSHighQuality", app.project_render_subsurface_quality)

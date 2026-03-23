@@ -5,8 +5,9 @@ function recent_add()
 {
 	// Find project in list
 	var obj = null;
+	var objpinned = false
 	render_low_drawing = -2
-	recent_load(true)
+	recent_load((window_state != "startup"))
 	
 	for (var i = 0; i < ds_list_size(recent_list); i++)
 	{
@@ -16,6 +17,7 @@ function recent_add()
 				break
 			
 			obj = id
+			objpinned = pinned
 			ds_list_delete_value(app.recent_list, id)
 			if (thumbnail != null)
 				texture_free(thumbnail)
@@ -68,11 +70,11 @@ function recent_add()
 		
 		filename = app.project_file
 		last_opened = date_current_datetime()
-		pinned = false
+		pinned = objpinned
+		
 		ds_list_insert(app.recent_list, 0, id)
 	}
 	
 	recent_update()
 	recent_save()
-	recent_destroy()
 }

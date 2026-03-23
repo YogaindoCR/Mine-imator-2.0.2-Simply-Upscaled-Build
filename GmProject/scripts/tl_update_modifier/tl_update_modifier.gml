@@ -3,11 +3,8 @@
 function tl_update_modifier()
 {
 	// Modifier shake
-	if (modifier_shake) // updated in app_update_animate
+	if (value[e_value.MODIFIER_SHAKE] && value[e_value.MODIFIER_SHAKE_INTENSITY] != 0)
 	{
-		// Modifier step
-		modifier_step += (app.timeline_marker - app.timeline_marker_previous) * value[e_value.MODIFIER_SHAKE_SPEED] / 25
-		
 		var shakeoffset, shakestrength;
 		shakeoffset =  value[e_value.MODIFIER_SHAKE_OFFSET] + (value[e_value.MODIFIER_SHAKE_OFFSET_AUTOMATIC]) ? modifier_shake_auto_offset : 0
 			
@@ -16,7 +13,7 @@ function tl_update_modifier()
 		else
 			shakestrength = value[e_value.MODIFIER_SHAKE_INTENSITY] * blend_value(1, 1 - dsin(keyframe_progress_ease * 180), abs(value[e_value.MODIFIER_SHAKE_KEYFRAME_INFLUENCE]))
 			
-		if (shakestrength != 0)
+		if (shakestrength != 0 && (modifier_step_prev[0] != modifier_step || modifier_step_prev[1] != shakestrength))
 		{
 			if (value[e_value.MODIFIER_SHAKE_POSITION])
 				modifier_shake_pos = generate_shake_value(modifier_step, shakestrength * value[e_value.MODIFIER_SHAKE_POSITION_POWER], shakeoffset, false)
@@ -27,9 +24,9 @@ function tl_update_modifier()
 			if (value[e_value.MODIFIER_SHAKE_BEND])
 				modifier_shake_bend = generate_shake_value(modifier_step, shakestrength * value[e_value.MODIFIER_SHAKE_BEND_POWER], shakeoffset + 200, false)
 		}
-	} 
-	else
-	{
+		
+		modifier_step_prev = vec2(modifier_step, shakestrength)
+	} else {
 		modifier_shake_pos = vec3(0)
 		modifier_shake_rot = vec3(0)
 		modifier_shake_bend = vec3(0)

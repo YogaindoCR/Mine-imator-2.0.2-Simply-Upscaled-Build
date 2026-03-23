@@ -66,6 +66,7 @@ function app_startup_lists()
 		"LIGHT_STRENGTH",
 		"LIGHT_SPECULAR_STRENGTH",
 		"LIGHT_SIZE",
+		"LIGHT_SHADOW_BLUR",
 		"LIGHT_RANGE",
 		"LIGHT_FADE_SIZE",
 		"LIGHT_SPOT_RADIUS",
@@ -108,6 +109,7 @@ function app_startup_lists()
 		"CAM_DOF_FRINGE_RED",
 		"CAM_DOF_FRINGE_GREEN",
 		"CAM_DOF_FRINGE_BLUE",
+		"CAM_CLIP_NEAR",
 		"CAM_BLOOM",
 		"CAM_BLOOM_THRESHOLD",
 		"CAM_BLOOM_INTENSITY",
@@ -265,6 +267,7 @@ function app_startup_lists()
 		"PATH_POINT_ANGLE",
 		"PATH_POINT_SCALE",
 		"IK_TARGET",
+		"IK_TARGET_OFFSET",
 		"IK_BLEND",
 		"IK_TARGET_ANGLE",
 		"IK_ANGLE_OFFSET",
@@ -670,6 +673,7 @@ function app_startup_lists()
 			//"diagonal",
 			"radial",
 			//"pyramid",
-			//"circular"
+			"triangle",
+			"circular"
 	)
 }

@@ -96,7 +96,7 @@ function tl_update_path()
 	if (ds_list_size(path_points_list) < 2)
 	{
 		with (app)
-			tl_update_matrix(true)
+			tl_update_matrix(true, true, false, false, false)
 		
 		return 0
 	}

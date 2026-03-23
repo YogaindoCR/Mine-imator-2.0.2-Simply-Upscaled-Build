@@ -30,8 +30,11 @@ function action_tl_light_type(mode)
 		with (obj_timeline)
 		{
 			if (!selected)
-				continue
+				continue			
 			
+			if (type != e_tl_type.POINT_LIGHT && type != e_tl_type.SPOT_LIGHT) 
+				continue
+				
 			with (hobj)
 				history_save_var(other.id, other.type, mode)
 			
