@@ -86,6 +86,8 @@
 		"tl/": {
 			"previouskeyframe": "Vorheriger Keyframe",
 			"nextkeyframe": "Nächster Keyframe",
+			"recordkeyframesenable": "Aufnahme von Keyframes aktivieren",
+			"recordkeyframesdisable": "Aufnahme von Keyframes deaktivieren",
 			"previousframe": "1 Frame zurück",
 			"nextframe": "1 Frame vorwärts",
 			"stop": "Stop",
@@ -148,7 +150,8 @@
 			"copy": "Alle Werte kopieren",
 			"paste": "Alle Werte einfügen",
 			"reset": "Alle Werte zurücksetzen",
-			"copyglobalposition": "Globale Position kopieren"
+			"copyglobalposition": "Globale Position kopieren",
+			"inverse": "Invertierung festlegen"
 		},
 		"tl/": {
 			"addfolder": "Ordner hinzufügen",
@@ -165,10 +168,14 @@
 				"cut": "Keyframes ausschneiden",
 				"copy": "Keyframes kopieren",
 				"paste": "Keyframes einfügen",
+				"actions": "Keyframe-Aktionen...",
+				"randomize": "Randomisieren",
+				"reverse": "Keyframes umkehren",
 				"delete": "Keyframes löschen",
 				"export": "Keyframes exportieren",
 				"select": "Keyframes auswählen...",
 				"select/": {
+					"current": "Aktueller Marker",
 					"before": "Vor Marker",
 					"after": "Nach Marker",
 					"first": "Erster in Timelines",
@@ -637,6 +644,8 @@
 		},
 		"stop": "Halte Escape zum Abbrechen",
 		"loading": "%1% erledigt",
+		"hidepreview": "Vorschau ausblenden",
+		"hiddenpreview": "Vorschau ist ausgeblendet",
 		"movie/": {
 			"title": "Exportiert deinen Film...",
 			"caption": "Film exportieren",
@@ -646,6 +655,8 @@
 			"videosizecustomkeepaspectratio": "Seitenverhältnis beibehalten",
 			"videosizecustomerror": "MP4 und MOV Formate unterstützen keine ungeraden Videogrößen.",
 			"format": "Format",
+			"legacyformat": "Legacy-Format",
+			"legacyformattip": "Verwendet alte Videocodecs mit schlechtester Qualität, falls deine CPU sie nicht unterstützt, und hat WESENTLICH BESSERE LEISTUNG",
 			"format/": {
 				"mp4": "MP4",
 				"mov": "MOV",
@@ -879,6 +890,7 @@
 			"diagonal": "Diagonal",
 			"radial": "Radial",
 			"pyramid": "Pyramide",
+			"triangle": "Dreieck",
 			"circular": "Kreisförmig"
 		},
 		"snap/": {
@@ -2740,6 +2752,7 @@
 			"ex": "AVE-X"
 		},
 		"legacyrendering": "Legacy-Rendering",
+		"legacyrenderingtip": "Verwendet alte, langsame Rendering-Methode. Nutze diese Option, falls Probleme auftreten.",
 		"performancemode": "Performance-Modus",
 		"performancemode/": {
 		"tip": "Deaktiviert einige Rendering-Funktionen, um die Renderzeiten zu verkürzen. Überprüfe das Aussehen in den Objekteigenschaften.",
@@ -2770,6 +2783,7 @@
 			"spotbuffersize": "Scheinwerferlicht Buffer-Größe",
 			"pointbuffersize": "Punktlicht Buffer-Größe",
 			"blur": "Schattenunschärfe-Multiplikator",
+			"bias": "Schatten-Versatz",
 			"blursample": "Schattenunschärfe-Sample",
 			"transparent": "Transparente Schatten",
 			"buffersize128": "Winzig",
@@ -2814,6 +2828,7 @@
 			"precision": "Präzision",
 			"precisiontip": "Die Genauigkeit des Raytracing für Lichtreflexionen: Je höher die Präzision, desto langsamer ist der Vorgang.",
 			"raysteptip": "Die Menge an Ray-Reflexion, bevor sie aufhört. Höher ist präziser und flüssiger, aber LANGSAMER.",
+			"blursample": "Unschärfe-Sample",
 			"blurradius": "Rauschunterdrückungsradius",
 			"strength": "Stärke",
 			"raystep" : "Ray Step Blur",
@@ -2839,7 +2854,8 @@
 			"intensity": "Intensität",
 			"falloff": "Sekundäres Leuchten",
 			"falloffradius": "Radius",
-			"falloffintensity": "Intensität"
+			"falloffintensity": "Intensität",
+			"blendmode": "Mischmodus"
 		},
 		"texturefiltering": "Texturfilterung",
 		"texturefilteringtip": "Glättet Texturen auf Objekten aus der Ferne.",
@@ -3065,7 +3081,7 @@
 					"big_smoke": "Big Smoke",
 					"bubble": "Bubble",
 					"bubble_pop": "Bubble Pop",
-					"cherry_leaves": "Cherry Leaves",
+					"cherry": "Cherry Leaves",
 					"copper_fire_flame": "Copper Fire Flame",
 					"critical_hit": "Critical Hit",
 					"damage": "Damage",
@@ -3248,7 +3264,8 @@
 			"stretch": "Zerren um anzupassen",
 			"boxmapped": "Gemappte Textur",
 			"savemap": "Map exportieren",
-			"rotation": "Rotation"
+			"rotation": "Rotation",
+			"rpobestrength": "Probe-Stärke"
 		},
 		"skybackground": "Himmelshintergrund",
 		"sky/": {
@@ -3723,9 +3740,62 @@
 		"ik/": {
 			"tip": "Ermöglicht es dem Glied, sich in Richtung einer anderen Timeline oder Position zu drehen und zu beugen.",
 			"target": "Ziel",
+			"targetoffset": "X als Versatz biegen",
 			"blend": "Mischung",
 			"angletarget": "Winkelziel",
 			"angleoffset": "Winkelversatz"
+		},
+		"lookat": "Ansehen",
+		"lookat/": {
+			"target": "Ziel",
+			"blend": "Mischung",
+			"axis": "Achse ansehen",
+			"xoffset": "X",
+			"yoffset": "Y",
+			"zoffset": "Z",
+			"offset": "Versatz"
+		},
+		"copyconstraint": "Transformierung kopieren",
+		"copypos": "Position kopieren",
+		"copypos/": {
+			"tip": "Ermöglicht es dem Objekt, die Position von einem separaten Objekt zu übernehmen.",
+			"target": "Ziel",
+			"copyaxis": "Achse",
+			"x": "X",
+			"y": "Y",
+			"z": "Z",
+			"child": "Rotieren",
+			"bend": "Gebogene Hälfte",
+			"offset": "Versatz",
+			"xoffset": "X",
+			"yoffset": "Y",
+			"zoffset": "Z",
+			"blend": "Mischung"
+		},
+		"copyrot": "Rotation kopieren",
+		"copyrot/": {
+			"tip": "Ermöglicht es dem Objekt, die Rotation von einem separaten Objekt zu übernehmen.",
+			"target": "Ziel",
+			"copyaxis": "Achse",
+			"x": "X",
+			"y": "Y",
+			"z": "Z",
+			"xoffset": "X",
+			"yoffset": "Y",
+			"zoffset": "Z",
+			"bend": "Gebogene Hälfte",
+			"offset": "Versatz",
+			"blend": "Mischung"
+		},
+        "copyscale": "Skalierung kopieren",
+		"copyscale/": {
+			"tip": "Ermöglicht es dem Objekt, die Skalierung von einem separaten Objekt zu übernehmen.",
+			"target": "Ziel",
+			"copyaxis": "Achse",
+			"x": "X",
+			"y": "Y",
+			"z": "Z",
+			"blend": "Mischung"
 		},
 		"modifier" : "Modifikatoren",
 		"modifier/": {
@@ -3814,6 +3884,7 @@
 			"strength": "Stärke",
 			"specularstrength": "Spiegelungsstärke",
 			"size": "Größe",
+			"shadowblur": "Unschärfegröße",
 			"range": "Reichweite",
 			"fadesize": "Übergangsgröße",
 			"spotsharpness": "Spot-Schärfe",
@@ -3822,6 +3893,7 @@
 		"camera": "KAMERA",
 		"camera/": {
 			"fov": "Sichtfeld",
+			"clipnear": "Nahe Ebene",
 			"lightmanagement": "Licht-Management",
 			"tonemapper": "Tonemapper",
 			"tonemapper/": {
@@ -3878,6 +3950,7 @@
 				"fadesize": "Übergangsgröße",
 				"blursize": "Unschärfengröße",
 				"blurratio": "Anamorphisches Seitenverhältnis",
+				"bokeh": "Bokeh-Stärke",
 				"bias": "Kantenhervorhebung",
 				"gain": "Highlight-Boost",
 				"threshold": "Boost-Schwellenwert",
@@ -3899,7 +3972,8 @@
 				"intensity": "Intensität",
 				"radius": "Radius",
 				"ratio": "Anamorphisches Seitenverhältnis",
-				"blend": "Mischfarbe"
+				"blend": "Mischfarbe",
+				"blendmode": "Mischmodus"
 			},
 			"lensdirt": "Objektivverschmutzung",
 			"lensdirt/": {
@@ -3918,6 +3992,7 @@
 				"vibrance": "Lebendigkeit",
 				"invert": "Umkehren",
 				"invertstrength": "Stärke umkehren",
+				"hue": "Farbton",
 				"colorburn": "Color Burn"
 			},
 			"grain": "Filmkorn",
@@ -3965,6 +4040,13 @@
 				"strength": "Stärke",
 				"speed": "Geschwindigkeit",
 				"scale": "Skalierung"
+			},
+			"vhs": "VHS",
+			"vhs/": {
+				"distortion": "Verzerrung",
+				"noise": "Rauschen",
+				"scanlines": "Scanlines",
+				"chromashift": "Chroma Shift"
 			},
 			"outline": "Outline",
 			"outline/": {
@@ -4084,6 +4166,7 @@
 		"viewportoptimization": "Viewport-Optimierung",
 		"unstablefeatures": "Instabile Features",
 		"unstablefeatureslabelwarning": "Instabile Features ist Aktiviert",
+		"legacyrenderingwarning": "Legacy Rendering ist Aktiviert",
 		"performancemodewarning": "Performance Mode ist Aktiviert",
 		"interface": "INTERFACE",
 		"appearance": "Aussehen",
