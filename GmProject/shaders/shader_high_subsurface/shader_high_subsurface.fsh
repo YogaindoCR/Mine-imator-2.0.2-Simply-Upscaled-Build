@@ -48,7 +48,12 @@ void getMaterial(out float roughness, out float metallic, out float emissive, ou
 			sss = (matColor.b > 0.255 ? (((matColor.b - 0.255) / 0.745) * uDefaultSubsurface) : 0.0);
 		}
 		
+		// Convert material color to linear roughness
 		roughness = pow(1.0 - matColor.r, 2.0);
+		
+		// Convert linear roughness to material color
+		matColor.r = 1.0 - sqrt(roughness);
+		
 		emissive = (matColor.a < 1.0 ? matColor.a /= 0.9961 : 0.0) * uDefaultEmissive;
 		
 		return;
