@@ -95,10 +95,12 @@ vec2 getFog()
     return vec2(fog1, fog2);
 }
 
-// Fresnel Schlick approximation
+// Fresnel-Schlick approximation (injected roughness term)
+// -------------------------------------------------------
+// https://learnopengl.com/PBR/IBL/Diffuse-irradiance
 float fresnelSchlickRoughness(float cosTheta, float F0, float roughness)
 {
-	return clamp(F0 + (max((1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0), 0.0, 1.0);
+    return F0 + (max(float(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
 float hash(vec2 c)
@@ -123,7 +125,12 @@ void getMaterial(out float roughness, out float metallic, out float emissive, ou
 			sss = (matColor.b > 0.255 ? (((matColor.b - 0.255) / 0.745) * uDefaultSubsurface) : 0.0);
 		}
 		
+		// Convert material color to linear roughness
 		roughness = pow(1.0 - matColor.r, 2.0);
+		
+		// Convert linear roughness to material color
+		matColor.r = 1.0 - sqrt(roughness);
+		
 		emissive = (matColor.a < 1.0 ? matColor.a /= 0.9961 : 0.0) * uDefaultEmissive;
 		
 		return;
@@ -146,7 +153,7 @@ void getMaterial(out float roughness, out float metallic, out float emissive, ou
 	sss = vCustom.w * uDefaultSubsurface;
 }
 
-/// ACES (implementation by Stephen Hill, @self_shadow)
+// ACES (implementation by Stephen Hill, @self_shadow)
 vec3 RRTAndODTFit(vec3 v)
 {
 	vec3 a = v * (v + 0.0245786) - 0.000090537;
@@ -165,7 +172,7 @@ vec3 mapACESApprox(vec3 x)
     return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);
 }
 
-//Filmic
+// Filmic
 vec3 mapFilmic(vec3 x)
 {
     float A = 0.22; // shoulder strength
@@ -225,9 +232,9 @@ void main()
 	getMaterial(roughness, metallic, emissive, F0, sss);
 	
 	// Fresnel
-	vec3 N = vNormal;
-	vec3 V = normalize(uCameraPosition - vPosition);
-	vec3 H = normalize(V + -reflect(V, N));
+	vec3 N  = vNormal;
+	vec3 V  = normalize(uCameraPosition - vPosition);
+	vec3 H  = normalize(V + -reflect(V, N));
 	float F = fresnelSchlickRoughness(max(dot(H, V), 0.0), F0, roughness);
 	
 	// Diffuse
