@@ -66,6 +66,18 @@ float getSSAOstrength(vec2 uv)
 	return (1.0 - clamp(emissive, 0.0, 1.0)) * mask;
 }
 
+// Accelerating interpolation function
+// ----------------------------------------------
+// https://learnopengl.com/Advanced-Lighting/SSAO
+float lerp(float a, float b, float f, float i, vec3 sample)
+{
+	float scale = float(i) / 64.0; 
+    scale   = (0.1, 1.0, scale * scale);
+    sample *= scale;
+   
+    return a + f * (b - a);
+}
+
 void main()
 {
 	// Perform alpha test to ignore background
