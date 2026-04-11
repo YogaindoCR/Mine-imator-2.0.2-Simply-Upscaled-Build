@@ -50,6 +50,9 @@ uniform float uIndirectStength;
 
 uniform float uSampleIndex;
 
+// Local position of specular reflection
+uniform vec3 localPos;
+
 // Unpacks depth value from packed color
 float unpackValue(vec4 c)
 {
@@ -98,7 +101,9 @@ vec3 unpackNormalBlueNoise(vec4 c)
 	return normalize(vec3(cos(c.r * 2.0 * PI), sin(c.r * 2.0 * PI), c.g));
 }
 
-// GGX importance sampling (https://learnopengl.com/PBR/IBL/Specular-IBL)
+// Hammersley sequence without bit operator support
+// ------------------------------------------------
+// https://learnopengl.com/PBR/IBL/Specular-IBL
 float VanDerCorput(int n, int base)
 {
 	float invBase = 1.0 / float(base);
@@ -109,10 +114,10 @@ float VanDerCorput(int n, int base)
 	{
 		if (n > 0)
 		{
-			denom = mod(float(n), 2.0);
+			denom   = mod(float(n), 2.0);
 			result += denom * invBase;
 			invBase = invBase / 2.0;
-			n = int(float(n) / 2.0);
+			n       = int(float(n) / 2.0);
 		}
 	}
 	
@@ -124,14 +129,83 @@ vec2 Hammersley(int i, int N)
 	return vec2(float(i)/float(N), VanDerCorput(i, 2));
 }
 
+// GGX importance sampling
 vec3 sampleGGX(vec2 Xi, float roughness)
 {
 	float a = roughness * roughness;
+	
 	float phi = 2.0 * PI * Xi.x;
 	float cosTheta = sqrt((1.0 - Xi.y) / (1.0 + (a * a - 1.0) * Xi.y));
 	float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 	
+	// From spherical coordinates to cartesian coordinates
+	vec3 H;
+	H.x = cos(phi) * sinTheta;
+    H.y = sin(phi) * sinTheta;
+    H.z = cosTheta;
+	
 	return vec3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
+}
+
+// Schlick-GGX geometry function
+float geometrySchlickGGX(float NdotV, float roughness)
+{
+    float a = roughness;
+    float k = (a * a) / 2.0;
+
+    float nom   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+
+    return nom / denom;
+}
+
+float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
+{
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float ggx2 = geometrySchlickGGX(NdotV, roughness);
+    float ggx1 = geometrySchlickGGX(NdotL, roughness);
+
+    return ggx1 * ggx2;
+}
+
+// Pre-compute the BRDF
+vec2 integrateBRDF(float NdotV, float roughness)
+{
+    vec3 V;
+    V.x = sqrt(1.0 - NdotV * NdotV);
+    V.y = 0.0;
+    V.z = NdotV;
+
+    float A = 0.0;
+    float B = 0.0;
+
+    vec3 N = vec3(0.0, 0.0, 1.0);
+
+    const int SAMPLE_COUNT = 1024;
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
+    {
+        vec2 Xi = Hammersley(i, SAMPLE_COUNT);
+        vec3 H  = sampleGGX(Xi, roughness);
+        vec3 L  = normalize(2.0 * dot(V, H) * H - V);
+
+        float NdotL = max(L.z, 0.0);
+        float NdotH = max(H.z, 0.0);
+        float VdotH = max(dot(V, H), 0.0);
+
+        if (NdotL > 0.0)
+        {
+            float G = geometrySmith(N, V, L, roughness);
+            float G_Vis = (G * VdotH) / (NdotH * NdotV);
+            float Fc = pow(1.0 - VdotH, 5.0);
+
+            A += (1.0 - Fc) * G_Vis;
+            B += Fc * G_Vis;
+        }
+    }
+    A /= float(SAMPLE_COUNT);
+    B /= float(SAMPLE_COUNT);
+    return vec2(A, B);
 }
 
 float percent(float xx, float start, float end)
@@ -139,6 +213,7 @@ float percent(float xx, float start, float end)
 	return clamp((xx - start) / (end - start), 0.0, 1.0);
 }
 
+// Ray trace in screen-space
 vec3 rayTrace(vec3 rayStart, vec3 rayDir, float rayThickness, vec3 noise)
 {
 	// Ray data
@@ -155,7 +230,7 @@ vec3 rayTrace(vec3 rayStart, vec3 rayDir, float rayThickness, vec3 noise)
 	rayUvStart	= rayPxStart / uScreenSize;
 	float thickness = rayThickness;
 	
-	// Get pixel data for line tracing, swizzel to keep longest axis in X
+	// Get pixel data for line tracing, swizzle to keep longest axis in X
 	bool rayHit	= false;
 	bool rayVertical	= (abs(rayPxDis.y) > abs(rayPxDis.x));
 	
@@ -167,7 +242,7 @@ vec3 rayTrace(vec3 rayStart, vec3 rayDir, float rayThickness, vec3 noise)
 	
 	vec2 stepPx = rayPxDis / max(abs(rayPxDis.x), 0.001);
 	
-	// Correct swizzel, UV coords needs to be correct
+	// Correct swizzle, UV coords needs to be correct
 	vec2 uvStep = ((rayVertical ? stepPx.yx : stepPx.xy) / uScreenSize);
 	
 	float progress, progressPrev, p;
@@ -242,10 +317,17 @@ vec3 rayTrace(vec3 rayStart, vec3 rayDir, float rayThickness, vec3 noise)
 
 void main()
 {
+	vec2 integratedBRDF = integrateBRDF(vTexCoord.x, vTexCoord.y);
+	
+	// Assume the view direction to be equal to the output sample direction
+	vec3 N = normalize(localPos);    
+    vec3 R = N;
+    vec3 V = R;
+	
 	// Depth quick exit
 	float depth		= unpackValue(texture2D(uDepthBuffer, vTexCoord));
 	
-	// Sample material (Specular only)
+	// Sample material (specular only)
 	vec3 materialData = vec3(0.0);
 	if (uRayType == RAY_SPECULAR)
 		materialData = texture2D(uMaterialBuffer, vTexCoord).rgb;
@@ -270,23 +352,25 @@ void main()
 		vec3 tangent = normalize(up - normal * dot(up, normal));
 		mat3 mat	 = mat3(tangent, cross(normal, tangent), normal);
 		
-		// Specular (GGX)
+		// Specular reflection (GGX)
 		if (uRayType == RAY_SPECULAR)
 		{
 			for (int i = 0; i < 1; i++)
 			{
 				vec2 Xi = Hammersley(int(256.0 + ((noise.r - .5) * 256.0)), 512);
 				vec3 H  = normalize(mat * sampleGGX(Xi, materialData.r));
-				rayDir = reflect(normalize(rayPos), H);
-			
-				if (dot(normal, rayDir) > 0.0)
+				vec3 L  = normalize(2.0 * dot(V, H) * H - V);
+				rayDir  = reflect(normalize(rayPos), H);
+				
+				float NdotL = max(dot(N, L), 0.0);
+				if (NdotL > 0.0)
 					break;
 			}
 		}
-		else // Diffuse
+		else // Diffuse interreflection
 			rayDir = normalize(mat * unpackNormalBlueNoise(noise));
 	
-		// Ray thickness (Increase based on steepness of ray)
+		// Ray thickness (increase based on steepness of ray)
 		float rayThickness = uThickness * max(1.0, pow(1.0 - abs(max(0.0, dot(rayDir, normal))), 6.0) * 100.0);
 		
 		if (rayDir.z < 0.2)
@@ -307,7 +391,7 @@ void main()
 			rayCoord.x = -1.0;
 	}
 	
-	// Specular
+	// Specular reflection
 	if (uRayType == RAY_SPECULAR)
 	{
 		// Fade by edge
@@ -337,7 +421,7 @@ void main()
 		
 		gl_FragColor = vec4(rayColor, 1.0);
 	}
-	else // Diffuse
+	else // Diffuse interreflection
 	{
 		vec3 light = vec3(0.0);		
 		
