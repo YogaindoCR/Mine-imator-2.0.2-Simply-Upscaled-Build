@@ -10,6 +10,7 @@ function export_update()
 	if (export_escape_time > 0 && current_time - export_escape_time > 500)
 	{
 		export_escape_time = 0
+		window_taskbar_progress_state_set(e_window_taskbar_state.PAUSED)
 		
 		if (question(text_get("questionstoprender")))
 		{
@@ -24,6 +25,9 @@ function export_update()
 			return 0
 		}
 	}
+	
+	window_taskbar_progress_state_set(e_window_taskbar_state.NORMAL)
+	
 	// Update movie
 	if (window_state = "export_movie")
 	{
@@ -34,6 +38,8 @@ function export_update()
 			if (timeline_marker > exportmovie_marker_end)
 			{
 				export_done_movie()
+				window_flash()
+				window_beep()
 				return 0
 			}
 			
@@ -47,6 +53,8 @@ function export_update()
 			if (timeline_marker > exportmovie_marker_end)
 				{
 					export_done_movie()
+					window_flash()
+					window_beep()
 					return 0
 				}
 			app_update_animate(false)
@@ -136,6 +144,9 @@ function export_update()
 	{
 		surface_save_lib(export_surface, export_filename)
 		export_done_image()
+		window_flash()
+		window_beep()
+		return 0
 	}
 	
 	return 1

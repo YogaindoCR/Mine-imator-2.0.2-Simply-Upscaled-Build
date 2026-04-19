@@ -17,13 +17,13 @@ function draw_composition_guide(xx, yy, wid, hei, alpha = 0.8)
     {
         
         case e_composition_guide.RULE_OF_THIRDS:
-	        var cw = wid / project_grid_rows;
-	        var ch = hei / project_grid_columns;
+	        var cw = wid / project_grid_columns;
+	        var ch = hei / project_grid_rows;
 
-	        for (var i = 1; i < project_grid_rows; i++)
+	        for (var i = 1; i < project_grid_columns; i++)
 	            draw_line_ext(xx + cw * i, yy, xx + cw * i, yy + hei, col, a);
 
-	        for (var j = 1; j < project_grid_columns; j++)
+	        for (var j = 1; j < project_grid_rows; j++)
 	            draw_line_ext(xx, yy + ch * j, xx + wid, yy + ch * j, col, a);
 			break;
 		

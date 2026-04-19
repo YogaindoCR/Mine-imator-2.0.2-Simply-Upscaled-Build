@@ -15,6 +15,7 @@ function model_part_fill_shape_vbuffer_map(part, vbufmap, alphamap, bend)
 		return 0
 	
 	var isbent = !vec3_equals(bend, vec3(0));
+	
 	for (var s = 0; s < ds_list_size(part.shape_list); s++)
 	{
 		with (part.shape_list[|s])

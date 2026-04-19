@@ -430,6 +430,10 @@ function minecraft_assets_load()
 				
 				if (dev_mode_skip_blocks)
 					load_assets_stage = "done"
+					
+				// Skip to the last 10 blocks to debug newer blocks
+				//if (dev_mode_skip_blocks && load_assets_stage != "done")
+				//	load_assets_block_index = (ds_list_size(blockslist) - 10)
 				
 				if (load_assets_stage = "done")
 				{
@@ -561,6 +565,7 @@ function minecraft_assets_load()
 			}
 		}
 		
+		window_taskbar_progress_value_set(load_assets_progress)
 		return true
 	}
 }

@@ -114,20 +114,20 @@ function tab_timeline()
 	
 	// Current time
 	draw_set_font(font_heading)
-	timelabel = timeline_show_frames ? text_get("timelineframe", floor(timeline_marker)) : string_time_seconds(timeline_marker / project_tempo)
+	timelabel = timeline_show_frames ? text_get("timelineframe", floor(timeline_marker)) : string_time((timeline_marker / project_tempo) * 1000)
 	draw_label(timelabel, timex, headery + headerh - 6, fa_left, fa_bottom, c_text_secondary, a_text_secondary)
 	timex += string_width(timelabel)
 	
 	// Time length
 	draw_set_font(font_subheading)
-	timelabel = timeline_show_frames ? " / " + string(timeline_length) : " / " + string_time_seconds(timeline_length / project_tempo)
+timelabel = timeline_show_frames ? " / " + string(timeline_length) : " / " + string_time((timeline_length / project_tempo) * 1000)
 	draw_label(timelabel, timex, headery + headerh - 7, fa_left, fa_bottom, c_text_secondary, a_text_secondary)
 	timex += string_width(timelabel)
 	
 	// Time selected
 	if (timeline_region_start != null && (timeline_region_start != timeline_region_end))
 	{
-		timelabel = " (" + (timeline_show_frames ? string(timeline_region_end - timeline_region_start) : string_time_seconds((timeline_region_end - timeline_region_start) / project_tempo)) + ")"
+		timelabel = " (" + (timeline_show_frames ? string(timeline_region_end - timeline_region_start) : string_time(((timeline_region_end - timeline_region_start) / project_tempo) * 1000)) + ")"
 		draw_label(timelabel, timex, headery + headerh - 7, fa_left, fa_bottom, c_accent, a_accent)
 		timex += string_width(timelabel)
 	}
@@ -414,7 +414,7 @@ function tab_timeline()
 		// Start/end markers
 		if (x1 >= -32 && x1 <= (barw + 32))
 		{
-			draw_image(spr_marker_region, 0, barx + x1, bary, 1, 1, c_accent, 1)
+			draw_image(spr_marker_region, timeline_region_start <= 0 ? 1 : 0, barx + x1 + (timeline_region_start <= 0 ? 10 : 0), bary, 1, 1, c_accent, 1)
 			draw_box(barx + x1, bary, 1, markerh + barh, false, c_accent, 1)
 		}
 			
@@ -1688,7 +1688,7 @@ function tab_timeline()
 		// Change region
 		if (timeline_region_start != null)
 		{
-			if (app_mouse_box(barx + regionx1 - 8, bary, 8, barh, "place"))
+			if (app_mouse_box(barx + regionx1 + (timeline_region_start <= 0 ? 0 : -8), bary, 8, barh, "place"))
 			{
 				mouse_cursor = cr_size_we
 				if (mouse_left_pressed)

@@ -139,9 +139,6 @@ void main()
 			baseColor.a = 1.0;
 	}
 	
-	if (baseColor.a <= 0.011)
-		baseColor.a = 0.0;
-	
 	if (uIsSky > 0)
 	{
 		lightResult = vec3(0.0);

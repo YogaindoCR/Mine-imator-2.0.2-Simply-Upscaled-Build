@@ -186,7 +186,22 @@ function tl_remove_clean()
 				block_vbuffer_destroy()
 		}
 		
-		if (model_shape_vbuffer_map != null)
+		if (model_shape_vbuffer_map_cache != null && ds_map_size(model_shape_vbuffer_map) > 0)
+		{
+			var key = ds_map_find_first(model_shape_vbuffer_map_cache)
+		
+			for (var i = 0; i< ds_map_size(model_shape_vbuffer_map_cache); i++)
+			{ 
+				var vbuf = model_shape_vbuffer_map_cache[? key]
+				
+				vbuffer_destroy(vbuf)
+			
+				key = ds_map_find_next(model_shape_vbuffer_map_cache, key)
+			}
+			
+			key = ds_map_find_first(model_shape_vbuffer_map)
+		} 
+		else if (model_shape_vbuffer_map != null)
 		{
 			var key = ds_map_find_first(model_shape_vbuffer_map);
 			while (!is_undefined(key))

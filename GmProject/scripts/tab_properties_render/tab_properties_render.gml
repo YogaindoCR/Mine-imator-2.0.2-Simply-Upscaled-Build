@@ -2,6 +2,8 @@
 
 function tab_properties_render()
 {
+	var text;
+	
 	// Render setings
 	if (project_render_settings = "")
 		text = text_get("projectrendersettingscustom")
@@ -432,16 +434,24 @@ function tab_properties_render()
 		tab_collapse_start()
 		
 		// Tonemapper
-		if (project_render_tonemapper == e_tonemapper.REINHARD)  
-		    text = text_get("rendertonemapperreinhard")  
-		else if (project_render_tonemapper == e_tonemapper.ACES)  
+		switch (project_render_tonemapper)
+		{
+		case e_tonemapper.REINHARD:
+		    text = text_get("rendertonemapperreinhard")
+			break;
+		case e_tonemapper.ACES:
 		    text = text_get("rendertonemapperaces")  
-		else if (project_render_tonemapper == e_tonemapper.FILMIC)  
+			break;
+		case e_tonemapper.FILMIC:
 		    text = text_get("rendertonemapperfilmic")
-		else if (project_render_tonemapper == e_tonemapper.ACES_APPROX)  
-		    text = text_get("rendertonemapperacesapprox")  
-		else  
+			break;
+		case e_tonemapper.ACES_APPROX:
+		    text = text_get("rendertonemapperacesapprox") 
+			break; 
+		default:  
 		    text = text_get("rendertonemappernone");
+			break;
+		}
 		
 		tab_control_menu()
 		draw_button_menu("rendertonemapper", e_menu.LIST, dx, dy, dw, 24, project_render_tonemapper, text, action_project_render_tonemapper)

@@ -33,7 +33,10 @@ function res_update_model_shape()
 	
 	// Create map for shape ID->mesh
 	if (model_shape_vbuffer_map = null)
+	{
 		model_shape_vbuffer_map = ds_map_create()
+		model_shape_vbuffer_map_cache = ds_map_create()
+	}
 	
 	// Get texture (default)
 	var res = id;

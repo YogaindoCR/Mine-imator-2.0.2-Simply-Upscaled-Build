@@ -222,8 +222,13 @@ void main()
 	if (baseColor.a == 0.0)
 		discard;
 	
-	if (uAlphaHash > 0 && (baseColor.a < hash(vec2(hash(vPosition.xy + (uSampleIndex / 255.0)), vPosition.z + (uSampleIndex / 255.0)))))
-		discard;
+	if (uAlphaHash > 0)
+	{
+		if (baseColor.a < hash(vec2(hash(vPosition.xy + (uSampleIndex / 255.0)), vPosition.z + (uSampleIndex / 255.0))))
+			discard;
+		else
+			baseColor.a = 1.0;
+	}
 		
 	// Check if only glow are applied
 	//if (uGlowOnly < 1)

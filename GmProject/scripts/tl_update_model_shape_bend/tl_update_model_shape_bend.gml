@@ -14,7 +14,7 @@ function tl_update_model_shape_bend()
 	// Invalid part, no bending or no shapes
 	if (model_part = null || model_part.bend_part = null || model_part.shape_list = null)
 		return 0
-		
+	
 	// Clear old vbuffers
 	if (model_shape_vbuffer_map != null && ds_map_size(model_shape_vbuffer_map) > 0)
 	{

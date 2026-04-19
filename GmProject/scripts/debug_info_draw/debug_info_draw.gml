@@ -56,7 +56,7 @@ function debug_info_draw()
 		{
 			if (!is_cpp() && ds_list_size(window_list) > 0) // Debug windows in GM
 			{
-				str += "[F1]: Main window" + " \n"
+				str += "[F1]: Main view" + " \n"
 				for (var i = 0; i < ds_list_size(window_list); i++)
 				{
 					var winindex = "undefined view";
@@ -66,6 +66,7 @@ function debug_info_draw()
 						winindex = "Timeline view"
 					str += "[F" + string(i + 2) + "]: " + winindex + " \n"
 				}
+				str += "\n"
 			}
 			str += "[F7]: Reload Minecraft assets" + " \n"
 			str += "[F9]: Open file directory" + " \n"
@@ -83,6 +84,6 @@ function debug_info_draw()
 	var ty = yy + h - 8;
 	var mouseon = app_mouse_box(xx, yy, w, h);
 	
-	draw_box(xx, yy, w, h, false, c_black, mouseon ? .5675 : .75) //window_width - w - 8
-	draw_label(str, tx, ty, fa_left, fa_bottom, c_white, mouseon ? .75 : 1, font_label)
+	draw_box(xx, yy, w, h, false, c_black, mouseon ? .375 : .75) //window_width - w - 8
+	draw_label(str, tx, ty, fa_left, fa_bottom, c_white, mouseon ? .5 : 1, font_label)
 }

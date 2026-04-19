@@ -16,7 +16,7 @@ function shader_high_light_spot_EX_set()
 	render_set_uniform("uLightSize", render_light_size * app.project_render_shadows_blur * render_light_shadow_blur)
 	render_set_uniform("uKernel2D", render_shadow_blur_kernel)
 	render_set_uniform("uIgnore", false)
-	render_set_uniform("uRenderShadow", !render_light_shadow)
+	render_set_uniform("uRenderShadow", render_light_shadow)
 	
 	render_set_uniform("uLightNear", render_light_near)
 	render_set_uniform("uLightFar", render_light_far)
