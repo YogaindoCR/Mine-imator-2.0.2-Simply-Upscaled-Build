@@ -113,7 +113,7 @@ function vbuffer_create_icosphere(rad, tex1, tex2, detail, smooth, invert, morph
 	
 	// Texture info
 	var texsize = point2D_sub(tex2, tex1);
-	var texmid = point2D_add(tex1, vec2_mul(texsize, 0.5));
+	// var texmid = point2D_add(tex1, vec2_mul(texsize, 0.5));
 	
 	// Generate triangles
 	for (var f = 0; f < array_length(faces); f++)

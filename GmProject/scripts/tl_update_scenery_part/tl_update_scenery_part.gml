@@ -24,6 +24,7 @@ function tl_update_scenery_part()
 		model_color_name_map = null
 		model_color_map = null
 		model_shape_vbuffer_map = null
+		model_shape_vbuffer_map_cache = null
 		temp_update_model()
 		temp_update_model_timeline_parts()
 	}

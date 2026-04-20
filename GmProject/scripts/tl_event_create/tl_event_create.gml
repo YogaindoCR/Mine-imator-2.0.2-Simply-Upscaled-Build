@@ -24,6 +24,7 @@ function tl_event_create()
 	model_part = null
 	model_part_name = ""
 	model_shape_vbuffer_map = null
+	model_shape_vbuffer_map_cache = null
 	model_shape_alpha_map = null
 	part_of = null
 	part_list = null

@@ -33,6 +33,7 @@ void main()
 {
 	vec2 tex = vTexCoord;
 	vec4 col = texture2D(uTexture, tex) * vColor;
+	
 	if (col.a < 0.001)
 		discard;
 	
@@ -41,7 +42,7 @@ void main()
 	if (uAlphaHash > 0 && (col.a < hash(vec2(hash(vPosition.xy + (uSampleIndex / 255.0)), vPosition.z + (uSampleIndex / 255.0)))))
 		depth.a = 0.0;
 	else
-		col.a = 1.0;
+		depth.a = 1.0;
 		
 	if (col.a <= 0.011)
 		depth.a = 0.0;

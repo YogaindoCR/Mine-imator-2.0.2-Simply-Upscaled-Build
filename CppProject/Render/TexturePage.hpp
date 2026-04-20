@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.hpp"
 
-#define PAGE_SIZE 8192
+#define PAGE_SIZE 2048
 
 namespace CppProject
 {

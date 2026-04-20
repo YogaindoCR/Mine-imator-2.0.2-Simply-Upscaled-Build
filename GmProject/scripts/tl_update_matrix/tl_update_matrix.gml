@@ -622,8 +622,13 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 				if (lasttex != value_inherit[e_value.TEXTURE_OBJ] && model_part != null && model_part.has_3d_plane)
 					tl_update_model_shape()
 				else
-				// Update bend if angle changed
-					tl_update_model_shape_bend()
+				{
+				// Update bend if angle 
+					if (render_quality = e_view_mode.RENDER || selected || !app.setting_viewport_optimization)
+						tl_update_model_shape_bend()
+					else
+						tl_update_model_shape_bend_low()
+				}
 			}
 			
 			// Update objects following this path

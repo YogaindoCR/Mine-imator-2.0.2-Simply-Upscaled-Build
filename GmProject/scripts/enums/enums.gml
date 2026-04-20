@@ -911,7 +911,17 @@ function enums()
 		WORLD,
 		WORLD_SMALL,
 		YOUTUBE,
-		RECORDKEY
+		RECORDKEY,
+		BEND_SMALL,
+		GAME,
+		GOOSE,
+		IMAGE_EXPORT_SMALL,
+		MODEL_SMALL,
+		PAN,
+		TEXTURE_SMALL,
+		WIND_SMALL,
+		ZOOM_IN,
+		ZOOM_OUT
 	}
 	
 	// Render modes
@@ -1235,6 +1245,16 @@ function enums()
 		MAIN,
 		VIEW_SECOND,
 		TIMELINE
+	}
+	
+	// Taskbar progress state
+	enum e_window_taskbar_state
+	{
+		NOPROGRESS		= 0,
+		INDETERMINATE	= 1,
+		NORMAL			= 2,
+		ERROR			= 4,
+		PAUSED			= 8
 	}
 	
 	// Composition Guide

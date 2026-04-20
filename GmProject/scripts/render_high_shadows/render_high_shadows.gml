@@ -338,7 +338,7 @@ function render_high_shadows()
 				
 				taa_matrix = taa_jitter_matrix
 				render_alpha_hash = app.project_render_alpha_mode
-				render_alpha_hash_force = 
+				render_alpha_hash_force = false
 				
 				render_light_shadow = shadows
 				

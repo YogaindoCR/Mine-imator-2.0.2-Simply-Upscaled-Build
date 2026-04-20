@@ -31,6 +31,7 @@ function temp_event_create()
 	model_color_name_map = null
 	model_color_map = null
 	model_shape_vbuffer_map = null
+	model_shape_vbuffer_map_cache = null
 	model_shape_alpha_map = null
 	model_hide_list = null
 	model_shape_hide_list = null
@@ -98,6 +99,7 @@ function temp_event_create()
 	shape_invert = false
 	shape_smooth = true
 	shape_detail = 32
+	shape_ring_detail = 32
 	shape_major_size = 1
 	shape_minor_size = 0.4
 	shape_subdivision = 0

@@ -4,16 +4,16 @@
       "commandName": "Project",
 
       // david
-      //"commandLineArgs": "G:\\Dev\\Projects\\Mine-imator\\GmProject G:\\Dev\\Projects\\Mine-imator\\CppProject\\Generated G:\\Dev\\Projects\\Mine-imator\\CppProject\\Asset\\Sprites G:\\Dev\\Projects\\Mine-imator\\CppProject\\Asset\\Shaders G:\\Dev\\Projects\\Mine-imator\\CppGen\\gml.json"
+      //"commandLineArgs": "D:\\Dev\\Projects\\Mine-imator\\GmProject D:\\Dev\\Projects\\Mine-imator\\CppProject\\Generated D:\\Dev\\Projects\\Mine-imator\\CppProject\\Asset\\Sprites D:\\Dev\\Projects\\Mine-imator\\CppProject\\Asset\\Shaders D:\\Dev\\Projects\\Mine-imator\\CppGen\\gml.json"
 
       // Nimi
       //"commandLineArgs": "C:\\Dev\\Mine-imator\\GmProject C:\\Dev\\Mine-imator\\CppProject\\Generated C:\\Dev\\Mine-imator\\CppProject\\Asset\\Sprites C:\\Dev\\Mine-imator\\CppProject\\Asset\\Shaders C:\\Dev\\Mine-imator\\CppGen\\gml.json"
 
       // mbanders
-      //"commandLineArgs": "G:\\Mine-imator-2.0.2-Continuation-Build-master2\\Mine-imator-2.0.2-Continuation-Build-master\\GmProject G:\\Mine-imator-2.0.2-Continuation-Build-master2\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Generated G:\\Mine-imator-2.0.2-Continuation-Build-master2\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Asset\\Sprites G:\\Mine-imator-2.0.2-Continuation-Build-master2\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Asset\\Shaders G:\\Mine-imator-2.0.2-Continuation-Build-master2\\Mine-imator-2.0.2-Continuation-Build-master\\CppGen\\gml.json"
+      //"commandLineArgs": "D:\\Mine-imator-2.0.2-Continuation-Build-master2\\Mine-imator-2.0.2-Continuation-Build-master\\GmProject D:\\Mine-imator-2.0.2-Continuation-Build-master2\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Generated D:\\Mine-imator-2.0.2-Continuation-Build-master2\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Asset\\Sprites D:\\Mine-imator-2.0.2-Continuation-Build-master2\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Asset\\Shaders D:\\Mine-imator-2.0.2-Continuation-Build-master2\\Mine-imator-2.0.2-Continuation-Build-master\\CppGen\\gml.json"
       
 	  //YogaindoCR
-	  "commandLineArgs": "G:\\Mine-imator-2.0.2-Continuation-Build-master\\Mine-imator-2.0.2-Continuation-Build-master\\GmProject G:\\Mine-imator-2.0.2-Continuation-Build-master\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Generated G:\\Mine-imator-2.0.2-Continuation-Build-master\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Asset\\Sprites G:\\Mine-imator-2.0.2-Continuation-Build-master\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Asset\\Shaders G:\\Mine-imator-2.0.2-Continuation-Build-master\\Mine-imator-2.0.2-Continuation-Build-master\\CppGen\\gml.json"
+	  "commandLineArgs": "D:\\Mine-imator-2.0.2-Continuation-Build-master\\Mine-imator-2.0.2-Continuation-Build-master\\GmProject D:\\Mine-imator-2.0.2-Continuation-Build-master\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Generated D:\\Mine-imator-2.0.2-Continuation-Build-master\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Asset\\Sprites D:\\Mine-imator-2.0.2-Continuation-Build-master\\Mine-imator-2.0.2-Continuation-Build-master\\CppProject\\Asset\\Shaders D:\\Mine-imator-2.0.2-Continuation-Build-master\\Mine-imator-2.0.2-Continuation-Build-master\\CppGen\\gml.json"
     }
   }
 }

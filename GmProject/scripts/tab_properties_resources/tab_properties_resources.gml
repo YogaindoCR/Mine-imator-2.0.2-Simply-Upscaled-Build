@@ -23,10 +23,10 @@ function tab_properties_resources()
 	if (draw_button_icon("previewexport", dx + 28, dy, 24, 24, false, icons.ASSET_EXPORT, null, (!res_edit || res_edit.type = e_res_type.FROM_WORLD), "tooltipresourcesave"))
 		action_res_export()
 	
-	if (draw_button_icon("resourcesreload", dx + (28 * 2), dy, 24, 24, false, icons.RELOAD, null, (!res_edit || res_edit = mc_res), "tooltipresourcereload"))
+	if (draw_button_icon("resourcesreload", dx + (28 * 2), dy, 24, 24, false, icons.REFRESH, null, (!res_edit || res_edit = mc_res), "tooltipresourcereload"))
 		action_res_reload()
 	
-	if (draw_button_icon("resourcesreplace", dx + (28 * 3), dy, 24, 24, false, icons.FOLDER, null, (!res_edit || res_edit = mc_res || res_edit.type = e_res_type.FROM_WORLD), "tooltipresourcereplace"))
+	if (draw_button_icon("resourcesreplace", dx + (28 * 3), dy, 24, 24, false, icons.REPLACE, null, (!res_edit || res_edit = mc_res || res_edit.type = e_res_type.FROM_WORLD), "tooltipresourcereplace"))
 		action_res_replace()
 	
 	if (draw_button_icon("resourcesremove", dx + (28 * 4), dy, 24, 24, false, icons.DELETE, null, (!res_edit || res_edit = mc_res), "tooltipresourceremove"))
@@ -122,13 +122,12 @@ function tab_properties_resources()
 	{
 		// Size
 		axis_edit = X
-		tab_control_dragger()
-		draw_dragger("resourcesitemsheetsizerows", dx, dy, dragger_width, res_edit.item_sheet_size[X], 0.1, 1, no_limit, minecraft_item_sheet_size[0], 1, tab.resources.tbx_item_sheet_width, action_res_item_sheet_size)
-		tab_next()
-		
+		textfield_group_add("resourcesitemsheetsizecolumns", res_edit.item_sheet_size[X], minecraft_item_sheet_size[0], action_res_item_sheet_size, axis_edit, tab.resources.tbx_item_sheet_width, null, 1, 1, no_limit)
 		axis_edit = Y
-		tab_control_dragger()
-		draw_dragger("resourcesitemsheetsizecolumns", dx, dy, dragger_width, res_edit.item_sheet_size[Y], 0.1, 1, no_limit, minecraft_item_sheet_size[1], 1, tab.resources.tbx_item_sheet_height, action_res_item_sheet_size)
+		textfield_group_add("resourcesitemsheetsizerows", res_edit.item_sheet_size[Y], minecraft_item_sheet_size[1], action_res_item_sheet_size, axis_edit, tab.resources.tbx_item_sheet_height, null, 1, 1, no_limit)
+		
+		tab_control_textfield_group(true)
+		draw_textfield_group("resourcesitemsheetsizegrid", dx, dy, dw, 0.1, 1, no_limit, 1, true)
 		tab_next()
 	}
 	else if (res_edit.scenery_structure)
@@ -189,7 +188,7 @@ function tab_properties_resources()
 		draw_label(string_limit(string_remove_newline(res_edit.filename), dw - wid - 32), dx + wid + 8, dy + 14, fa_left, fa_middle, c_text_main, a_text_main, font_value)
 		
 		// Open in external program
-		if (draw_button_icon("resourcesfilenameopen", dx + dw - 24, dy, 24, 24, false, icons.FOLDER, null, res_edit.type = e_res_type.SCENERY || res_edit.type = e_res_type.FROM_WORLD, "tooltipresourceopen"))
+		if (draw_button_icon("resourcesfilenameopen", dx + dw - 24, dy, 24, 24, false, icons.EXTERNAL, null, res_edit.type = e_res_type.SCENERY || res_edit.type = e_res_type.FROM_WORLD, "tooltipresourceopen"))
 			open_url(project_folder + "/" + res_edit.filename)
 		
 		tab_next()
