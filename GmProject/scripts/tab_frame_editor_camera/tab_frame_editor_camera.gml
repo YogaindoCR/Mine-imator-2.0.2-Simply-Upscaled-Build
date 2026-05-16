@@ -116,6 +116,9 @@ function tab_frame_editor_camera()
 		case e_tonemapper.ACES_APPROX:
 			text = text_get("frameeditorcameratonemapperacesapprox")
 			break;
+		case e_tonemapper.AGX:
+			text = text_get("frameeditorcameratonemapperagx")
+			break;
 		default:
 			text = text_get("frameeditorcameratonemappernone")
 			break;

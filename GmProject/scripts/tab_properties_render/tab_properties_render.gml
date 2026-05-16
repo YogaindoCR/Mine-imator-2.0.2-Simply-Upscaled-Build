@@ -448,6 +448,9 @@ function tab_properties_render()
 		case e_tonemapper.ACES_APPROX:
 		    text = text_get("rendertonemapperacesapprox") 
 			break; 
+		case e_tonemapper.AGX:
+		    text = text_get("rendertonemapperagx") 
+			break; 
 		default:  
 		    text = text_get("rendertonemappernone");
 			break;

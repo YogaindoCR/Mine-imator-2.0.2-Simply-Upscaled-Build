@@ -1484,6 +1484,7 @@
     {"id":{"name":"app_event_http","path":"scripts/app_event_http/app_event_http.yy",},"order":17,},
     {"id":{"name":"app_event_step","path":"scripts/app_event_step/app_event_step.yy",},"order":18,},
     {"id":{"name":"app_mouse_box","path":"scripts/app_mouse_box/app_mouse_box.yy",},"order":19,},
+    {"id":{"name":"action_randomize_transformation","path":"scripts/action_randomize_transformation/action_randomize_transformation.yy",},"order":83,},
     {"id":{"name":"action_tl_frame_copy_rot_bend","path":"scripts/action_tl_frame_copy_rot_bend/action_tl_frame_copy_rot_bend.yy",},"order":9,},
     {"id":{"name":"app_mouse_clear","path":"scripts/app_mouse_clear/app_mouse_clear.yy",},"order":20,},
     {"id":{"name":"app_startup","path":"scripts/app_startup/app_startup.yy",},"order":21,},

@@ -11,7 +11,7 @@ function action_setting_viewport_optimization(val)
 		if (model_shape_vbuffer_map_cache != null)
 		{
 			var key = ds_map_find_first(model_shape_vbuffer_map_cache)
-		
+			
 			for (var i = 0; i< ds_map_size(model_shape_vbuffer_map_cache); i++)
 			{ 
 				var vbuf = model_shape_vbuffer_map_cache[? key]
@@ -24,9 +24,9 @@ function action_setting_viewport_optimization(val)
 			ds_map_clear(model_shape_vbuffer_map)
 			ds_map_clear(model_shape_vbuffer_map_cache)
 			
-			with (model_part)
-				model_shape_vbuffer_map = vbuffer_default
-				
+			model_shape_vbuffer_map = null
+			model_shape_vbuffer_map_cache = null
+			
 			tl_update_model_shape()
 		}
 	}

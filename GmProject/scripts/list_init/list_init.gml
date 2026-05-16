@@ -1426,6 +1426,7 @@ function list_init(name)
 			menu_add_item(e_tonemapper.ACES, text_get("rendertonemapperaces"))
 			menu_add_item(e_tonemapper.FILMIC, text_get("rendertonemapperfilmic"))
 			menu_add_item(e_tonemapper.ACES_APPROX, text_get("rendertonemapperacesapprox"))
+			menu_add_item(e_tonemapper.AGX, text_get("rendertonemapperagx"))
 			
 			break
 		}

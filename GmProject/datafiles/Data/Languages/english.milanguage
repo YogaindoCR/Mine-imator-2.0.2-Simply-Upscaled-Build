@@ -151,7 +151,12 @@
 			"paste": "Paste all values",
 			"reset": "Reset all values",
 			"copyglobalposition": "Copy global position",
-			"inverse": "Set inverse"
+			"inverse": "Set inverse",
+			"randomize/": {
+				"position": "Randomize Position",
+				"rotation": "Randomize Rotation",
+				"scale": "Randomize Scale"
+			}
 		},
 		"tl/": {
 			"addfolder": "Add folder",

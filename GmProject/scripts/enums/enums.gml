@@ -1235,8 +1235,8 @@ function enums()
 		REINHARD,
 		ACES,
 		FILMIC,
-		AGX,
-		ACES_APPROX
+		ACES_APPROX,
+		AGX
 	}
 	
 	// Window

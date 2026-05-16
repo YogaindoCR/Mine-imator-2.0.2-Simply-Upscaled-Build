@@ -35,7 +35,6 @@ function temp_update_model_shape()
 	if (model_shape_vbuffer_map = null)
 	{
 		model_shape_vbuffer_map = ds_map_create()
-		model_shape_vbuffer_map_cache = ds_map_create()
 	}
 	
 	// Get texture (from library setting)

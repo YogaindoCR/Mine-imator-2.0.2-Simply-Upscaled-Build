@@ -215,6 +215,164 @@ vec3 mapACES(vec3 color)
 	return color;
 }
 
+vec3 agxDefaultContrastApprox(vec3 x)
+{
+    vec3 x2 = x * x;
+    vec3 x4 = x2 * x2;
+
+    return 15.5 * x4 * x2 - 40.14  * x4 * x + 31.96  * x4 - 6.868  * x2 * x + 0.4298 * x2 + 0.1191 * x - 0.00232;
+}
+
+vec3 mulMat3Vec3(
+    vec3 r0,
+    vec3 r1,
+    vec3 r2,
+    vec3 v)
+{
+    return vec3(
+        dot(r0, v),
+        dot(r1, v),
+        dot(r2, v)
+    );
+}
+
+vec3 mapAGX(vec3 color, float exposure, float gamma)
+{
+    // AGX Inset Matrix (TRANSPOSED FOR ROW-DOT MULTIPLY)
+    vec3 AgXInsetMatrixR0 = vec3(
+        0.856627153315983,
+        0.095121240538159,
+        0.048251606145858
+    );
+
+    vec3 AgXInsetMatrixR1 = vec3(
+        0.137318972929847,
+        0.761241990602591,
+        0.101439036467562
+    );
+
+    vec3 AgXInsetMatrixR2 = vec3(
+        0.111898212999950,
+        0.076799418603190,
+        0.811302368396859
+    );
+
+    // AGX Outset Matrix (TRANSPOSED)
+    vec3 AgXOutsetMatrixR0 = vec3(
+         1.127100581814437,
+        -0.110606643096603,
+        -0.016493938717835
+    );
+
+    vec3 AgXOutsetMatrixR1 = vec3(
+        -0.141329763498438,
+         1.157823702216272,
+        -0.016493938717834
+    );
+
+    vec3 AgXOutsetMatrixR2 = vec3(
+        -0.141329763498438,
+        -0.110606643096603,
+         1.251936406595041
+    );
+
+    // REC2020 -> SRGB (TRANSPOSED)
+    vec3 REC2020_TO_SRGB_R0 = vec3(
+         1.6605,
+        -0.5876,
+        -0.0728
+    );
+
+    vec3 REC2020_TO_SRGB_R1 = vec3(
+        -0.1246,
+         1.1329,
+        -0.0083
+    );
+
+    vec3 REC2020_TO_SRGB_R2 = vec3(
+        -0.0182,
+        -0.1006,
+         1.1187
+    );
+
+    // SRGB -> REC2020 (TRANSPOSED)
+    vec3 SRGB_TO_REC2020_R0 = vec3(
+        0.6274,
+        0.3293,
+        0.0433
+    );
+
+    vec3 SRGB_TO_REC2020_R1 = vec3(
+        0.0691,
+        0.9195,
+        0.0113
+    );
+
+    vec3 SRGB_TO_REC2020_R2 = vec3(
+        0.0164,
+        0.0880,
+        0.8956
+    );
+
+    float AgxMinEv = -12.47393;
+    float AgxMaxEv = 4.026069;
+
+    // Exposure
+    color *= exposure;
+
+    // SRGB -> REC2020
+    color = mulMat3Vec3(
+        SRGB_TO_REC2020_R0,
+        SRGB_TO_REC2020_R1,
+        SRGB_TO_REC2020_R2,
+        color
+    );
+
+    // Inset
+    color = mulMat3Vec3(
+        AgXInsetMatrixR0,
+        AgXInsetMatrixR1,
+        AgXInsetMatrixR2,
+        color
+    );
+
+    // Avoid negative / zero
+    color = max(color, vec3(1e-10));
+
+    // Log2 encoding
+    color = log2(color);
+
+    // Normalize EV range
+    color = (color - AgxMinEv) / (AgxMaxEv - AgxMinEv);
+
+    // Clamp
+    color = clamp(color, 0.0, 1.0);
+
+    // Contrast curve
+    color = agxDefaultContrastApprox(color);
+
+    // Outset
+    color = mulMat3Vec3(
+        AgXOutsetMatrixR0,
+        AgXOutsetMatrixR1,
+        AgXOutsetMatrixR2,
+        color
+    );
+
+    // Gamma-ish transform
+    color = pow(max(vec3(0.0), color), vec3(gamma));
+
+    // REC2020 -> SRGB
+    color = mulMat3Vec3(
+        REC2020_TO_SRGB_R0,
+        REC2020_TO_SRGB_R1,
+        REC2020_TO_SRGB_R2,
+        color
+    );
+
+    return color;
+}
+
 void main()
 {
 	vec2 tex = vTexCoord;
@@ -280,8 +438,10 @@ void main()
 	
 	if (vDiffuse.r >= 0.0)
 	{
-		col.rgb *= uExposure;
-		
+		// Exposure
+		if (uTonemapper != 5)
+			col.rgb *= uExposure;
+	
 		// Tone map
 		if (uTonemapper == 0);
 		else if (uTonemapper == 1)
@@ -290,10 +450,14 @@ void main()
 			col.rgb = mapACES(col.rgb); // ACES
 		else if (uTonemapper == 3)
 		    col.rgb = mapFilmic(col.rgb); // Filmic
-		else
+		else if (uTonemapper == 4)
 		    col.rgb = mapACESApprox(col.rgb); // ACES Approx
-		
-		col.rgb = pow(col.rgb, vec3(1.0/uGamma));
+		else
+			col.rgb = mapAGX(col.rgb, uExposure, uGamma); // AGX
+	
+		// Gamma
+		if (uTonemapper != 5)
+			col.rgb = pow(col.rgb, vec3(1.0/uGamma));
 	}
 	
 	vec2 fog = getFog();

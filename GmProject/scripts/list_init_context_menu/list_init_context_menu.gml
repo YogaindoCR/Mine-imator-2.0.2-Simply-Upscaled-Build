@@ -63,7 +63,16 @@ function list_init_context_menu(name)
 				list_item_add(text_get("contextmenugroupreset"), null, "", null, icons.RESET_ALL, null, action_group_reset, false)
 				
 				if (context_menu_group = e_context_group.POSITION)
+				{
 					list_item_add(text_get("contextmenugroupcopyglobalposition"), null, "", null, icons.COPY_ALL, null, action_group_copy_global, true)
+					
+					list_item_add(text_get("contextmenugrouprandomizeposition"), null, "", null, icons.RANDOMIZE, null, action_randomize_transformation, true);
+                }
+                
+				if (context_menu_group = e_context_group.ROTATION)
+                    list_item_add(text_get("contextmenugrouprandomizerotation"), null, "", null, icons.RANDOMIZE, null,action_randomize_transformation, true);
+                if (context_menu_group = e_context_group.SCALE)
+                    list_item_add(text_get("contextmenugrouprandomizescale"), null, "", null, icons.RANDOMIZE, null, action_randomize_transformation, true);
 			}
 			
 			// Color options

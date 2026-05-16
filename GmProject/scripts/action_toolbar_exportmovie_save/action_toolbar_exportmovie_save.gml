@@ -90,7 +90,7 @@ function action_toolbar_exportmovie_save()
 				modifier_step = 0
 				
 				// Free up vbuffer cache memory if needed
-				if (app.exportmovie_high_quality)
+				if (app.exportmovie_high_quality && app.setting_viewport_optimization)
 				{
 					if (model_shape_vbuffer_map_cache != null)
 					{
@@ -107,10 +107,10 @@ function action_toolbar_exportmovie_save()
 			
 						ds_map_clear(model_shape_vbuffer_map)
 						ds_map_clear(model_shape_vbuffer_map_cache)
-			
-						with (model_part)
-							model_shape_vbuffer_map = vbuffer_default
-				
+						
+						model_shape_vbuffer_map = null
+						model_shape_vbuffer_map_cache = null
+						
 						tl_update_model_shape()
 					}
 				}

@@ -35,7 +35,6 @@ function res_update_model_shape()
 	if (model_shape_vbuffer_map = null)
 	{
 		model_shape_vbuffer_map = ds_map_create()
-		model_shape_vbuffer_map_cache = ds_map_create()
 	}
 	
 	// Get texture (default)
@@ -47,6 +46,9 @@ function res_update_model_shape()
 	for (var p = 0; p < ds_list_size(model_file.file_part_list); p++)
 	{
 		var part = model_file.file_part_list[|p];
+		if (part.bend_part != null)
+			model_shape_vbuffer_map_cache = ds_map_create()
+		
 		model_part_fill_shape_alpha_map(part, model_shape_alpha_map, res, model_texture_name_map, model_shape_texture_name_map)
 		model_part_fill_shape_vbuffer_map(part, model_shape_vbuffer_map, model_shape_alpha_map, part.bend_inherit_angle)
 	}

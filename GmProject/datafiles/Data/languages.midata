@@ -4,11 +4,6 @@
 			"name": "English",
 			"locale": "en-US",
 			"filename": "english.milanguage"
-		},
-		{
-			"name": "Deutsch",
-			"locale": "de-DE",
-			"filename": "german.milanguage"
 		}
 	]
 }

@@ -53,7 +53,7 @@ function render_high()
 		// Reflections
 		if (render_reflections)
 			render_high_reflections(finalsurf)
-		
+			
 		finalsurf = render_high_tonemap(finalsurf)
 		
 		// Minecraft fog

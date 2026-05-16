@@ -1,4 +1,4 @@
-#define SAMPLES 8
+#define SAMPLES 16
 
 varying vec2 vTexCoord;
 
@@ -73,17 +73,25 @@ void main()
 		vec2 texel = 1.0 / (uScreenSize / uScreenSize.y);
 
 	    // Sample offsets for edge detection
-	    vec2 offsets[8];
-	    offsets[0] = vec2(-1.0, -1.0);
-	    offsets[1] = vec2( 0.0, -1.0);
-	    offsets[2] = vec2( 1.0, -1.0);
-	    offsets[3] = vec2(-1.0,  0.0);
-	    offsets[4] = vec2( 1.0,  0.0);
-	    offsets[5] = vec2(-1.0,  1.0);
-	    offsets[6] = vec2( 0.0,  1.0);
-	    offsets[7] = vec2( 1.0,  1.0);
+	    vec2 offsets[16];
+		offsets[0]  = vec2( 1.0,  0.0);
+		offsets[1]  = vec2( 0.923,  0.382);
+		offsets[2]  = vec2( 0.707,  0.707);
+		offsets[3]  = vec2( 0.382,  0.923);
+		offsets[4]  = vec2( 0.0,  1.0);
+		offsets[5]  = vec2(-0.382,  0.923);
+		offsets[6]  = vec2(-0.707,  0.707);
+		offsets[7]  = vec2(-0.923,  0.382);
+		offsets[8]  = vec2(-1.0,  0.0);
+		offsets[9]  = vec2(-0.923, -0.382);
+		offsets[10] = vec2(-0.707, -0.707);
+		offsets[11] = vec2(-0.382, -0.923);
+		offsets[12] = vec2( 0.0, -1.0);
+		offsets[13] = vec2( 0.382, -0.923);
+		offsets[14] = vec2( 0.707, -0.707);
+		offsets[15] = vec2( 0.923, -0.382);
 
-	    for (int i = 0; i < 8; i++)
+	    for (int i = 0; i < 16; i++)
 	    {
 	        vec2 uv = vTexCoord + offsets[i] * 0.001 * uRadius * texel;
 
