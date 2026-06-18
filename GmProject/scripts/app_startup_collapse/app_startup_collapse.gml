@@ -39,6 +39,7 @@ function app_startup_collapse()
 	collapse_register("motionblur")
 	
 	collapse_register("sunlight")
+	collapse_register("godray")
 	collapse_register("sky")
 	collapse_register("clouds")
 	collapse_register("ground")

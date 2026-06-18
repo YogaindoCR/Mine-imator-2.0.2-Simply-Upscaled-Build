@@ -396,6 +396,9 @@ function tab_frame_editor_camera()
 	if (tl_edit.value[e_value.CAM_BLOOM] && collapse_map[?"bloom"])
 	{
 		tab_collapse_start()
+		tab_control_switch()
+		draw_switch("frameeditorcamerabloomhdr", dx, dy, tl_edit.value[e_value.CAM_BLOOM_HDR], action_tl_frame_cam_bloom_hdr)
+		tab_next()
 		
 		tab_control_dragger()
 		draw_dragger("frameeditorcamerabloomradius", dx, dy, dragger_width, round(tl_edit.value[e_value.CAM_BLOOM_RADIUS] * 100), .1, 0, no_limit, 100, 1, tab.camera.tbx_bloom_radius, action_tl_frame_cam_bloom_radius)

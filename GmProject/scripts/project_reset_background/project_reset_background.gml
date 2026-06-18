@@ -30,6 +30,9 @@ function project_reset_background()
 	background_sunlight_specular_strength = 1
 	background_sunlight_angle = .526
 	background_twilight = true
+	background_godray = false
+	background_godray_strength = 0.2
+	background_godray_density = 0.9
 	
 	background_sky_clouds_show = true
 	background_sky_clouds_tex = mc_res

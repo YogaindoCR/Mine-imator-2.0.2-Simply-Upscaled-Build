@@ -4,10 +4,17 @@ varying vec2 vTexCoord;
 
 void main()
 {
-	vec4 baseColor = texture2D(gm_BaseTexture, vTexCoord);
-	
-	if (max(max(baseColor.r, baseColor.g), baseColor.b) > uThreshold)
-		gl_FragColor = baseColor;
-	else
-		gl_FragColor = vec4(vec3(0.0), 1.0);
+    vec4 baseColor = texture2D(gm_BaseTexture, vTexCoord);
+
+    float brightness = max(max(baseColor.r, baseColor.g), baseColor.b);
+
+    float softness = 0.1;
+
+    float mask = smoothstep(
+        uThreshold - softness,
+        uThreshold + softness,
+        brightness
+    );
+
+    gl_FragColor = vec4(baseColor.rgb * mask, 1.0);
 }

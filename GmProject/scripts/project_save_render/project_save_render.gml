@@ -74,6 +74,7 @@ function project_save_render()
 		json_save_var_bool("render_dof_ghostingfix", project_render_dof_ghostingfix)
 		json_save_var("render_dof_ghostingfix_threshold", project_render_dof_ghostingfix_threshold)
 		json_save_var_bool("render_dof_affect_glow", project_render_dof_affect_glow)
+		json_save_var("render_godray_step",	project_render_godray_step)
 		
 		json_save_var_bool("render_motionblur", project_render_motionblur)
 		json_save_var("render_motionblur_power", project_render_motionblur_power)

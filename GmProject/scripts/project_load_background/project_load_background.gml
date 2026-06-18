@@ -43,6 +43,10 @@ function project_load_background(map)
 	background_sunlight_angle = value_get_real(map[?"sunlight_angle"], background_sunlight_angle)
 	
 	background_twilight = value_get_real(map[?"twilight"], background_twilight)
+	background_godray = value_get_real(map[?"godray"], background_godray)
+	
+	background_godray_strength = value_get_real(map[?"godray_strength"], background_godray_strength)
+	background_godray_density = value_get_real(map[?"godray_density"], background_godray_density)
 	
 	background_sky_clouds_show = value_get_real(map[?"sky_clouds_show"], background_sky_clouds_show)
 	background_sky_clouds_mode = value_get_real(map[?"sky_clouds_mode"], background_sky_clouds_mode)

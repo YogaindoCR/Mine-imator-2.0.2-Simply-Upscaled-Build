@@ -24,7 +24,12 @@ function model_part_fill_shape_vbuffer_map(part, vbufmap, alphamap, bend)
 			
 			// Generate new mesh if needed
 			if (type = "block" && bend_shape && isbent)
-				vbufmap[? id] = model_shape_generate_block(bend)
+			{
+				if (!bend_vertex)
+					vbufmap[? id] = model_shape_generate_block(bend)
+				else
+					vbufmap[? id] = model_shape_generate_block_vertex(bend)
+			}
 			else if (type = "plane")
 			{
 				if (is3d)
@@ -33,7 +38,12 @@ function model_part_fill_shape_vbuffer_map(part, vbufmap, alphamap, bend)
 						vbufmap[? id] = model_shape_generate_plane_3d(bend, alphamap[? id])
 				}
 				else if (isbent && bend_shape)
-					vbufmap[? id] = model_shape_generate_plane(bend)
+				{
+					if (!bend_vertex)
+						vbufmap[? id] = model_shape_generate_plane(bend)
+					else
+						vbufmap[? id] = model_shape_generate_plane_vertex(bend)
+				}
 			}
 		}
 	}

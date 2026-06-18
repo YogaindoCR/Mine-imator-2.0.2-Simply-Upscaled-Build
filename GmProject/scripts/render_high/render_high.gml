@@ -50,10 +50,17 @@ function render_high()
 		var finalsurf;
 			finalsurf = render_high_scene()
 		
+		if (background_godray)
+			render_high_godray(finalsurf)
+		
 		// Reflections
 		if (render_reflections)
 			render_high_reflections(finalsurf)
 			
+		// HDR Bloom
+		if (render_camera_bloom && render_camera.value[e_value.CAM_BLOOM_HDR])
+			render_high_bloom_hdr(finalsurf)
+	
 		finalsurf = render_high_tonemap(finalsurf)
 		
 		// Minecraft fog

@@ -111,6 +111,7 @@ function app_startup_interface_tabs()
 			tbx_dof_sample = new_textbox_integer()
 			tbx_dof_ghostingfix_threshold = new_textbox_integer()
 			tbx_dof_ghostingfix_threshold.suffix = "%"
+			tbx_godray_step = new_textbox_integer()
 			
 			tbx_motionblur_power = new_textbox_integer()
 			tbx_motionblur_power.suffix = "%"
@@ -175,6 +176,9 @@ function app_startup_interface_tabs()
 			tbx_sky_sun_angle.suffix = "°"
 			tbx_sky_sun_scale = new_textbox_decimals()
 			tbx_sky_sun_scale.suffix = "%"
+			tbx_godray_strength = new_textbox_decimals()
+			tbx_godray_density = new_textbox_decimals()
+			tbx_godray_density.suffix = "ρ"
 			tbx_sky_moon_angle = new_textbox_integer()
 			tbx_sky_moon_angle.suffix = "°"
 			tbx_sky_moon_scale = new_textbox_decimals()

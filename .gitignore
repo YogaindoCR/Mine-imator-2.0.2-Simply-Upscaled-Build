@@ -2,7 +2,9 @@
 CppGen/CppGen/obj/
 CppGen/CppGen/bin/
 CppGen/Logs/
-Builds/
+CppGen/.vs/
+Build/
+Backup/
 Installer/Windows/Mine-imator/
 Installer/Mac/Mine-imator.app/Contents/
 Installer/Linux/Mine-imator/usr/local/bin/

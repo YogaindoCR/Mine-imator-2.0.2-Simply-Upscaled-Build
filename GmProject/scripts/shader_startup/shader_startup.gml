@@ -93,6 +93,7 @@ function shader_startup()
 		new_shader("shader_remove_background")
 		new_shader("shader_high_glint")
 		new_shader("shader_high_outline")
+		new_shader("shader_high_godray")
 		if (is_cpp())
 			new_shader("shader_high_wolviza")
 		else {
@@ -910,6 +911,19 @@ function shader_startup()
 		new_shader_uniform("uGlintSize")
 		new_shader_uniform("uGlintEnabled")
 		new_shader_uniform("uGlintStrength")
+	}
+	
+	with (shader_map[?shader_high_godray])
+	{
+		new_shader_uniform("uLightDirection")
+		new_shader_uniform("uViewMatrix")
+		new_shader_uniform("uKernelGodRay")
+		new_shader_uniform("uStrength")
+		new_shader_uniform("uDensity")
+		new_shader_uniform("uStep")
+		new_shader_uniform("uRayColor")
+		
+		new_shader_sampler("uMaskRaysTexture")
 	}
 	return true
 }

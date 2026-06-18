@@ -76,6 +76,7 @@ function project_load_render(map)
 	project_render_dof_ghostingfix = value_get_real(map[?"render_dof_ghostingfix"], project_render_dof_ghostingfix)
 	project_render_dof_ghostingfix_threshold = value_get_real(map[?"render_dof_ghostingfix_threshold"], project_render_dof_ghostingfix_threshold)
 	project_render_dof_affect_glow = value_get_real(map[?"render_dof_affect_glow"], project_render_dof_affect_glow)
+	project_render_godray_step = value_get_real(map[?"render_godray_step"], project_render_godray_step)
 	
 	project_render_motionblur = value_get_real(map[?"render_motionblur"], project_render_motionblur)
 	project_render_motionblur_power = value_get_real(map[?"render_motionblur_power"], project_render_motionblur_power)

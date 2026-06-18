@@ -89,6 +89,7 @@ function tl_value_interpolate(vid, p, val1, val2)
 		case e_value.CAM_DOF:
 		case e_value.CAM_DOF_FRINGE:
 		case e_value.CAM_BLOOM:
+		case e_value.CAM_BLOOM_HDR:
 		case e_value.CAM_BLOOM_BLEND_MODE:
 		case e_value.CAM_LENS_DIRT:
 		case e_value.CAM_LENS_DIRT_BLOOM:
@@ -113,6 +114,7 @@ function tl_value_interpolate(vid, p, val1, val2)
 		case e_value.BG_IMAGE_SHOW:
 		case e_value.BG_SKY_MOON_PHASE:
 		case e_value.BG_TWILIGHT:
+		case e_value.BG_GODRAY:
 		case e_value.BG_SKY_CLOUDS_SHOW:
 		case e_value.BG_GROUND_SHOW:
 		case e_value.BG_GROUND_SLOT:

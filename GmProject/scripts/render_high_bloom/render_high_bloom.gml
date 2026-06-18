@@ -76,7 +76,7 @@ function render_high_bloom(prevsurf)
 				surface_reset_target()
 			}
 			
-			bloomstrength = (1/blades * render_camera.value[e_value.CAM_BLOOM_RATIO] * render_camera.value[e_value.CAM_BLOOM_INTENSITY])
+			bloomstrength = (1/blades * render_camera.value[e_value.CAM_BLOOM_RATIO] * render_camera.value[e_value.CAM_BLOOM_INTENSITY]) / (render_camera.value[e_value.CAM_BLOOM_HDR] ? pi : 1)
 			
 			surface_set_target(bloomsurftemp)
 			{
@@ -173,7 +173,7 @@ function render_high_bloom(prevsurf)
 			surface_reset_target()
 		}
 		
-		bloomstrength = ((1.0 - render_camera.value[e_value.CAM_BLOOM_RATIO]) * render_camera.value[e_value.CAM_BLOOM_INTENSITY])
+		bloomstrength = ((1.0 - render_camera.value[e_value.CAM_BLOOM_RATIO]) * render_camera.value[e_value.CAM_BLOOM_INTENSITY]) / (render_camera.value[e_value.CAM_BLOOM_HDR] ? pi : 1)
 		
 		surface_set_target(bloomsurftemp)
 		{

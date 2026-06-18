@@ -68,6 +68,7 @@ function tl_value_default(valueid)
 		case e_value.CAM_DOF_FRINGE_ANGLE_RED: return 90
 		case e_value.CAM_DOF_FRINGE_ANGLE_GREEN: return -135
 		case e_value.CAM_DOF_FRINGE_ANGLE_BLUE: return -45
+		case e_value.CAM_BLOOM_HDR: return false
 		case e_value.CAM_BLOOM_THRESHOLD: return .85
 		case e_value.CAM_BLOOM_INTENSITY: return .4
 		case e_value.CAM_BLOOM_RADIUS: return 1
@@ -139,6 +140,9 @@ function tl_value_default(valueid)
 		case e_value.BG_SUNLIGHT_SPECULAR_STRENGTH: return app.background_sunlight_specular_strength
 		case e_value.BG_SUNLIGHT_ANGLE: return app.background_sunlight_angle
 		case e_value.BG_TWILIGHT: return app.background_twilight
+		case e_value.BG_GODRAY: return app.background_godray
+		case e_value.BG_GODRAY_STRENGTH: return app.background_godray_strength
+		case e_value.BG_GODRAY_DENSITY: return app.background_godray_density
 		case e_value.BG_SKY_CLOUDS_SHOW: return app.background_sky_clouds_show
 		case e_value.BG_SKY_CLOUDS_SPEED: return app.background_sky_clouds_speed
 		case e_value.BG_SKY_CLOUDS_HEIGHT: return app.background_sky_clouds_height

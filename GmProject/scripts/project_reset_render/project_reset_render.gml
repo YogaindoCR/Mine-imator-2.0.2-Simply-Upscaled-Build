@@ -73,6 +73,7 @@ function project_reset_render()
 	project_render_dof_ghostingfix = false
 	project_render_dof_ghostingfix_threshold = 0.3
 	project_render_dof_affect_glow = false
+	project_render_godray_step = 64
 	
 	project_render_motionblur = false
 	project_render_motionblur_power = 0.35

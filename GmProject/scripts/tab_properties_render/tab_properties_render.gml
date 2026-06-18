@@ -557,6 +557,10 @@ function tab_properties_render()
 			tab_control_switch()
 			draw_switch("renderextrasettingsdofaffectglow", dx, dy, project_render_dof_affect_glow, action_project_render_dof_affect_glow, "renderextrasettingsdofaffectglowtip")
 			tab_next()
+		
+			tab_control_meter()
+			draw_meter("renderextrasettingsgodraystep", dx, dy, dw, project_render_godray_step, 16, 128, 64, 1, tab.render.tbx_godray_step, action_project_render_godray_step)
+			tab_next()
 
 			if (setting_unstable_features) {
 				tab_control_dragger()

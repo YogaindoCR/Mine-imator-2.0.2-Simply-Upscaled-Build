@@ -8,6 +8,7 @@ function tl_value_is_bool(vid)
 			vid = e_value.CLEAR ||
 			vid = e_value.CUSTOM_SEED ||
 			vid = e_value.BG_IMAGE_SHOW ||
+			vid = e_value.BG_GODRAY ||
 			vid = e_value.BG_SKY_CLOUDS_SHOW ||
 			vid = e_value.BG_GROUND_SHOW ||
 			vid = e_value.BG_FOG_SHOW ||
@@ -22,6 +23,7 @@ function tl_value_is_bool(vid)
 			vid = e_value.CAM_DOF ||
 			vid = e_value.CAM_DOF_FRINGE ||
 			vid = e_value.CAM_BLOOM ||
+			vid = e_value.CAM_BLOOM_HDR ||
 			vid = e_value.CAM_LENS_DIRT ||
 			vid = e_value.CAM_LENS_DIRT_BLOOM ||
 			vid = e_value.CAM_LENS_DIRT_GLOW ||

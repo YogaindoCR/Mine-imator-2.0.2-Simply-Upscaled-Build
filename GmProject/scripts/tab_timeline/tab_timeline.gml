@@ -120,7 +120,7 @@ function tab_timeline()
 	
 	// Time length
 	draw_set_font(font_subheading)
-timelabel = timeline_show_frames ? " / " + string(timeline_length) : " / " + string_time((timeline_length / project_tempo) * 1000)
+	timelabel = timeline_show_frames ? " / " + string(timeline_length) : " / " + string_time((timeline_length / project_tempo) * 1000)
 	draw_label(timelabel, timex, headery + headerh - 7, fa_left, fa_bottom, c_text_secondary, a_text_secondary)
 	timex += string_width(timelabel)
 	
@@ -182,12 +182,12 @@ timelabel = timeline_show_frames ? " / " + string(timeline_length) : " / " + str
 	draw_button_icon("timelinenextframe", buttonsx, buttonsy, 24, 24, false, icons.FRAME_NEXT, action_tl_frame_next, timeline_playing, "tooltiptlnextframe")
 	buttonsx += 24 + 6
 	
-	// Next keyframe
-	draw_button_icon("timelinenextkeyframe", buttonsx, buttonsy, 24, 24, false, icons.KEYFRAME_NEXT, action_tl_keyframe_next, timeline_playing, "tooltiptlnextkeyframe")
+ 	// Next keyframe
+ 	draw_button_icon("timelinenextkeyframe", buttonsx, buttonsy, 24, 24, false, icons.KEYFRAME_NEXT, action_tl_keyframe_next, timeline_playing, "tooltiptlnextkeyframe")
 	buttonsx += 24 + 6
 	
 	draw_divide_vertical(buttonsx, buttonsy + 2, 20)
-	buttonsx += 4
+	buttonsx += 6
 	
 	// Transition quick buttons (only show when keyframes are selected)
 	if (setting_advanced_mode)
@@ -313,7 +313,27 @@ timelabel = timeline_show_frames ? " / " + string(timeline_length) : " / " + str
 	if (settings_menu_name = "timelineintervalsettings" && settings_menu_ani_type != "hide")
 		current_microani.active.value = true
 	
-	buttonsx += 16 + 6
+	buttonsx += 16 + 4
+	draw_divide_vertical(buttonsx, buttonsy, 24)
+	buttonsx += 4
+	
+	var zoombutton = 0;
+	
+	if (!setting_timeline_compact)
+	{
+		// Zoom out
+	 	if (draw_button_icon("timelinezoomout", buttonsx, buttonsy, 24, 24, false, icons.ZOOM_OUT, null, timeline_zoom_goal <= 0.25, "tooltiptlzoomout"))
+			zoombutton = 1
+		buttonsx += 24 + 6
+	
+		// Zoom in
+	 	if (draw_button_icon("timelinezoomin", buttonsx, buttonsy, 24, 24, false, icons.ZOOM_IN, null, timeline_zoom_goal >= 32, "tooltiptlzoomin"))
+			zoombutton = -1
+	
+		buttonsx += 24 + 4
+		draw_divide_vertical(buttonsx, buttonsy, 24)
+		buttonsx += 4
+	}
 	
 	// Loop
 	var tooltip;
@@ -326,10 +346,8 @@ timelabel = timeline_show_frames ? " / " + string(timeline_length) : " / " + str
 		tooltip = "tooltiptldisableloop"
 	
 	draw_button_icon("timelineloop", buttonsx, buttonsy, 24, 24, timeline_repeat || timeline_seamless_repeat, timeline_seamless_repeat ? icons.REPEAT_SEAMLESS : icons.REPEAT, action_tl_play_repeat, false, tooltip)
-	
-	buttonsx += 24 + 4
-	draw_divide_vertical(buttonsx, buttonsy, 24)
-	buttonsx += 4
+
+	buttonsx += 24 + 6
 	
 	// Pop out/back button
 	if (window_get_current() = e_window.MAIN)
@@ -1913,13 +1931,17 @@ timelabel = timeline_show_frames ? " / " + string(timeline_length) : " / " + str
 		timeline_scroll_scalling = 0
 	
 	// Zoom
-	if (window_scroll_focus_prev = "timelinezoom" && window_busy = "" && mouse_wheel <> 0)
+	if (zoombutton <> 0 || (window_scroll_focus_prev = "timelinezoom" && window_busy = "" && mouse_wheel <> 0))
 	{
-		var m = (mouse_wheel = 1 ? .5 : 2);
+		var m;
+		if (zoombutton <> 0)
+			m = (zoombutton = 1 ? .5 : 2)
+		else
+			m = (mouse_wheel = 1 ? .5 : 2)
 		timeline_zoom_goal = clamp(timeline_zoom_goal * m, 0.25, 32)
 		if (timeline_zoom_goal > 1)
 			timeline_zoom_goal = round(timeline_zoom_goal)
-		timeline_zoom_target = mouse_x
+		timeline_zoom_target = zoombutton <> 0 ? (barw * .5) + barx : mouse_x
 	}
 	var zoompoint = (timeline_zoom_target - barx + timeline.hor_scroll.value);
 	if (timeline_zoom != timeline_zoom_goal)

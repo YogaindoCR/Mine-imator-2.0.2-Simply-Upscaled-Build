@@ -32,6 +32,10 @@ function project_save_background()
 		
 		json_save_var_bool("twilight", background_twilight)
 		
+		json_save_var_bool("godray", background_godray)
+		json_save_var("godray_strength", background_godray_strength)
+		json_save_var("godray_density", background_godray_density)
+		
 		json_save_var_bool("sky_clouds_show", background_sky_clouds_show)
 		json_save_var("sky_clouds_mode", background_sky_clouds_mode)
 		json_save_var_save_id("sky_clouds_tex", background_sky_clouds_tex)

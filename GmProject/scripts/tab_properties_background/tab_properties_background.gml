@@ -46,6 +46,28 @@ function tab_properties_background()
 		tab_control_dragger()
 		draw_dragger("backgroundsunlightspecularstrength", dx, dy, dragger_width, round(background_sunlight_specular_strength * 100), 0.1, 0, no_limit, 100, 1, tab.background.tbx_sunlight_specular_strength, action_background_sunlight_specular_strength)
 		tab_next()
+			
+		// Godray
+		tab_control_switch()
+		draw_button_collapse("godray", collapse_map[?"godray"], action_background_godray, background_godray, "backgroundsunlightgodray")
+		tab_next()
+			
+		if (background_godray && collapse_map[?"godray"])
+		{
+			tab_collapse_start()
+			
+			// Godray Strength
+			tab_control_dragger()
+			draw_dragger("backgroundsunlightgodraystrength", dx, dy, dragger_width, background_godray_strength, 0.01, 0.0, 2.0, 0.2, 0.01, tab.background.tbx_godray_strength, action_background_godray_strength)
+			tab_next()
+			
+			// Godray Density
+			tab_control_dragger()
+			draw_dragger("backgroundsunlightgodraydensity", dx, dy, dragger_width, background_godray_density, 0.01, 0, 2.0, 0.9, 0.01, tab.background.tbx_godray_density, action_background_godray_density)
+			tab_next()
+			
+			tab_collapse_end()
+		}
 		
 		tab_collapse_end()
 	}
