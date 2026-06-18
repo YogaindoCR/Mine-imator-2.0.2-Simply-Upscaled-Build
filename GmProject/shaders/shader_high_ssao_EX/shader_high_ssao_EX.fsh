@@ -127,10 +127,11 @@ void main()
 	        float depthHit = smoothstep(0.0001, 0.002, -zDiff - bias);
 	        float rangeFalloff = 1.0 - clamp(dist / (uRadius * uRatio), 0.0, 1.0);
 	        float normalFalloff = clamp(1.0 - dot(normal, sampleNormal), 0.0, 1.0);
+			float angleCheck = clamp((1.0 - dot(sampleNormal, normal)) * 2.0, 0.0, 1.0);
 
-	        occlusion += (1.0 - uRatioBalance) * depthHit * rangeFalloff * normalFalloff * sampleStrength;
+	        occlusion += (1.0 - uRatioBalance) * depthHit * rangeFalloff * normalFalloff * angleCheck * sampleStrength;
 	    
-			//Pass 2
+			// Pass 2
 			
 			sampleVec = tbn * uKernel[(i * 2) + 1];
 			samplePos = origin + sampleVec * (uRadius);
@@ -159,8 +160,9 @@ void main()
 			
 	        rangeFalloff = 1.0 - clamp(dist / uRadius, 0.0, 1.0);
 	        normalFalloff = clamp(1.0 - dot(normal, sampleNormal), 0.0, 1.0);
+			angleCheck = clamp((1.0 - dot(sampleNormal, normal)) * 2.0, 0.0, 1.0);
 
-	        occlusion += uRatioBalance * depthHit * rangeFalloff * normalFalloff * sampleStrength;
+	        occlusion += uRatioBalance * depthHit * rangeFalloff * normalFalloff * angleCheck * sampleStrength;
 		}
 		
 	// Raise to power

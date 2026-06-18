@@ -19,6 +19,8 @@ uniform float uDefaultEmissive;
 uniform float uLightSpecular;
 uniform int uIgnoreInt;
 
+uniform vec4 uLightColor; // static
+
 uniform float uSampleIndex;
 uniform int uAlphaHash;
 
@@ -30,6 +32,19 @@ varying vec4 vColor;
 varying vec2 vTexCoord;
 varying vec4 vCustom;
 
+// Material parameters for PBR surface model
+uniform float emissive;
+uniform float metallic;
+uniform float roughness;
+uniform float ao;
+uniform sampler2D metallicMap;
+uniform sampler2D roughnessMap;
+uniform sampler2D aoMap;
+
+// Declare variables "specular" and "Lo" as uniforms to bypass a compilation error
+uniform float specular;
+uniform vec3 Lo;
+
 // Improved noise functions
 float hash(vec2 c)
 {
@@ -37,33 +52,52 @@ float hash(vec2 c)
 	(0.1 + abs(sin(13.0 * c.y + c.x))));
 }
 
-// Fresnel Schlick approximation
+// Fresnel-Schlick approximation (injected roughness term)
+// -------------------------------------------------------
+// https://learnopengl.com/PBR/IBL/Diffuse-irradiance
 float fresnelSchlickRoughness(float cosTheta, float F0, float roughness)
 {
-	return F0 + (max((1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+    return F0 + (max(float(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
-// GGX specular (https://learnopengl.com/PBR/Lighting)
+// Normal distribution function (Trowbridge-Reitz GGX)
+// ---------------------------------------------------
+// https://learnopengl.com/PBR/Lighting
 float distributionGGX(vec3 N, vec3 H, float roughness)
 {
-	float a2 = roughness * roughness * roughness * roughness;
-	float NdotH = max(dot(N, H), 0.0);
-	float denom = (NdotH * NdotH * (a2 - 1.0) + 1.0);
-	return a2 / (PI * denom * denom);
+    float a      = roughness * roughness;
+	float a2     = a * a;
+	float NdotH  = max(dot(N, H), 0.0);
+	float NdotH2 = NdotH * NdotH;
+	
+	float num   = a2;
+	float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+	denom = PI * denom * denom;
+	
+	return num / denom;
 }
 
+// Geometry function (Schlick-GGX)
 float geometrySchlickGGX(float NdotV, float roughness)
 {
-	float r = (roughness + 1.0);
+    float r = (roughness + 1.0);
 	float k = (r * r) / 8.0;
 	
-	return NdotV / (NdotV * (1.0 - k) + k);
+	float num   = NdotV;
+	float denom = NdotV * (1.0 - k) + k;
+	
+	return num / denom;
 }
 
+// Smith's method with Schlick-GGX
 float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
-	return	geometrySchlickGGX(max(dot(N, V), 0.0), roughness) *
-			geometrySchlickGGX(max(dot(N, L), 0.0), roughness);
+    float NdotV = max(dot(N, V), 0.0);
+	float NdotL = max(dot(N, L), 0.0);
+	float ggx2  = geometrySchlickGGX(NdotV, roughness);
+	float ggx1  = geometrySchlickGGX(NdotL, roughness);
+	
+	return ggx1 * ggx2;
 }
 
 uniform int uUseNormalMap; // static
@@ -75,7 +109,7 @@ vec3 getMappedNormal(vec2 uv)
 	vec4 n = texture2D(uTextureNormal, uv).rgba;
 	n.rgba = (n.a < 0.01 ? vec4(.5, .5, 0.0, 1.0) : n.rgba); // No normal?
 	n.xy = n.xy * 2.0 - 1.0; // Decode
-	n.z = sqrt(max(0.0, 1.0 - dot(n.xy, n.xy))); // Get Z
+	n.z  = sqrt(1.0 - dot(n.xy, n.xy)); // Reconstruct Z
 	n.y *= -1.0; // Convert Y- to Y+
 	return normalize(vTBN * n.xyz);
 }
@@ -96,7 +130,12 @@ void getMaterial(out float roughness, out float metallic, out float emissive, ou
 			sss = (matColor.b > 0.255 ? (((matColor.b - 0.255) / 0.745) * max(uSSS, uDefaultSubsurface)) : 0.0);
 		}
 		
+		// Convert material color to linear roughness
 		roughness = pow(1.0 - matColor.r, 2.0);
+		
+		// Convert linear roughness to material color
+		matColor.r = 1.0 - sqrt(roughness);
+		
 		emissive = (matColor.a < 1.0 ? matColor.a /= 0.9961 : 0.0) * uDefaultEmissive;
 		
 		return;
@@ -189,19 +228,47 @@ void main()
 			
 				lightResult.rgb += light;
 			
-				// Calculate specular
-				vec3 N = normal;
+				// Calculate specular highlights (PBR surface model)
+				//
+				// Textured PBR
+				float metallic  = texture2D(metallicMap, vTexCoord).r;
+				float roughness = texture2D(roughnessMap, vTexCoord).r;
+				float ao        = texture2D(aoMap, vTexCoord).r;
+				
+				vec3 N = normalize(normal);
 				vec3 V = normalize(uCameraPosition - vPosition);
-				vec3 L = normalize(lightPosition - vPosition);
-				vec3 H = normalize(V + L);
-				float NDF = distributionGGX(N, H, roughness);
-				float G = geometrySmith(N, V, L, roughness);
-			
-				float F = fresnelSchlickRoughness(max(dot(H, V), 0.0), F0, roughness);
-			
-				float numerator = NDF * G * F;
-				float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
-				float specular = numerator / denominator;
+				
+				// Mix material parameters
+				F0 = mix(F0, emissive, metallic);
+				
+				// Reflectance equation
+				vec3 Lo = vec3(0.0);
+				for (int i = 0; i < 4; ++i)
+				{
+					// Calculate per-light radiance
+					vec3 L = normalize(lightPosition - vPosition);
+					vec3 H = normalize(V + L);
+					float distance = length(lightPosition - vPosition);
+					att			   = 1.0 / (distance * distance);
+					vec3 radiance  = uLightColor.rgb * att;
+					
+					// Cook-Torrance BRDF
+					float NDF = distributionGGX(N, H, roughness);
+					float G   = geometrySmith(N, V, L, roughness);
+					float F   = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+					
+					float kS = F;
+					vec3  kD = vec3(1.0) - kS;
+					kD *= 1.0 - metallic;
+					
+					float numerator   = NDF * G * F;
+					float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
+					float specular    = numerator / denominator;
+					
+					// Add to outgoing radiance Lo
+					float NdotL = max(dot(N, L), 0.0);
+					Lo += (kD * emissive / PI + specular) * radiance * NdotL;
+				}
 			
 				spec = data2.rgb * specular * mix(vec3(1.0), baseColor.rgb * vColor.rgb, metallic) * data3.g * uLightSpecular * dif;
 				specResult.rgb += spec;
@@ -209,6 +276,15 @@ void main()
 		}
 	}
 	
+	// Add an ambient term to the direct lighting result Lo
+	vec3 ambient = vec3(0.03) * emissive * ao;
+	vec3 color = ambient + Lo;
+	
+	// Tone map the HDR color using the Reinhard operator
+	color = color / (color + vec3(1.0));
+	color = pow(color, vec3(1.0/2.2));
+	
+	// Final output
 	gl_FragData[0] = vec4(lightResult, baseColor.a);
 	gl_FragData[1] = vec4(specResult, baseColor.a);
 }

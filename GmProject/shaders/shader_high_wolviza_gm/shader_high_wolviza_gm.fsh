@@ -50,10 +50,12 @@ varying vec4 vCustom;
 varying mat3 vTBN;
 varying mat3 vTBN2;
 
-// Fresnel Schlick approximation
+// Fresnel-Schlick approximation (injected roughness term)
+// -------------------------------------------------------
+// https://learnopengl.com/PBR/IBL/Diffuse-irradiance
 float fresnelSchlickRoughness(float cosTheta, float F0, float roughness)
 {
-	return F0 + (max((1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+    return F0 + (max(float(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
 uniform int uUseNormalMap; // static
@@ -65,7 +67,7 @@ vec3 getMappedNormal(vec2 uv)
 	vec4 n = texture2D(uTextureNormal, uv).rgba;
 	n.rgba = (n.a < 0.01 ? vec4(.5, .5, 0.0, 1.0) : n.rgba); // No normal?
 	n.xy = n.xy * 2.0 - 1.0; // Decode
-	n.z = sqrt(max(0.0, 1.0 - dot(n.xy, n.xy))); // Get Z
+	n.z  = sqrt(1.0 - dot(n.xy, n.xy)); // Reconstruct Z
 	n.y *= -1.0; // Convert Y- to Y+
 	vec3 smoothNormal = normalize(mix(vec3(0.0, 0.0, 1.0), n.xyz, uNormalStrength));
 	
@@ -80,7 +82,7 @@ vec3 getMappedNormal2(vec2 uv)
 	vec4 n = texture2D(uTextureNormal, uv).rgba;
 	n.rgba = (n.a < 0.01 ? vec4(.5, .5, 0.0, 1.0) : n.rgba); // No normal?
 	n.xy = n.xy * 2.0 - 1.0; // Decode
-	n.z = sqrt(max(0.0, 1.0 - dot(n.xy, n.xy))); // Get Z
+	n.z  = sqrt(1.0 - dot(n.xy, n.xy)); // Reconstruct Z
 	//n.y *= -1.0; // Convert Y- to Y+
 
 	vec3 smoothNormal = normalize(mix(vec3(0.0, 0.0, 1.0), n.xyz, uNormalStrength));
@@ -174,7 +176,12 @@ void getMaterial(out float roughness, out float metallic, out float emissive, ou
 			sss = (matColor.b > 0.255 ? (((matColor.b - 0.255) / 0.745) * uDefaultSubsurface) : 0.0);
 		}
 		
+		// Convert material color to linear roughness
 		roughness = pow(1.0 - matColor.r, 2.0);
+		
+		// Convert linear roughness to material color
+		matColor.r = 1.0 - sqrt(roughness);
+		
 		emissive = (matColor.a < 1.0 ? matColor.a /= 0.9961 : 0.0) * uDefaultEmissive;
 		
 		return;
@@ -258,7 +265,7 @@ void main()
 	getMaterial(roughness, metallic, emissive, F0, sss);
 	
 	// Fresnel
-	vec3 N = getMappedNormal(vTexCoord);
+	vec3 N  = getMappedNormal(vTexCoord);
 	vec3 V  = normalize(uCameraPosition - vPosition);
 	vec3 H  = normalize(V + -reflect(V, N));
 	float F = fresnelSchlickRoughness(max(dot(H, V), 0.0), F0, roughness);

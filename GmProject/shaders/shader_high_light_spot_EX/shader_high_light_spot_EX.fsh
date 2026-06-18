@@ -65,36 +65,65 @@ varying vec4 vShadowCoord;
 varying vec4 vCustom;
 varying vec4 vColor;
 
-// Optimized Fresnel Schlick approximation
+// Material parameters for PBR surface model
+uniform float emissive;
+uniform float metallic;
+uniform float roughness;
+uniform float ao;
+uniform sampler2D metallicMap;
+uniform sampler2D roughnessMap;
+uniform sampler2D aoMap;
+
+// Declare variables "specular" and "Lo" as uniforms to bypass a compilation error
+uniform float specular;
+uniform vec3 Lo;
+
+// Fresnel-Schlick approximation (injected roughness term)
+// -------------------------------------------------------
+// https://learnopengl.com/PBR/IBL/Diffuse-irradiance
 float fresnelSchlickRoughness(float cosTheta, float F0, float roughness)
 {
-    float powTerm = pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-    return F0 + (max(1.0 - roughness, F0) - F0) * powTerm;
+    return F0 + (max(float(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
-// Optimized GGX distribution
+// Normal distribution function (Trowbridge-Reitz GGX)
+// ---------------------------------------------------
+// https://learnopengl.com/PBR/Lighting
 float distributionGGX(vec3 N, vec3 H, float roughness)
 {
-    float a2 = roughness * roughness;
-    a2 *= a2; // roughness^4
-    float NdotH = max(dot(N, H), 0.0);
-    float NdotH2 = NdotH * NdotH;
-    float denom = NdotH2 * (a2 - 1.0) + 1.0;
-    return a2 / (PI * denom * denom);
+    float a      = roughness * roughness;
+	float a2     = a * a;
+	float NdotH  = max(dot(N, H), 0.0);
+	float NdotH2 = NdotH * NdotH;
+	
+	float num   = a2;
+	float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+	denom = PI * denom * denom;
+	
+	return num / denom;
 }
 
-// Optimized geometry function
+// Geometry function (Schlick-GGX)
 float geometrySchlickGGX(float NdotV, float roughness)
 {
-    float k = (roughness + 1.0);
-    k = (k * k) * 0.125;
-    return NdotV / (NdotV * (1.0 - k) + k);
+    float r = (roughness + 1.0);
+	float k = (r * r) / 8.0;
+	
+	float num   = NdotV;
+	float denom = NdotV * (1.0 - k) + k;
+	
+	return num / denom;
 }
 
+// Smith's method with Schlick-GGX
 float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
-    return geometrySchlickGGX(max(dot(N, V), 0.0), roughness) *
-           geometrySchlickGGX(max(dot(N, L), 0.0), roughness);
+    float NdotV = max(dot(N, V), 0.0);
+	float NdotL = max(dot(N, L), 0.0);
+	float ggx2  = geometrySchlickGGX(NdotV, roughness);
+	float ggx1  = geometrySchlickGGX(NdotL, roughness);
+	
+	return ggx1 * ggx2;
 }
 
 uniform int uUseNormalMap; // static
@@ -107,7 +136,7 @@ vec3 getMappedNormal(vec2 uv)
     if (n.a < 0.01) return normalize(vNormal); // Fallback to vertex normal
     
     n.xy = n.xy * 2.0 - 1.0;
-	n.z = sqrt(max(0.0, 1.0 - dot(n.xy, n.xy)));
+	n.z  = sqrt(1.0 - dot(n.xy, n.xy));
 	//n.y *= -1.0;
 
 	vec3 smoothNormal = normalize(mix(vec3(0.0, 0.0, 1.0), n.xyz, uNormalStrength));
@@ -140,7 +169,8 @@ void getMaterial(out float roughness, out float metallic, out float emissive, ou
         metallic = step(0.898, matColor.g); // Metallic threshold
         F0 = mix(matColor.g, 1.0, metallic);
         sss = (matColor.b > 0.255) ? ((matColor.b - 0.255) * (1.0/0.745) * max(uSSS, uDefaultSubsurface)) : 0.0;
-        roughness = pow(1.0 - matColor.r, 2.0);
+        roughness = pow(1.0 - matColor.r, 2.0); // Convert material color to linear roughness
+		matColor.r = 1.0 - sqrt(roughness);		// Convert linear roughness to material color
         emissive = (matColor.a < 1.0 ? matColor.a * (1.0/0.9961) : 0.0) * uDefaultEmissive;
         return;
     }
@@ -296,7 +326,7 @@ void main()
 								{
 									vec3 rad, dis, falloff;
 							
-									//Subsurface
+									// Subsurface
 									if (uSSSStrength > 0.01)
 									{
 										rad = uSSSRadius * sss;
@@ -305,29 +335,29 @@ void main()
 										if ((fragDepth - (bias * 0.01)) <= sampleDepth)
 											dis = vec3(0.0);
 								
-										//Sharpness
+										// Sharpness
 										falloff = pow(max(1.0 - pow(dis / rad, vec3(uSSSSharpness)), 0.0), vec3(uSSSSharpness * 0.5)); // adjust both terms
 
 										subsurf += ((falloff / (pow(dis, vec3(2.0)) + 1.0) * att) * uSSSStrength);
 										subsurf *= smoothstep(0.0, 0.5, sss);
 									}
 							
-									//Subsurface Highlight
+									// Subsurface Highlight
 									if (uSSSHighlightStrength > 0.01)
 									{
-										//normalize based on both highlight affectance and strength
+										// Normalize based on both highlight affectance and strength
 										rad = uSSSRadius * sss * (1.0 - uSSSHighlight);
 								
-										//Color Threshold
+										// Color Threshold
 										dis = vec3((fragDepth + bias) - sampleDepth) / (mix((uLightColor.rgb), vec3(1.0), uSSSHighlightColorThreshold) * uLightStrength * rad);
                 
 										if ((fragDepth - (bias * 0.01)) <= sampleDepth)
 											dis = vec3(0.0);
                 
-										//Sharpness
+										// Sharpness
 										falloff = pow(max(1.0 - pow(dis / rad, vec3(uSSSHighlightSharpness)), 0.0), vec3(uSSSHighlightSharpness * 0.5)); // adjust both terms
 
-										//Power by uSSSHighlightStrength
+										// Power by uSSSHighlightStrength
 										subsurfhightlight += ((falloff / (pow(dis, vec3(2.0)) + 1.0) * att) * uSSSHighlightStrength);
 									}
 								}
@@ -403,50 +433,69 @@ void main()
 			subsurf *= absorption;
 			subsurfhightlight *= absorption;
 			
-			//Mix both subsurface layers
+			// Mix both subsurface layers
 			light += (mix(uLightColor.rgb, vec3(1.0), uSSSDesaturation) * uLightStrength * uSSSColor.rgb * transDif * subsurf * difMask * smoothstep(0.0, 0.05, (sss / 50.0)));
 			light += (mix(uLightColor.rgb, vec3(1.0), uSSSHighlightDesaturation) * uLightStrength * uSSSColor.rgb * transDif * subsurfhightlight * difMask * smoothstep(0.0, 0.05, (sss / 50.0)));
 			
 			light *= mix(vec3(1.0), uSSSColor.rgb, clamp(sss / 75.0, 0.0, 1.0));
 		}
         
-        // Specular calculation
+        // Calculate specular highlights (PBR surface model)
 		if (uLightSpecular > 0.0 && dif * shadow > 0.0)
 		{
-		    vec3 L = normalize(uLightPosition - vPosition);
-		    vec3 V = normalize(uCameraPosition - vPosition);
-		    vec3 H = normalize(V + L);
+		    // Textured PBR
+			float metallic  = texture2D(metallicMap, vTexCoord).r;
+			float roughness = texture2D(roughnessMap, vTexCoord).r;
+			float ao        = texture2D(aoMap, vTexCoord).r;
+				
+			vec3 N = normalize(normal);
+			vec3 V = normalize(uCameraPosition - vPosition);
+				
+			// Mix material parameters
+			F0 = mix(F0, emissive, metallic);
+				
+			// Reflectance equation
+			vec3 Lo = vec3(0.0);
+			for (int i = 0; i < 4; ++i)
+			{
+				// Calculate per-light radiance
+				vec3 L = normalize(uLightPosition - vPosition);
+				vec3 H = normalize(V + L);
+				float distance = length(uLightPosition - vPosition);
+				att			   = 1.0 / (distance * distance);
+				vec3 radiance  = uLightColor.rgb * att;
+					
+				// Cook-Torrance BRDF
+				float NDF = distributionGGX(N, H, roughness);
+				float G   = geometrySmith(N, V, L, roughness);
+				float F   = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+					
+				float kS = F;
+				vec3  kD = vec3(1.0) - kS;
+				kD *= 1.0 - metallic;
+					
+				float numerator   = NDF * G * F;
+				float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
+				float specular    = numerator / denominator;
+					
+				// Add to outgoing radiance Lo
+				float NdotL = max(dot(N, L), 0.0);
+				Lo += (kD * emissive / PI + specular) * radiance * NdotL;
+			}
 
-		    // Light size & cone softness
-		    float lightDist = length(uLightPosition - vPosition);
-
-		    // Larger cone = softer specular, and nearby large lights look bigger
-		    float sizeFactor = uLightSize / (lightDist + 0.001);
-
-		    // Blend light size into roughness for area-light-like spread
-		    float adjustedRoughness = clamp(roughness + sizeFactor * 0.5, 0.0, 1.0);
-
-		    // GGX specular with adjusted roughness
-		    float NDF = distributionGGX(normal, H, adjustedRoughness);
-		    float G   = geometrySmith(normal, V, L, adjustedRoughness);
-		    float F   = fresnelSchlickRoughness(max(dot(H, V), 0.0), F0, adjustedRoughness);
-
-		    vec3 kS = vec3(F);
-		    vec3 kD = vec3(1.0) - kS;
-		    kD *= 1.0 - metallic;
-
-		    float numerator   = NDF * G * F;
-		    float denominator = 4.0 * max(dot(normal, V), 0.0) * max(dot(normal, L), 0.0) + 0.0001;
-		    vec3 specular     = vec3(numerator / denominator);
-
-		    // Energy balancing for large lights
-		    float sizeAtten = 1.0 / (1.0 + sizeFactor * 4.0);
-
-		    spec = uLightColor.rgb * shadow * uLightSpecular * dif *
-		           specular * sizeAtten * mix(vec3(1.0), baseColor.rgb, metallic);
+		    spec = uLightColor.rgb * shadow * difMask * uLightSpecular * dif * (specular * mix(vec3(1.0), baseColor.rgb, metallic));
 		}
     }
+	
+	// Add an ambient term to the direct lighting result Lo
+	vec3 ambient = vec3(0.03) * emissive * ao;
+	vec3 color = ambient + Lo;
+	
+	// Tone map the HDR color using the Reinhard operator
+	color = color / (color + vec3(1.0));
+	color = pow(color, vec3(1.0/2.2));
     
+	// Final output
     gl_FragData[0] = vec4(light, baseColor.a);
     gl_FragData[1] = vec4(spec, baseColor.a);
     
