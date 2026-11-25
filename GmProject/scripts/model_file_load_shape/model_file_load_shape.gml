@@ -204,58 +204,15 @@ function model_file_load_shape(map, res)
 		from = point3D_mul(point3D_sub(from_noscale, inflate), scale)
 		to = point3D_mul(point3D_add(to_noscale, inflate), scale)
 		
-		// Vertex Shape
-		vo1 = null
-		vo2 = null
-		vo3 = null
-		vo4 = null
-		vo5 = null
-		vo6 = null
-		vo7 = null
-		vo8 = null
-		
-		vo1 = value_get_point3D(map[?"vert1"])
-		vo2 = value_get_point3D(map[?"vert2"])
-		vo3 = value_get_point3D(map[?"vert3"])
-		vo4 = value_get_point3D(map[?"vert4"])
-		vo5 = value_get_point3D(map[?"vert5"])
-		vo6 = value_get_point3D(map[?"vert6"])
-		vo7 = value_get_point3D(map[?"vert7"])
-		vo8 = value_get_point3D(map[?"vert8"])
-		
-		// Check if Vertex value is available
-		if (vo1 != null || vo2 != null || vo3 != null ||
-			vo4 != null || vo5 != null || vo6 != null ||
-			vo7 != null || vo8 != null)
-		{ // THESE ARE JANKY AS HELL
-			bend_vertex = true
-			
-			if (vo1 == null)
-				vo1 = vec3(0)
-				
-			if (vo2 == null)
-				vo2 = vec3(0)
-				
-			if (vo3 == null)
-				vo3 = vec3(0)
-				
-			if (vo4 == null)
-				vo4 = vec3(0)
-				
-			if (vo5 == null)
-				vo5 = vec3(0)
-				
-			if (vo6 == null)
-				vo6 = vec3(0)
-				
-			if (vo7 == null)
-				vo7 = vec3(0)
-				
-			if (vo8 == null)
-				vo8 = vec3(0)
+		// Vertex offsets (optional, Modelbench: Community Build compatibility)
+		vertex_offsets = array_create(8)
+		has_vertex_offsets = false
+		for (var i = 0; i < array_length(vertex_offsets); i++)
+		{
+			var offset = value_get_point3D(map[?"vert" + string(i + 1)], vec3(0))
+			vertex_offsets[i] = vec3_mul(offset, scale)
+			has_vertex_offsets = has_vertex_offsets || !vec3_equals(offset, vec3(0))
 		}
-		else
-			bend_vertex = false
 		
 		// Locked shape
 		locked = value_get_real(map[?"locked"], false)
@@ -303,7 +260,7 @@ function model_file_load_shape(map, res)
 		// Generate default mesh
 		if (type = "block")
 		{
-			if (!bend_vertex)
+			if (!has_vertex_offsets)
 				vbuffer_default = model_shape_generate_block(vec3(0))
 			else
 				vbuffer_default = model_shape_generate_block_vertex(vec3(0))
@@ -313,7 +270,7 @@ function model_file_load_shape(map, res)
 		}
 		else if (type = "plane")
 		{
-			if (!bend_vertex)
+			if (!has_vertex_offsets)
 				vbuffer_default = model_shape_generate_plane(vec3(0))
 			else
 				vbuffer_default = model_shape_generate_plane_vertex(vec3(0))

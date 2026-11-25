@@ -465,7 +465,7 @@ namespace CppProject
 		}
 		else
 		{
-			stepTimer.start(0, this);
+			stepTimer.start(0.0, this);
 		}
 	}
 

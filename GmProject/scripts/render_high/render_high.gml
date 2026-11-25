@@ -50,7 +50,7 @@ function render_high()
 		var finalsurf;
 			finalsurf = render_high_scene()
 		
-		if (background_godray)
+		if (background_godray && background_sunlight_strength > 0)
 			render_high_godray(finalsurf)
 		
 		// Reflections

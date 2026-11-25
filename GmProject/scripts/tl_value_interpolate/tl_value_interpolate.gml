@@ -58,6 +58,7 @@ function tl_value_interpolate(vid, p, val1, val2)
 		case e_value.PATH_OBJ:
 		case e_value.IK_TARGET:
 		case e_value.IK_TARGET_ANGLE:
+		case e_value.BEND_IK_TARGET:
 		case e_value.ROT_TARGET:
 		case e_value.LOOK_AT_TARGET:
 		case e_value.POS_TARGET:

@@ -1,4 +1,4 @@
-/// model_shape_generate_plane_vertex(bend)
+/// model_shape_generate_plane(bend)
 /// @arg bend
 /// @desc Generates a plane shape transformed by a bend vector.
 
@@ -117,31 +117,6 @@ function model_shape_generate_plane_vertex(bend)
 	else // Apply rotation only
 		mat = matrix_build(0, 0, 0, rotation[X], rotation[Y], rotation[Z], 1, 1, 1)
 	
-	// Vertex Offset
-	switch (segaxis)
-	{
-		case X:
-		{
-	        p1 = vec3_add(p1, vo3)
-	        p2 = vec3_add(p2, vo1)
-			break
-		}
-			
-		case Y:
-		{
-	        p1 = vec3_add(p1, vo1)
-	        p2 = vec3_add(p2, vo2)
-			break
-		}
-			
-		case Z:
-		{
-	        p1 = vec3_add(p1, vo1)
-	        p2 = vec3_add(p2, vo2)
-			break
-		}
-	}
-	
 	p1 = point3D_mul_matrix(p1, mat)
 	p2 = point3D_mul_matrix(p2, mat)
 	n1 = vec3_normalize(vec3_mul_matrix(vec3(0, 1, 0), mat))
@@ -222,39 +197,6 @@ function model_shape_generate_plane_vertex(bend)
 		}
 		else // Apply rotation only
 			mat = matrix_build(0, 0, 0, rotation[X], rotation[Y], rotation[Z], 1, 1, 1)
-		
-		var scaleseg = 1;
-		scaleseg = (segpos) / (size[segaxis])
-		
-		switch (segaxis)
-		{
-			case X:
-			{
-	            np1 = vec3_add(np1, vec3_mul(vo4, scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo2, scaleseg))
-                np1 = vec3_add(np1, vec3_mul(vo3, 1 - scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo1, 1 - scaleseg))
-				break
-			}
-			
-			case Y:
-			{
-	            np1 = vec3_add(np1, vec3_mul(vo3, scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo4, scaleseg))
-                np1 = vec3_add(np1, vec3_mul(vo1, 1 - scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo2, 1 - scaleseg))
-				break
-			}
-			
-			case Z:
-			{
-	            np1 = vec3_add(np1, vec3_mul(vo3, scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo4, scaleseg))
-                np1 = vec3_add(np1, vec3_mul(vo1, 1 - scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo2, 1 - scaleseg))
-				break
-			}
-		}
 		
 		np1 = point3D_mul_matrix(np1, mat)
 		np2 = point3D_mul_matrix(np2, mat)

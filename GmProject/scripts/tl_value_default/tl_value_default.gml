@@ -222,7 +222,9 @@ function tl_value_default(valueid)
 		case e_value.TEXTURE_MATERIAL_OBJ:
 		case e_value.TEXTURE_NORMAL_OBJ:
 		case e_value.SOUND_OBJ:
+		case e_value.BEND_IK_TARGET:
 		case e_value.TEXT_FONT: return null
+		case e_value.BEND_IK_INFLUENCE:
 		case e_value.IK_BLEND:
 		case e_value.COPY_POS_BLEND:
 		case e_value.COPY_ROT_BLEND:
@@ -231,6 +233,10 @@ function tl_value_default(valueid)
 		case e_value.SOUND_VOLUME:
 		case e_value.SOUND_PITCH: return 1
 		case e_value.VISIBLE: return true
+		case e_value.LIGHT_SPOT_GOBO_H_REPEAT:
+		case e_value.LIGHT_SPOT_GOBO_V_REPEAT: return 1
+		case e_value.LIGHT_SPOT_GOBO_H_OFFSET:
+		case e_value.LIGHT_SPOT_GOBO_V_OFFSET: return 0
 		case e_value.TEXT: 
 		case e_value.ITEM_NAME: return ""
 		case e_value.PATH_POINT_SCALE: return 1

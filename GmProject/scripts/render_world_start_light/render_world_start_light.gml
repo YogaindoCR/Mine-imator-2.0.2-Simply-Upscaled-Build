@@ -19,6 +19,10 @@ function render_world_start_light(from, to, offset, tl)
 	render_light_shadow_blur = tl.value[e_value.LIGHT_SHADOW_BLUR]
 	render_light_fade_size = tl.value[e_value.LIGHT_FADE_SIZE]
 	render_light_tl = tl.object_tag
+	render_gobo_offset[X] = tl.value[e_value.LIGHT_SPOT_GOBO_H_OFFSET];
+	render_gobo_offset[Y] = tl.value[e_value.LIGHT_SPOT_GOBO_V_OFFSET];
+	render_gobo_repeat[X] = tl.value[e_value.LIGHT_SPOT_GOBO_H_REPEAT];
+	render_gobo_repeat[Y] = tl.value[e_value.LIGHT_SPOT_GOBO_V_REPEAT];
 	
 	if (tl.type = e_tl_type.POINT_LIGHT)
 	{
@@ -31,6 +35,11 @@ function render_world_start_light(from, to, offset, tl)
 	{
 		render_light_fov = tl.value[e_value.LIGHT_SPOT_RADIUS]
 		render_light_spot_sharpness = tl.value[e_value.LIGHT_SPOT_SHARPNESS]
+		
+		if (tl.value[e_value.TEXTURE_OBJ] != null)
+			render_gobo_texture = tl.value[e_value.TEXTURE_OBJ].texture
+		else
+			render_gobo_texture = spr_shape
 	}
 	
 	gpu_set_ztestenable(true)

@@ -10,8 +10,8 @@ uniform vec2 uScreenSize;
 uniform float uDepthSigma;
 uniform float uNormalSigma;
 uniform float uBilateralRadius;
-
 uniform float uNormalBufferScale;
+uniform bool uDirection;
 
 vec3 unpackNormal(vec4 c) {
     return (c.rgb / uNormalBufferScale) * 2.0 - 1.0;
@@ -36,9 +36,13 @@ void main()
 
     vec3 finalColor = vec3(0.0);
     float totalWeight = 0.0;
+	
+	// Have to do this otherwise there will be a ugly seams
+	int xloop = uDirection ? 3 : 1;
+	int yloop = uDirection ? 1 : 3;
 
-    for (int y = -5; y <= 5; y++) {
-        for (int x = -5; x <= 5; x++) {
+    for (int y = -xloop; y <= xloop; y++) {
+        for (int x = -yloop; x <= yloop; x++) {
             vec2 offset = vec2(float(x), float(y)) * texelSize;
             vec2 sampleCoord = vTexCoord + offset;
 

@@ -35,7 +35,7 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 				if (curtl.tree_list[|t].inherit_pose)
 					array_add(app.project_inherit_pose_array, curtl.tree_list[|t])
 					
-		if (curtl.value[e_value.ROT_TARGET] != null|| curtl.value[e_value.LOOK_AT_TARGET] != null || curtl.value[e_value.POS_TARGET] != null || curtl.value[e_value.SCALE_TARGET] != null)
+		if (curtl.value[e_value.ROT_TARGET] != null|| curtl.value[e_value.LOOK_AT_TARGET] != null || curtl.value[e_value.POS_TARGET] != null || curtl.value[e_value.SCALE_TARGET] != null || curtl.value[e_value.BEND_IK_TARGET] != null)
 		{	
 			if (updateik && !updatecopy)
 			{
@@ -406,6 +406,42 @@ function tl_update_matrix(usepaths = false, updateik = true, updatepose = false,
 					scale[Y] = lerp(value[e_value.SCA_Y], value[e_value.SCALE_TARGET].value[e_value.SCA_Y], value[e_value.COPY_SCALE_BLEND] *value[e_value.COPY_SCALE_Y]);
 					scale[Z] = lerp(value[e_value.SCA_Z], value[e_value.SCALE_TARGET].value[e_value.SCA_Z], value[e_value.COPY_SCALE_BLEND] *value[e_value.COPY_SCALE_Z]);
 					matrix = matrix_multiply(matrix_create(vec3(0), vec3(0), scale), matrix);
+				}
+				
+				if (value[e_value.BEND_IK_TARGET] != null)
+				{
+					var mat = matrix;
+		
+					// Target rotation matrix
+					var target_rot_mat =  array_copy_1d(value[e_value.BEND_IK_TARGET].matrix)
+		
+					// Remove global position
+					target_rot_mat[MAT_X] = 0;
+					target_rot_mat[MAT_Y] = 0;
+					target_rot_mat[MAT_Z] = 0;
+		
+					// Remove scale
+					matrix_remove_scale(target_rot_mat)
+		
+					// Invert matrix_parent (Used for resetting the bend rotation)
+					var mat_inv = matrix_inverse(mat) 
+		
+					// Multiply the target rotation with the inverse transform matrix
+					rot_target = matrix_rotation(matrix_multiply(target_rot_mat, mat_inv)) 
+					//var rot_target = to_euler(QuatInvert(world_rot)) 
+		
+					// Set the bend to the final value
+					var bend = rot_target
+
+					//ISSUE X ROTATIONS MORE THAN 90 RESULT IN Y AND Z MIRRORING AXIS
+
+					bend[X] *= (model_part.bend_invert[X] ? -1: 1) * value[e_value.BEND_IK_INFLUENCE]
+					bend[Y] *= (model_part.bend_invert[Y] ? -1: 1) * value[e_value.BEND_IK_INFLUENCE]
+					bend[Z] *= (model_part.bend_invert[Z] ? -1: 1) * value[e_value.BEND_IK_INFLUENCE]
+		
+					value_inherit[e_value.BEND_ANGLE_X] = bend[X]
+					value_inherit[e_value.BEND_ANGLE_Y] = bend[Y]
+					value_inherit[e_value.BEND_ANGLE_Z] = bend[Z]
 				}
 			}
 			

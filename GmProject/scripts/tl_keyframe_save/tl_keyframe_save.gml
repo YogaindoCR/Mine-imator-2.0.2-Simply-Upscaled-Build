@@ -18,7 +18,11 @@ function tl_keyframe_save(kf)
 	if (kf.value[e_value.IK_TARGET_ANGLE] != null)
 		with (kf.value[e_value.IK_TARGET_ANGLE])
 			tl_save()
-	
+			
+	if (kf.value[e_value.BEND_IK_TARGET] != null)
+		with (kf.value[e_value.BEND_IK_TARGET])
+			tl_save()
+			
 	if (kf.value[e_value.LOOK_AT_TARGET] != null)
 		with (kf.value[e_value.LOOK_AT_TARGET])
 			tl_save()

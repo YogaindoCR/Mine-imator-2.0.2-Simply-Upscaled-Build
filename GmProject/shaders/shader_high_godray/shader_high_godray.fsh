@@ -2,8 +2,6 @@
 
 uniform sampler2D uMaskRaysTexture; // static
 
-uniform vec3 uLightDirection; // static
-uniform vec3 uCameraPosition; // static
 uniform vec3 uRayColor; // static
 
 uniform float uKernelGodRay;
@@ -11,9 +9,8 @@ uniform float uStrength;
 uniform float uDensity;
 uniform int uStep;
 
-uniform mat4 uViewMatrix;
-
 varying vec2 vTexCoord;
+varying vec2 vSunUV;
 
 float dither(vec2 co)
 {
@@ -22,22 +19,8 @@ float dither(vec2 co)
 
 void main()
 {
-	vec3 sunDir = normalize(uLightDirection);
-
-	// Put fake sun very far away from camera
-	vec3 sunWorldPos = uCameraPosition + sunDir * 100000.0;
-
-	// Project to clip space
-	vec4 clip = uViewMatrix * vec4(sunWorldPos, 1.0);
-
-	// NDC
-	vec3 ndc = clip.xyz / clip.w;
-
-	// Convert to UV
-	vec2 sunUV = ndc.xy * vec2(0.5, -0.5) + 0.5;
-	
-	vec2 dir = normalize(sunUV - vTexCoord);
-	float rayLength = length(sunUV - vTexCoord);
+	vec2 dir = normalize(vSunUV - vTexCoord);
+	float rayLength = length(vSunUV - vTexCoord);
 	
 	float density = uDensity;
 	float weight = uStrength;
@@ -58,9 +41,7 @@ void main()
 		if (i > uStep)
 			break;
 		
-	    coord += dir * rayLength * density / float(uStep) * kerneloffset;
-		
-		// coord *= (dither(coord.xy + vec2(uKernel.y, uKernel.z)) - 0.5) / 255.0 + 1.0;
+	    coord += dir * rayLength * density / float(uStep) * (uKernelGodRay + ((dither(coord.xy + uKernelGodRay)) - 0.5));
 		
 		if (coord.x > 1.0 || coord.x < 0.0 || coord.y > 1.0 || coord.y < 0.0)
 			break;

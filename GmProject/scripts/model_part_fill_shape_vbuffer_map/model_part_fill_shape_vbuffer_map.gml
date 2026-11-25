@@ -25,7 +25,7 @@ function model_part_fill_shape_vbuffer_map(part, vbufmap, alphamap, bend)
 			// Generate new mesh if needed
 			if (type = "block" && bend_shape && isbent)
 			{
-				if (!bend_vertex)
+				if (!has_vertex_offsets)
 					vbufmap[? id] = model_shape_generate_block(bend)
 				else
 					vbufmap[? id] = model_shape_generate_block_vertex(bend)
@@ -39,7 +39,7 @@ function model_part_fill_shape_vbuffer_map(part, vbufmap, alphamap, bend)
 				}
 				else if (isbent && bend_shape)
 				{
-					if (!bend_vertex)
+					if (!has_vertex_offsets)
 						vbufmap[? id] = model_shape_generate_plane(bend)
 					else
 						vbufmap[? id] = model_shape_generate_plane_vertex(bend)

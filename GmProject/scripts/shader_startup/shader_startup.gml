@@ -362,6 +362,10 @@ function shader_startup()
 		new_shader_sampler("uDepthBuffer")
 		new_shader_uniform("uLightSpecular")
 		new_shader_uniform("uLightSize")
+		new_shader_uniform("uGoboOffset")
+		new_shader_sampler("uLightGobo")
+		new_shader_uniform("uGoboRepeat")
+		new_shader_uniform("uGobos")
 	}
 	
 	with (shader_map[?shader_high_light_spot_EX])
@@ -386,6 +390,10 @@ function shader_startup()
 		new_shader_uniform("uShadowBlurSample")
 		new_shader_uniform("uBias")
 		new_shader_uniform("uRenderShadow")
+		new_shader_uniform("uGoboOffset")
+		new_shader_sampler("uLightGobo")
+		new_shader_uniform("uGoboRepeat")
+		new_shader_uniform("uGobos")
 	}
 	
 	with (shader_map[?shader_high_light_sun])
@@ -725,6 +733,7 @@ function shader_startup()
 		new_shader_uniform("uNormalSigma")
 		new_shader_uniform("uBilateralRadius")
 		new_shader_uniform("uNormalBufferScale")
+		new_shader_uniform("uDirection")
 		new_shader_uniform("uScreenSize")
 	}
 	
@@ -925,5 +934,6 @@ function shader_startup()
 		
 		new_shader_sampler("uMaskRaysTexture")
 	}
+	
 	return true
 }

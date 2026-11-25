@@ -370,6 +370,8 @@
 		"openkeyframescaption": "Import asset error",
 		"loadmodel": "Could not load the model. See the log for details.",
 		"loadmodelcaption": "Load model error",
+		"loadmodelissue": "There's an Issue creating the model see logs for more details.",
+		"loadmodelissuecaption": "Creating model error",
 		"loadschematic": "Could not read the schematic file. See the log for details.",
 		"loadschematiccaption": "Import schematic error",
 		"loadworld": "Could not import from world, it might be deleted or moved to another location.",
@@ -4006,7 +4008,12 @@
 			"angletarget": "Angle target",
 			"angleoffset": "Angle offset"
 		},
-		
+        "bendik": "Bend inverse kinematics",
+        "bendik/": {
+            "tip": "Allows the part to bend parallel to the rotation of another timeline.",
+            "target": "Target",
+            "influence": "Influence"
+        },
 		"lookat": "Look at",
 		"lookat/": {
 			"target": "Target",
@@ -4150,7 +4157,17 @@
 			"range": "Range",
 			"fadesize": "Fade size",
 			"spotsharpness": "Spot sharpness",
-			"spotradius": "Spot radius"
+			"spotradius": "Spot radius",
+            "gobotexture": "Gobo",
+            "gobooffset": "Offset",
+            "gobohoffset": "H",
+            "gobovoffset": "V",
+            "goborepeat": "Repeat",
+            "gobohrepeat": "H",
+            "gobovrepeat": "V",
+            "goboscale": "Scale",
+            "goboscalex": "X",
+            "goboscaley": "Y" 
 		},
 		"camera": "CAMERA",
 		"camera/": {

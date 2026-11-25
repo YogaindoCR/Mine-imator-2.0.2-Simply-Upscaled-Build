@@ -25,6 +25,7 @@ function tab_frame_editor_constraints()
 	
 	// Inverse kinematics
 	tab_frame_editor_ik()
+	tab_frame_editor_bend_ik()
 	
 	// Modifier
 	tab_frame_editor_modifier()

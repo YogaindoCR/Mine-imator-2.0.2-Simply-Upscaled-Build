@@ -1,79 +1,19 @@
 {
     "splashes": [
         {
-            "file": "AVE-X1.png",
+            "file": "Mysu-1.png",
             "credits": "Wolviza",
-            "description": "I wonder why this ship only have 2 crews in it"
+            "description": "Use 0.02 Bias and high shadow blur size for a cool style!"
         },
         {
-            "file": "AVE-X2.png",
+            "file": "Mysu-2.png",
             "credits": "Wolviza",
-            "description": "Planet Avelania"
+            "description": "Spotlight is faster than Pointlight, but pointlight is easier to use"
         },
         {
-            "file": "AVE-X3.png",
+            "file": "Mysu-3.png",
             "credits": "Wolviza",
-            "description": "Terrarium for two man"
-        },
-        {
-            "file": "AVE-X4.png",
-            "credits": "Wolviza",
-            "description": "This could be my last ride"
-        },
-        {
-            "file": "AVE-X5.png",
-            "credits": "Wolviza",
-            "description": "Be patient"
-        },
-        {
-            "file": "AVE-X6.png",
-            "credits": "Wolviza",
-            "description": "Sometimes we just wanna play and forget responsibility"
-        },
-        {
-            "file": "AVE-X7.png",
-            "credits": "Wolviza",
-            "description": "Hi! :3"
-        },
-        {
-            "file": "AVE-X8.png",
-            "credits": "Wolviza",
-            "description": "Get back to work you two"
-        },
-        {
-            "file": "AVE-X9.png",
-            "credits": "Nirwandra",
-			"description": "1 Captain 1 Doctor, Driving to a never touched galaxy, Great."
-        },
-        {
-            "file": "AVE-X10.png",
-            "credits": "Nirwandra",
-			"description": "I love Biology, But that's not the reason I'm thick"
-        },
-        {
-            "file": "AVE-X11.png",
-            "credits": "Wolviza",
-			"description": "My pose when I'm live to trillions floffies on 127 differents Planets and Ships"
-        },
-        {
-            "file": "AVE-X12.png",
-            "credits": "Nirwandra",
-			"description": "X-SPI 211? It's more like a courrier than a exploration"
-        },
-        {
-            "file": "AVE-X13.png",
-            "credits": "Wolviza",
-			"description": "Faster than the speed of light"
-        },
-        {
-            "file": "AVE-X14.png",
-            "credits": "Wolviza",
-			"description": "Dude stop spinning"
-        },
-        {
-            "file": "AVE-X15.png",
-            "credits": "Wolviza",
-			"description": "When the color achieves richness, the form attains its fullness also"
+            "description": "Always disable Glow in Render Settings when you don't need it"
         }
     ]
 }

@@ -1,10 +1,7 @@
-/// model_shape_generate_block_vertex(bend)
-/// @arg bend
-/// @desc Generates a block shape transformed by a bend vector with offset.
+/// @desc Generates a block shape transformed by a bend vector.
+/// CppGen vec blockbend
 
-/// Notes: The reason why I separate the vertex version because it could lead to poor performance
-
-function model_shape_generate_block_vertex(bend)
+function model_shape_generate_block_vertex(blockbend)
 {
 	// Block dimensions
 	var x1, x2, y1, y2, z1, z2, size, scalef;
@@ -14,7 +11,8 @@ function model_shape_generate_block_vertex(bend)
 	scalef = 0.005 // Used to combat Z-fighting
 	
 	// Find whether the shape is bent
-	var isbent = !vec3_equals(bend, vec3(0)) && bend_shape;
+	var isbent;
+	isbent = (!vec3_equals(blockbend, vec3(0)) && bend_shape)
 	
 	// Axis to split up the block
 	var segaxis = Z;
@@ -31,7 +29,6 @@ function model_shape_generate_block_vertex(bend)
 	// Define texture coordinates to use
 	var texsize, texsizefix, texuv;
 	texsize = point3D_sub(to_noscale, from_noscale)
-	texsizefix = point3D_copy(texsize)
 	
 	if (floor_box_uvs)
 	{
@@ -45,7 +42,7 @@ function model_shape_generate_block_vertex(bend)
 	texsize = vec3(texsize[X] / texture_size[X], texsize[Y] / texture_size[Y], texsize[Z] / texture_size[Y])
 	texsizefix = vec3(texsizefix[X] / texture_size[X], texsizefix[Y] / texture_size[Y], texsizefix[Z] / texture_size[Y])
 	
-	texuv = vec2_div(floor_box_uvs ? [floor(uv[X]), floor(uv[Y])] : uv, texture_size)
+	texuv = vec2_div(floor_box_uvs ? [ floor(uv[X]), floor(uv[Y]) ] : uv, texture_size)
 	
 	// Block face texture mapping
 	var texeast1, texeast2, texeast3, texeast4;
@@ -111,26 +108,6 @@ function model_shape_generate_block_vertex(bend)
 		tmp1 = texdown3; texdown3 = texdown4; texdown4 = tmp1
 	}
 	
-	// Mirror texture on Y
-	if (texture_mirror_y)
-	{
-		// Switch north/south sides
-		var tmp1, tmp2, tmp3, tmp4;
-		tmp1 = texsouth1; tmp2 = texsouth2; tmp3 = texsouth3; tmp4 = texsouth1;
-		texsouth1 = texnorth2; texsouth2 = texnorth1; texsouth3 = texnorth4; texsouth4 = texnorth3;
-		texnorth1 = tmp2; texnorth2 = tmp1; texnorth3 = tmp4; texnorth4 = tmp3;
-		
-		tmp1 = texeast1; texeast1 = texeast2; texeast2 = tmp1
-		tmp1 = texeast3; texeast3 = texeast4; texeast4 = tmp1
-		tmp1 = texwest1; texwest1 = texwest2; texwest2 = tmp1
-		tmp1 = texwest3; texwest3 = texwest4; texwest4 = tmp1
-
-		tmp1 = texup1; texup1 = texup4; texup4 = tmp1
-		tmp1 = texup2; texup2 = texup3; texup3 = tmp1
-		tmp1 = texdown1; texdown1 = texdown4; texdown4 = tmp1
-		tmp1 = texdown2; texdown2 = texdown3; texdown3 = tmp1
-	}
-	
 	// Start position and bounds
 	var sharpbend, bendsize, detail, bendstart, bendend, bendsegsize, invangle;
 	sharpbend = app.project_bend_style = "blocky" && bend_size = null && ((bend_axis[X] && !bend_axis[Y] && !bend_axis[Z]) || (!bend_axis[X] && bend_axis[Y] && !bend_axis[Z]) || (!bend_axis[X] && !bend_axis[Y] && bend_axis[Z]))
@@ -140,12 +117,33 @@ function model_shape_generate_block_vertex(bend)
 	if ((bend_size != null && bend_size >= 1) && scale[segaxis] > .5)
 		detail /= scale[segaxis]
 	
-	bendsegsize = bendsize / detail;
+	bendsegsize = bendsize / detail
 	invangle = (bend_part = e_part.LOWER || bend_part = e_part.BACK || bend_part = e_part.LEFT)
+
+	var flatnormals, segextent, segfrom, mirrorfactor, pinchaxis, pinchfactor;
+	flatnormals = true
+	segextent = size[segaxis]
+	segfrom = from[segaxis]
+	mirrorfactor = negate(texture_mirror)
+	if (sharpbend && isbent)
+	{
+		if (vec3_equals(bend_axis, vec3(true, false, false)))
+			pinchaxis = X
+		else if (vec3_equals(bend_axis, vec3(false, true, false)))
+			pinchaxis = Y
+		else if (vec3_equals(bend_axis, vec3(false, false, true)))
+			pinchaxis = Z
+
+		var pinchangle = abs(blockbend[pinchaxis]);
+		if (pinchangle > 90)
+			pinchangle -= (pinchangle - 90) * 2
+		pinchfactor = clamp(percent(pinchangle, 0, 90), 0, 1)
+	}
 	
 	// Find start points/normals
 	var p1, p2, p3, p4;
 	var n1, n2, n3, n4;
+	var basen1, basen2, basen3, basen4;
 	var texp1, texp2, texp3;
 	switch (segaxis)
 	{
@@ -153,19 +151,24 @@ function model_shape_generate_block_vertex(bend)
 		{
 			bendstart = (bend_offset - (position[X] + x1)) - bendsize / 2
 			bendend = (bend_offset - (position[X] + x1)) + bendsize / 2
+			
 			p1 = point3D(x1, y1, z2)
 			p2 = point3D(x1, y2, z2)
 			p3 = point3D(x1, y2, z1)
 			p4 = point3D(x1, y1, z1)
-			n1 = vec3(0, 1, 0)
-			n2 = vec3(0, -1, 0)
-			n3 = vec3(0, 0, 1)
-			n4 = vec3(0, 0, -1)
+			
+			basen1 = vec3(0, 1, 0)
+			basen2 = vec3(0, -1, 0)
+			basen3 = vec3(0, 0, 1)
+			basen4 = vec3(0, 0, -1)
+			
 			texp1 = texsouth1[X] // South/Above X
 			texp2 = texnorth2[X] // North X
 			texp3 = texdown4[X] // Below X
+			
 			texstart1 = texwest1; texstart2 = texwest2; texstart3 = texwest3; texstart4 = texwest4;
 			texend1 = texeast1; texend2 = texeast2; texend3 = texeast3; texend4 = texeast4;
+			
 			break
 		}
 		
@@ -173,19 +176,24 @@ function model_shape_generate_block_vertex(bend)
 		{
 			bendstart = (bend_offset - (position[Y] + y1)) - bendsize / 2
 			bendend = (bend_offset - (position[Y] + y1)) + bendsize / 2
+			
 			p1 = point3D(x2, y1, z2)
 			p2 = point3D(x1, y1, z2)
 			p3 = point3D(x1, y1, z1)
 			p4 = point3D(x2, y1, z1)
-			n1 = vec3(1, 0, 0)
-			n2 = vec3(-1, 0, 0)
-			n3 = vec3(0, 0, 1)
-			n4 = vec3(0, 0, -1)
+			
+			basen1 = vec3(1, 0, 0)
+			basen2 = vec3(-1, 0, 0)
+			basen3 = vec3(0, 0, 1)
+			basen4 = vec3(0, 0, -1)
+			
 			texp1 = texeast2[X] // East X
 			texp2 = texwest1[X] // West X
 			texp3 = texup1[Y] // Above/Below Y
+			
 			texstart1 = texnorth1; texstart2 = texnorth2; texstart3 = texnorth3; texstart4 = texnorth4;
 			texend1 = texsouth1; texend2 = texsouth2; texend3 = texsouth3; texend4 = texsouth4;
+			
 			break
 		}
 		
@@ -193,21 +201,72 @@ function model_shape_generate_block_vertex(bend)
 		{
 			bendstart = (bend_offset - (position[Z] + z1)) - bendsize / 2
 			bendend = (bend_offset - (position[Z] + z1)) + bendsize / 2
+			
 			p1 = point3D(x1, y2, z1)
 			p2 = point3D(x2, y2, z1)
 			p3 = point3D(x2, y1, z1)
 			p4 = point3D(x1, y1, z1)
-			n1 = vec3(1, 0, 0)
-			n2 = vec3(-1, 0, 0)
-			n3 = vec3(0, 1, 0)
-			n4 = vec3(0, -1, 0)
+			
+			basen1 = vec3(1, 0, 0)
+			basen2 = vec3(-1, 0, 0)
+			basen3 = vec3(0, 1, 0)
+			basen4 = vec3(0, -1, 0)
+			
 			texp1 = texsouth3[Y] // East/South/West/North Y
 			texstart1 = texdown1; texstart2 = texdown2; texstart3 = texdown3; texstart4 = texdown4;
 			texend1 = texup1; texend2 = texup2; texend3 = texup3; texend4 = texup4;
+			
 			break
 		}
 	}
 	
+	var offset1, offset2, offset3, offset4;
+	var delta1, delta2, delta3, delta4;
+	switch (segaxis)
+	{
+		case X:
+		{
+			offset1 = point3D_copy(vertex_offsets[7])
+			delta1 = vec3_sub(vertex_offsets[6], offset1)
+			offset2 = point3D_copy(vertex_offsets[4])
+			delta2 = vec3_sub(vertex_offsets[5], offset2)
+			offset3 = point3D_copy(vertex_offsets[0])
+			delta3 = vec3_sub(vertex_offsets[1], offset3)
+			offset4 = point3D_copy(vertex_offsets[3])
+			delta4 = vec3_sub(vertex_offsets[2], offset4)
+			break
+		}
+		case Y:
+		{
+			offset1 = point3D_copy(vertex_offsets[6])
+			delta1 = vec3_sub(vertex_offsets[5], offset1)
+			offset2 = point3D_copy(vertex_offsets[7])
+			delta2 = vec3_sub(vertex_offsets[4], offset2)
+			offset3 = point3D_copy(vertex_offsets[3])
+			delta3 = vec3_sub(vertex_offsets[0], offset3)
+			offset4 = point3D_copy(vertex_offsets[2])
+			delta4 = vec3_sub(vertex_offsets[1], offset4)
+			break
+		}
+		case Z:
+		{
+			offset1 = point3D_copy(vertex_offsets[0])
+			delta1 = vec3_sub(vertex_offsets[4], offset1)
+			offset2 = point3D_copy(vertex_offsets[1])
+			delta2 = vec3_sub(vertex_offsets[5], offset2)
+			offset3 = point3D_copy(vertex_offsets[2])
+			delta3 = vec3_sub(vertex_offsets[6], offset3)
+			offset4 = point3D_copy(vertex_offsets[3])
+			delta4 = vec3_sub(vertex_offsets[7], offset4)
+			break
+		}
+	}
+
+	p1 = vec3_add(p1, offset1)
+	p2 = vec3_add(p2, offset2)
+	p3 = vec3_add(p3, offset3)
+	p4 = vec3_add(p4, offset4)
+
 	// Apply transform
 	var mat;
 	if (isbent) // Apply start bend
@@ -223,57 +282,39 @@ function model_shape_generate_block_vertex(bend)
 		if (invangle)
 			startp = 1 - startp
 		
-		bendvec = model_shape_get_bend(bend, startp)
+		var startweight = ease("easeinoutquint", startp);
+		bendvec = vec3(blockbend[X] * startweight, blockbend[Y] * startweight, blockbend[Z] * startp)
 		
 		// Blocky bending
 		var startscale = vec3(0);
-		if (sharpbend)
-			startscale = model_shape_get_bend_scale(bendstart, bendend, startp, true, 0, bend)
+		if (sharpbend && 0 > bendstart && 0 < bendend)
+		{
+			var startpinch = (startp <= 0.5 ? startp * 2 : (1 - startp) * 2);
+			startpinch *= pinchfactor
+			startpinch = ease("easeincubic", startpinch) / 2.5
+			startscale = vec3(pinchaxis = X ? 0 : startpinch, pinchaxis = Y ? 0 : startpinch, pinchaxis = Z ? 0 : startpinch)
+		}
 		
 		mat = model_part_get_bend_matrix(id, bendvec, vec3(0), vec3_add(vec3(1), startscale))
 	}
 	else // Apply rotation only
 		mat = matrix_build(0, 0, 0, rotation[X], rotation[Y], rotation[Z], 1, 1, 1)
 	
-	// Vertex Offset
-	switch (segaxis)
-	{
-		case X:
-		{
-	        p1 = vec3_add(p1, vo8)
-	        p2 = vec3_add(p2, vo5)
-	        p3 = vec3_add(p3, vo1)
-	        p4 = vec3_add(p4, vo4)
-			break
-		}
-			
-		case Y:
-		{
-			p1 = vec3_add(p1, vo7)
-			p2 = vec3_add(p2, vo8)
-			p3 = vec3_add(p3, vo4)
-			p4 = vec3_add(p4, vo3)
-			break
-		}
-			
-		case Z:
-		{
-	        p1 = vec3_add(p1, vo1)
-	        p2 = vec3_add(p2, vo2)
-	        p3 = vec3_add(p3, vo3)
-	        p4 = vec3_add(p4, vo4)
-			break
-		}
-	}
-		
 	p1 = point3D_mul_matrix(p1, mat)
 	p2 = point3D_mul_matrix(p2, mat)
 	p3 = point3D_mul_matrix(p3, mat)
 	p4 = point3D_mul_matrix(p4, mat)
-	n1 = vec3_normalize(vec3_mul_matrix(n1, mat))
-	n2 = vec3_normalize(vec3_mul_matrix(n2, mat))
-	n3 = vec3_normalize(vec3_mul_matrix(n3, mat))
-	n4 = vec3_normalize(vec3_mul_matrix(n4, mat))
+	if (flatnormals)
+	{
+		n1 = null; n2 = null; n3 = null; n4 = null;
+	}
+	else
+	{
+		n1 = vec3_normalize(vec3_mul_matrix(basen1, mat))
+		n2 = vec3_normalize(vec3_mul_matrix(basen2, mat))
+		n3 = vec3_normalize(vec3_mul_matrix(basen3, mat))
+		n4 = vec3_normalize(vec3_mul_matrix(basen4, mat))
+	}
 	
 	// Create triangles
 	vbuffer_start()
@@ -287,7 +328,7 @@ function model_shape_generate_block_vertex(bend)
 	while (true)
 	{
 		// End face
-		if (segpos >= size[segaxis] - 0.0001)
+		if (segpos >= segextent - 0.0001)
 		{
 			switch (segaxis)
 			{
@@ -307,6 +348,7 @@ function model_shape_generate_block_vertex(bend)
 					break
 				}
 			}
+			
 			break
 		}
 		
@@ -324,17 +366,17 @@ function model_shape_generate_block_vertex(bend)
 		
 		// Find segment size
 		if (!isbent || segpos >= bendend) // No/Above bend
-			segsize = size[segaxis] - segpos
+			segsize = segextent - segpos
 		else if (segpos < bendstart) // Below bend
-			segsize = min(size[segaxis] - segpos, bendstart)
+			segsize = min(segextent - segpos, bendstart)
 		else // Within bend
 		{
 			segsize = bendsegsize
 			
 			if (segpos = 0) // Start inside bend, apply partial size
-				segsize -= (from[segaxis] - bendstart) % bendsegsize
+				segsize -= (segfrom - bendstart) % bendsegsize
 			
-			segsize = min(size[segaxis] - segpos, segsize)
+			segsize = min(segextent - segpos, segsize)
 		}
 		
 		// Advance
@@ -350,13 +392,9 @@ function model_shape_generate_block_vertex(bend)
 				np2 = point3D(x1 + segpos, y2, z2)
 				np3 = point3D(x1 + segpos, y2, z1)
 				np4 = point3D(x1 + segpos, y1, z1)
-				nn1 = vec3(0, 1, 0)
-				nn2 = vec3(0, -1, 0)
-				nn3 = vec3(0, 0, 1)
-				nn4 = vec3(0, 0, -1)
-				var toff = (segpos / size[X]) * texsizefix[X] * negate(texture_mirror);
-				ntexp1 = texsouth1[X] + toff * negate(texture_mirror_y) // South/Above X
-				ntexp2 = texnorth2[X] - toff * negate(texture_mirror_y) // North X
+				var toff = (segpos / size[X]) * texsizefix[X] * mirrorfactor;
+				ntexp1 = texsouth1[X] + toff // South/Above X
+				ntexp2 = texnorth2[X] - toff // North X
 				ntexp3 = texdown4[X] + toff // Below X
 				break
 			}
@@ -368,14 +406,10 @@ function model_shape_generate_block_vertex(bend)
 				np2 = point3D(x1, y1 + segpos, z2)
 				np3 = point3D(x1, y1 + segpos, z1)
 				np4 = point3D(x2, y1 + segpos, z1)
-				nn1 = vec3(1, 0, 0)
-				nn2 = vec3(-1, 0, 0)
-				nn3 = vec3(0, 0, 1)
-				nn4 = vec3(0, 0, -1)
 				var toff = (segpos / size[Y]) * texsizefix[Y];
-				ntexp1 = texeast2[X] - toff * negate(texture_mirror) * negate(texture_mirror_y) // East X
-				ntexp2 = texwest1[X] + toff * negate(texture_mirror) * negate(texture_mirror_y) // West X
-				ntexp3 = texup1[Y] + toff * negate(texture_mirror_y) // Above/Below Y
+				ntexp1 = texeast2[X] - toff * mirrorfactor // East X
+				ntexp2 = texwest1[X] + toff * mirrorfactor // West X
+				ntexp3 = texup1[Y] + toff // Above/Below Y
 				break
 			}
 			
@@ -386,16 +420,34 @@ function model_shape_generate_block_vertex(bend)
 				np2 = point3D(x2, y2, z1 + segpos)
 				np3 = point3D(x2, y1, z1 + segpos)
 				np4 = point3D(x1, y1, z1 + segpos)
-				nn1 = vec3(1, 0, 0)
-				nn2 = vec3(-1, 0, 0)
-				nn3 = vec3(0, 1, 0)
-				nn4 = vec3(0, -1, 0)
 				var toff = (segpos / size[Z]) * texsizefix[Z];
 				ntexp1 = texsouth3[Y] - toff // East/South/West/North Y
 				break
 			}
 		}
 		
+		var offsetamount = segpos / segextent;
+		np1 = vec3(
+			np1[X] + (offset1[X] + delta1[X] * offsetamount),
+			np1[Y] + (offset1[Y] + delta1[Y] * offsetamount),
+			np1[Z] + (offset1[Z] + delta1[Z] * offsetamount)
+		)
+		np2 = vec3(
+			np2[X] + (offset2[X] + delta2[X] * offsetamount),
+			np2[Y] + (offset2[Y] + delta2[Y] * offsetamount),
+			np2[Z] + (offset2[Z] + delta2[Z] * offsetamount)
+		)
+		np3 = vec3(
+			np3[X] + (offset3[X] + delta3[X] * offsetamount),
+			np3[Y] + (offset3[Y] + delta3[Y] * offsetamount),
+			np3[Z] + (offset3[Z] + delta3[Z] * offsetamount)
+		)
+		np4 = vec3(
+			np4[X] + (offset4[X] + delta4[X] * offsetamount),
+			np4[Y] + (offset4[Y] + delta4[Y] * offsetamount),
+			np4[Z] + (offset4[Z] + delta4[Z] * offsetamount)
+		)
+
 		// Apply transform
 		if (isbent) // Apply segment bend
 		{
@@ -410,70 +462,31 @@ function model_shape_generate_block_vertex(bend)
 			if (invangle)
 				segp = 1 - segp
 			
-			bendvec = model_shape_get_bend(bend, segp)
-			
-			// Blocky bending
+			// Sharp segments use linear angles; their eased angles were previously discarded
 			var bendscale = vec3(0);
 			if (sharpbend)
 			{
-				bendscale = model_shape_get_bend_scale(bendstart, bendend, segp, false, segpos, bend)
-				bendvec = vec3_mul(bend, segp)
+				if (segpos > bendstart && segpos < bendend)
+				{
+					var segpinch = (segp <= 0.5 ? segp * 2 : (1 - segp) * 2);
+					segpinch *= pinchfactor
+					segpinch = ease("easeincubic", segpinch) / 2.5
+					bendscale = vec3(pinchaxis = X ? 0 : segpinch, pinchaxis = Y ? 0 : segpinch, pinchaxis = Z ? 0 : segpinch)
+				}
+				bendvec = vec3(blockbend[X] * segp, blockbend[Y] * segp, blockbend[Z] * segp)
+			}
+			else
+			{
+				var segweight = ease("easeinoutquint", segp);
+				bendvec = vec3(blockbend[X] * segweight, blockbend[Y] * segweight, blockbend[Z] * segp)
 			}
 			
 			var matsca = vec3_add(vec3_add(vec3(1), bendscale), vec3(segp * scalef));
 			// Don't scale shapes outside bend deformation
-			//if (segpos > size[segaxis] - 0.0001)
+			//if (segpos > segextent - 0.0001)
 			//	matsca = vec3_add(vec3(1), bendscale)
 			
 			mat = model_part_get_bend_matrix(id, bendvec, vec3(0), matsca)
-		}
-		else // Apply rotation only
-			mat = matrix_build(0, 0, 0, rotation[X], rotation[Y], rotation[Z], 1, 1, 1)
-		
-		// Vertex Offset
-		var scaleseg = 1;
-		scaleseg = (segpos) / (size[segaxis])
-       
-	    switch (segaxis)
-		{
-			case X:
-			{
-	            np1 = vec3_add(np1, vec3_mul(vo7, scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo6, scaleseg))
-                np3 = vec3_add(np3, vec3_mul(vo2, scaleseg))
-                np4 = vec3_add(np4, vec3_mul(vo3, scaleseg))
-                np1 = vec3_add(np1, vec3_mul(vo8, 1 - scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo5, 1 - scaleseg))
-                np3 = vec3_add(np3, vec3_mul(vo1, 1 - scaleseg))
-                np4 = vec3_add(np4, vec3_mul(vo4, 1 - scaleseg))
-				break
-			}
-			
-			case Y:
-			{
-				np1 = vec3_add(np1, vec3_mul(vo7, 1 - scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo8, 1 - scaleseg))
-                np3 = vec3_add(np3, vec3_mul(vo4, 1 - scaleseg))
-                np4 = vec3_add(np4, vec3_mul(vo3, 1 - scaleseg)) 
-				np1 = vec3_add(np1, vec3_mul(vo6, scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo5, scaleseg))
-                np3 = vec3_add(np3, vec3_mul(vo1, scaleseg))
-                np4 = vec3_add(np4, vec3_mul(vo2, scaleseg))
-				break
-			}
-			
-			case Z:
-			{
-	            np1 = vec3_add(np1, vec3_mul(vo5, scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo6, scaleseg))
-                np3 = vec3_add(np3, vec3_mul(vo7, scaleseg))
-                np4 = vec3_add(np4, vec3_mul(vo8, scaleseg))
-                np1 = vec3_add(np1, vec3_mul(vo1, 1 - scaleseg))
-                np2 = vec3_add(np2, vec3_mul(vo2, 1 - scaleseg))
-                np3 = vec3_add(np3, vec3_mul(vo3, 1 - scaleseg))
-                np4 = vec3_add(np4, vec3_mul(vo4, 1 - scaleseg))
-				break
-			}
 		}
 		
 		np1 = point3D_mul_matrix(np1, mat)
@@ -482,7 +495,7 @@ function model_shape_generate_block_vertex(bend)
 		np4 = point3D_mul_matrix(np4, mat)
 		
 		// Sharp lighting
-		if (sharpbend)
+		if (flatnormals)
 		{
 			n1 = null
 			n2 = null
@@ -496,10 +509,10 @@ function model_shape_generate_block_vertex(bend)
 		}
 		else
 		{
-			nn1 = vec3_normalize(vec3_mul_matrix(nn1, mat))
-			nn2 = vec3_normalize(vec3_mul_matrix(nn2, mat))
-			nn3 = vec3_normalize(vec3_mul_matrix(nn3, mat))
-			nn4 = vec3_normalize(vec3_mul_matrix(nn4, mat))
+			nn1 = vec3_normalize(vec3_mul_matrix(basen1, mat))
+			nn2 = vec3_normalize(vec3_mul_matrix(basen2, mat))
+			nn3 = vec3_normalize(vec3_mul_matrix(basen3, mat))
+			nn4 = vec3_normalize(vec3_mul_matrix(basen4, mat))
 		}
 		
 		// Add surrounding faces
@@ -531,14 +544,6 @@ function model_shape_generate_block_vertex(bend)
 				t4 = vec2(texp1, texup3[Y])
 				vbuffer_add_triangle(p1, np1, np2, t1, t2, t3, n3, nn3, nn3, invert)
 				vbuffer_add_triangle(np2, p2, p1, t3, t4, t1, nn3, n3, n3, invert)
-				
-				if (texture_mirror_y)
-				{
-					t1 = vec2(texp2, texup1[Y])
-					t2 = vec2(ntexp2, texup1[Y])
-					t3 = vec2(ntexp2, texup3[Y])
-					t4 = vec2(texp2, texup3[Y])	
-				}
 				
 				// Down
 				t1 = vec2(texp3, texdown1[Y])
@@ -638,6 +643,7 @@ function model_shape_generate_block_vertex(bend)
 	vertex_wave_zmin = null
 	vertex_wave_zmax = null
 	
-	return vbuffer_done()
+	var vbuf = vbuffer_done();
+	
+	return vbuf
 }
-

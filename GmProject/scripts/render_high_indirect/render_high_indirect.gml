@@ -5,6 +5,7 @@ function render_high_indirect()
 {
 	// Raytrace
 	render_surface_hdr[0] = surface_require(render_surface_hdr[0], render_width, render_height, true, true)
+	render_surface_hdr[2] = surface_require(render_surface_hdr[2], render_width, render_height, true, true)
 	surface_set_target(render_surface_hdr[0])
 	{
 		gpu_set_texrepeat(false)
@@ -61,7 +62,7 @@ function render_high_indirect()
 		surface_set_target(render_surface_hdr[0])
 		{
 			draw_clear_alpha(c_black, 0)
-			
+	
 			if (app.project_render_engine) {
 				render_shader_obj = shader_map[?shader_high_indirect_blur_EX]
 			} else {
@@ -89,6 +90,26 @@ function render_high_indirect()
 	if (app.project_render_indirect_denoiser)
 	{
 		// Denoise from whatever is currently in indirectsurf to the other buffer
+		surface_set_target(render_surface_hdr[2])
+		{
+			draw_clear_alpha(c_black, 0)
+
+			render_shader_obj = shader_map[?shader_bilateral_blur]
+
+			with (render_shader_obj)
+			{
+				shader_set(shader)
+				shader_bilateral_blur_set(render_surface_hdr[0], true)
+			}
+
+			draw_surface(render_surface_hdr[0], 0, 0) // Source: render_surface_hdr[0]
+
+			with (render_shader_obj)
+				shader_clear()
+		}
+		surface_reset_target()
+		
+		// Pass 2
 		surface_set_target(render_surface_hdr[1])
 		{
 			draw_clear_alpha(c_black, 0)
@@ -98,10 +119,10 @@ function render_high_indirect()
 			with (render_shader_obj)
 			{
 				shader_set(shader)
-				shader_bilateral_blur_set(render_surface_hdr[0])
+				shader_bilateral_blur_set(render_surface_hdr[2], false)
 			}
 
-			draw_surface(render_surface_hdr[0], 0, 0) // Source: render_surface_hdr[0]
+			draw_surface(render_surface_hdr[2], 0, 0) // Source: render_surface_hdr[2]
 
 			with (render_shader_obj)
 				shader_clear()

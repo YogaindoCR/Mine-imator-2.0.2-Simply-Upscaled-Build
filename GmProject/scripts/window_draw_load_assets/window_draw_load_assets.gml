@@ -1,101 +1,142 @@
+
 /// window_draw_load_assets()
 
 function window_draw_load_assets()
 {
-	if (!minecraft_assets_load())
-	{
-		error("errorloadassets")
-		game_end()
-		return 0
-	}
+    if (!minecraft_assets_load())
+    {
+        error("errorloadassets")
+        game_end()
+        return 0
+    }
+
+    draw_clear(c_level_top)
+
+    if (load_assets_stage = "done")
+    {
+        load_assets_stage = "exit"
+        return 0
+    }
+    else if (load_assets_stage = "exit")
+    {
+        window_taskbar_progress_state_set()
+        window_flash()
+
+        window_state = "startup"
+        app_startup_interface()
+
+        instance_deactivate_object(obj_deactivate)
+        play_audio_from_files(audio_directory + "startup.ogg")
+
+        return 0
+    }
+    else
+        window_taskbar_progress_state_set(e_window_taskbar_state.NORMAL)
+		
+    var screenwid = 740
+    var screenhei = 450
+
+    // var sidebarwid = 0 // 190
+
+    var xoff = floor((window_width / 2) - (screenwid / 2))
+    var yoff = floor((window_height / 2) - (screenhei / 2))
+
+    content_x = 28
+    content_y = 28
+    content_width = window_width - 56
+    content_height = window_height - 56
 	
 	// Background
-	draw_clear(c_level_top)
+    draw_box(xoff, yoff, screenwid, screenhei, false, c_level_middle, 1)
+
+    if (load_assets_splash != null)
+    {
+        var texwid = sprite_get_width(load_assets_splash)
+        var texhei = sprite_get_height(load_assets_splash)
+
+        // Scale to cover the entire window.
+        // Excess image area is cropped automatically.
+
+        var texsca = max(screenwid / texwid, screenhei / texhei)
+
+        var drawwid = texwid * texsca
+        var drawhei = texhei * texsca
+
+        var drawx = xoff + (screenwid - drawwid) / 2
+        var drawy = yoff + (screenhei - drawhei) / 2
+
+        draw_sprite_ext(load_assets_splash, 0, drawx, drawy, texsca, texsca, 0, c_white, 1)
+    }
+
+    // Left sidebar
+    // Dark translucent background
+    // draw_box(xoff, yoff, sidebarwid, screenhei - 4, false, c_level_top, 0.92)
+
+    // Accent separator
+    // draw_box(xoff + sidebarwid - 2, yoff, 2, screenhei - 4, false, c_accent, 0.8)
 	
-	if (load_assets_stage = "done")
-	{
-		load_assets_stage = "exit"
-		return 0
-	}
-	else if (load_assets_stage = "exit")
-	{
-		window_taskbar_progress_state_set()
-		window_flash()
-		
-		window_state = "startup"
-		app_startup_interface()
-		
-		// Deactivate instances for better performance
-		instance_deactivate_object(obj_deactivate)
-		play_audio_from_files(audio_directory + "startup.ogg")
-		
-		return 0
-	}
-	else
-		window_taskbar_progress_state_set(e_window_taskbar_state.NORMAL)
+    // Branding
+	draw_gradient(xoff, yoff, screenwid, 128, c_black, 0.5, 0.5, 0.0, 0.0)
+    draw_sprite_ext(spr_load_assets, 0, xoff + 62, yoff + 72, 0.5, 0.5, 0, c_white, 1)
+    draw_sprite_ext(spr_ave_x, 0, xoff + 30, yoff + 92, 0.07, 0.07, 0, c_white, 1)
+    
+	var afterlogo = 122
 	
-	var screenwid, screenhei, splashwid;
-	screenwid = 740
-	screenhei = 450
-	splashwid = 550
+	draw_label("Mine-imator " + string(mineimator_version), xoff + afterlogo, yoff + 37, fa_left, fa_bottom, c_text_main, a_text_main, font_heading)
+    // draw_label(string(mineimator_version), xoff + 82, yoff + 37, fa_left, fa_bottom,c_text_secondary, a_text_secondary, font_subheading)
+
+    if (mineimator_version_sub != "")
+        draw_label(string_upper(mineimator_version_sub), xoff + afterlogo, yoff + 57, fa_left, fa_bottom, c_text_secondary, a_text_secondary, font_subheading)
+    
+	if (mineimator_version_extra != "")
+        draw_label(string_upper(mineimator_version_extra), xoff + afterlogo, yoff + 77, fa_left, fa_bottom, c_text_tertiary, a_text_tertiary, font_subheading)
+
+    // Loading information
+	draw_gradient(xoff, yoff + screenhei - 80, screenwid, 80, c_black, 0.0, 0.0, 1.0, 1.0)
+    draw_label("LOADING", xoff + 12, yoff + screenhei - 32, fa_left, fa_bottom, c_text_main, a_text_secondary, font_subheading)
+    draw_label(text_get("startuploadingassets", app.setting_minecraft_assets_version, floor(load_assets_progress * 100)), xoff + 12, yoff + screenhei - 14, fa_left, fa_bottom, c_text_tertiary, a_text_tertiary, font_caption)
+
+    // Description
+    if (load_assets_description != "")
+    {
+        // Subtle dark backing for text readability.
+        // draw_box(xoff + sidebarwid + 12, yoff + screenhei - 57, screenwid - sidebarwid - 24, 49, false, c_level_top, 0.7)
+        
+		draw_label(text_get("startupsplashdescription", load_assets_description),
+            xoff + screenwid - 12,
+            yoff + screenhei - 32,
+            fa_right, fa_bottom,
+            c_text_main, a_text_secondary,
+            font_caption, 12,
+            screenwid - 12
+        )
+
+        if (load_assets_credits != "")
+        {
+            draw_label(text_get("startupsplashauthor", load_assets_credits),
+                xoff + screenwid - 12,
+                yoff + screenhei - 14,
+                fa_right, fa_bottom,
+                c_text_secondary, a_text_tertiary,
+                font_caption
+            )
+        }
+    }
+    else if (load_assets_credits != "")
+        draw_label(text_get("startupsplashauthor", load_assets_credits), xoff + screenwid - 18, yoff + screenhei - 22, fa_right, fa_bottom, c_text_secondary, a_text_tertiary, font_caption)
 	
-	var xoff, yoff;
-	xoff = floor((window_width/2) - (screenwid/2))
-	yoff = floor((window_height/2) - (screenhei/2))
-	
-	content_x = 28
-	content_y = 28
-	content_width = window_width - 56
-	content_height = window_height - 56
-	
-	draw_dropshadow(xoff, yoff, screenwid, screenhei, c_accent, 1)
-	draw_box(xoff, yoff, screenwid, screenhei, false, c_level_middle, 1)
-	
-	// Pattern
-	var pattern = (setting_theme = theme_light ? 0 : 1);
-	draw_sprite_ext(spr_pattern_left, pattern, xoff, yoff, 138 / sprite_get_width(spr_pattern_left), screenhei / sprite_get_height(spr_pattern_left), 0, c_white, 1)
-	
-	draw_sprite(spr_load_assets, 0, xoff + 95, yoff + 207)
-	
-	draw_label("Mine-imator " + string(mineimator_version), xoff + 95, yoff + 289, fa_middle, fa_bottom, c_text_secondary, a_text_secondary, font_heading)
-	draw_label(string(string_upper(mineimator_version_sub)), xoff + 95, yoff + 289 + 12, fa_middle, fa_bottom, c_text_secondary, a_text_secondary, font_subheading)
-	draw_label(string(string_upper(mineimator_version_extra)), xoff + 95, yoff + 289 + (mineimator_version_sub = "" ? 16 : 26), fa_middle, fa_bottom, c_text_tertiary, a_text_tertiary, font_subheading)
-	draw_label(text_get("startuploadingassets", app.setting_minecraft_assets_version, floor(load_assets_progress * 100)), xoff + 95, yoff + 437, fa_middle, fa_bottom, c_text_tertiary, a_text_tertiary, font_caption)
-	draw_sprite_ext(spr_ave_x, 0, xoff + 55, yoff + 16, 0.1, 0.1, 0 , c_white, 0.8)
-	
-	draw_gradient(xoff + 190, yoff, shadow_size * 2, screenhei, c_black, shadow_alpha * 2, 0, 0, shadow_alpha * 2)
-	draw_gradient(xoff + 190, yoff, screenwid - 190, shadow_size * 2, c_black, shadow_alpha * 2, shadow_alpha * 2, 0, 0)
-	
+	var totalhead = 3
 	for(var i = 0; i < sprite_get_number(spr_head); i++)
 	{
-		draw_sprite_ext(spr_head, i, xoff + (i * 20) + 10, yoff + 404, 2, 2, 0, c_white, 0.7)
+		draw_sprite_ext(spr_head, i, xoff + screenwid - (totalhead * 20) - 20  + (i * 20) + 10, yoff + 14, 2, 2, 0, c_white, 0.5)
 	}
 
-	// Splash
-	if (load_assets_splash != null)
-	{
-		// Scale down to fit
-		var texwid, texhei, texsca;
-		texwid = sprite_get_width(load_assets_splash)
-		texhei = sprite_get_height(load_assets_splash)
-		texsca = max(1, texwid / splashwid, texhei / screenhei)
-		draw_sprite_ext(load_assets_splash, 0, xoff + 190 + ((splashwid / 2) - ((texwid / texsca) / 2)), yoff + ((screenhei / 2) - ((texhei / texsca) / 2)), 1 / texsca, 1 / texsca, 0, c_white, 1)
-	}
-	
-	// Splash credits
-	if (load_assets_description != "")
-		draw_label(text_get("startupsplashdescription", load_assets_description), xoff + 95, yoff + 289 + 41, fa_middle, fa_top, c_text_tertiary, a_text_secondary, font_subheading, 12, 180)
-	
-	// Splash credits
-	if (load_assets_credits != "")
-		draw_label(text_get("startupsplashauthor", load_assets_credits), xoff + 95, yoff + 289 + 89, fa_middle, fa_top, c_text_tertiary, a_text_tertiary, font_caption)
-	
-	// Loading bar
-	draw_box(xoff, yoff + screenhei - 8, screenwid, 8, false, c_level_top, .8)
-	draw_box(xoff, yoff + screenhei - 8, screenwid * load_assets_progress, 8, false, c_accent, 1)
-	
-	draw_outline(xoff, yoff, screenwid, screenhei, 1, c_border, a_border, true)
-	draw_dropshadow(xoff, yoff, screenwid, screenhei, c_black, 1)
-	
-	current_step++
+    // Progress bar
+    draw_box(xoff, yoff + screenhei - 4, screenwid, 4, false, c_level_top, 1)
+    draw_box(xoff, yoff + screenhei - 4, screenwid * clamp(load_assets_progress, 0, 1), 4, false, c_accent, 1)
+
+    // Outline
+    draw_outline(xoff, yoff, screenwid, screenhei, 1, c_border, a_border, true)
+
+    current_step++
 }

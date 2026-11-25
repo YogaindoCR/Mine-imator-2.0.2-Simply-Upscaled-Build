@@ -17,7 +17,13 @@ uniform float uLightSpotSharpness; // static
 uniform vec3 uShadowPosition; // static
 uniform float uLightSpecular;
 uniform bool uIgnore;
+uniform bool uGobos;
 
+// Texture
+uniform vec2 uGoboOffset;
+uniform vec2 uGoboRepeat;
+
+uniform sampler2D uLightGobo; // static
 uniform sampler2D uDepthBuffer; // static
 
 uniform sampler2D uTextureMaterial; // static
@@ -185,6 +191,7 @@ void main()
 		float shadow = 1.0;
 		float att = 0.0;
 		vec3 subsurf = vec3(0.0);
+		vec3 gobotex = vec3(1.0);
 		
 		// Check if not behind the spot light
 		if (vScreenCoord.w > 0.0)
@@ -215,7 +222,7 @@ void main()
 				
 				// Calculate shadow
 				fragDepth = min(vShadowCoord.z, uLightFar);
-				fragCoord = (vec2(vShadowCoord.x, -vShadowCoord.y) / vShadowCoord.z + 1.0) * 0.5;
+				fragCoord = (vec2(vShadowCoord.x, -vShadowCoord.y) / vShadowCoord.z + 1.0 + uGoboOffset) * 0.5 * uGoboRepeat;
 				
 				if (difMask > 0.0)
 				{
@@ -225,6 +232,9 @@ void main()
 					// Shadow
 					float sampleDepth = uLightNear + unpackDepth(texture2D(uDepthBuffer, fragCoord)) * (uLightFar - uLightNear);
 					shadow = ((fragDepth - bias) > sampleDepth) ? 0.0 : 1.0;
+					
+					if (uGobos)
+						gobotex = texture2D(uLightGobo, fragCoord).rgb;
 					
 					// Get subsurface translucency
 					if (sss > 0.0 && dif == 0.0)
@@ -242,7 +252,7 @@ void main()
 		}
 		
 		// Diffuse light
-		light = uLightColor.rgb * uLightStrength * dif * shadow;
+		light = uLightColor.rgb * uLightStrength * dif * shadow * gobotex;
 		
 		// Subsurface translucency
 		if (sss > 0.0)
@@ -270,6 +280,7 @@ void main()
 			float specular = numerator / denominator;
 		
 			spec = uLightColor.rgb * shadow * difMask * uLightSpecular * dif * (specular * mix(vec3(1.0), baseColor.rgb, metallic));
+			spec *= gobotex;
 		}
 	}
 	

@@ -119,6 +119,8 @@ function tl_update_values(force = true)
 			tl_update_values_ease(e_value.IK_BLEND)
 			tl_update_values_ease(e_value.IK_TARGET_ANGLE)
 			tl_update_values_ease(e_value.IK_ANGLE_OFFSET)
+			tl_update_values_ease(e_value.BEND_IK_TARGET)
+			tl_update_values_ease(e_value.BEND_IK_INFLUENCE)
 		}
 	}
 	
@@ -255,6 +257,11 @@ function tl_update_values(force = true)
 		{
 			tl_update_values_ease(e_value.LIGHT_SPOT_RADIUS)
 			tl_update_values_ease(e_value.LIGHT_SPOT_SHARPNESS)
+			tl_update_values_ease(e_value.TEXTURE_OBJ)
+			tl_update_values_ease(e_value.LIGHT_SPOT_GOBO_H_OFFSET)
+			tl_update_values_ease(e_value.LIGHT_SPOT_GOBO_V_OFFSET)
+			tl_update_values_ease(e_value.LIGHT_SPOT_GOBO_H_REPEAT)
+			tl_update_values_ease(e_value.LIGHT_SPOT_GOBO_V_REPEAT)
 		}
 	}
 	

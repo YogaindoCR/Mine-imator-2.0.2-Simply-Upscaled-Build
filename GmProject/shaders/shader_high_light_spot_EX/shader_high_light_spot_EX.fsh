@@ -26,7 +26,13 @@ uniform float uShadowBlurSample;
 uniform bool uIgnore;
 uniform float uBias;
 uniform bool uRenderShadow;
+uniform bool uGobos;
 
+// Texture
+uniform vec2 uGoboOffset;
+uniform vec2 uGoboRepeat;
+
+uniform sampler2D uLightGobo; // static
 uniform sampler2D uDepthBuffer; // static
 
 uniform sampler2D uTextureMaterial; // static
@@ -392,7 +398,15 @@ void main()
         }
         
         // Light calculation
-        light = uLightColor.rgb * uLightStrength * dif * shadow;
+		vec3 gobotex = vec3(1.0);
+		
+		if (uGobos)
+		{
+			vec2 GoboCoord = (vec2(vShadowCoord.x, -vShadowCoord.y) / vShadowCoord.w + 1.0 + uGoboOffset) * 0.5 * uGoboRepeat;
+	        gobotex = texture2D(uLightGobo, GoboCoord).rgb;
+		}
+		
+		light = uLightColor.rgb * uLightStrength * dif * shadow * gobotex;
         
         // Subsurface scattering
         if (sss > 0.001)
@@ -443,7 +457,8 @@ void main()
 		    float sizeAtten = 1.0 / (1.0 + sizeFactor * 4.0);
 
 		    spec = uLightColor.rgb * shadow * uLightSpecular * dif *
-		           specular * sizeAtten * mix(vec3(1.0), baseColor.rgb, metallic);
+		           specular * sizeAtten * mix(vec3(1.0), baseColor.rgb, metallic)
+				   * gobotex;
 		}
     }
     

@@ -11,5 +11,6 @@ function tl_value_is_obj(vid)
 			vid = e_value.LOOK_AT_TARGET ||
 			vid = e_value.POS_TARGET ||
 			vid = e_value.ROT_TARGET ||
-			vid = e_value.SCALE_TARGET)
+			vid = e_value.SCALE_TARGET ||
+			vid = e_value.BEND_IK_TARGET)
 }

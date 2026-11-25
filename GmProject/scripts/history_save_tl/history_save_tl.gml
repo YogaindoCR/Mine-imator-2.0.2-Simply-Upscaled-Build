@@ -113,6 +113,12 @@ function history_save_tl(tl)
 				save.usage_tl_copy_scale_target_save_id[save.usage_tl_copy_scale_target_amount] = save_id
 				save.usage_tl_copy_scale_target_amount++
 			}
+			
+			if (value[e_value.BEND_IK_TARGET] = tl)
+			{
+				save.usage_tl_bnd_ik_target_save_id[save.usage_tl_bnd_ik_target_amount] = save_id
+				save.usage_tl_bnd_ik_target_amount++
+			}
 		}
 		
 		// Save references in keyframes
@@ -188,6 +194,13 @@ function history_save_tl(tl)
 				save.usage_kf_copy_scale_target_tl_save_id[save.usage_kf_copy_scale_target_amount] = save_id_get(timeline)
 				save.usage_kf_copy_scale_target_index[save.usage_kf_copy_scale_target_amount] = ds_list_find_index(timeline.keyframe_list, id)
 				save.usage_kf_copy_scale_target_amount++
+			}
+			
+			if (value[e_value.BEND_IK_TARGET] = tl)
+			{
+				save.usage_kf_bnd_ik_target_tl_save_id[save.usage_kf_bnd_ik_target_amount] = save_id_get(timeline)
+				save.usage_kf_bnd_ik_target_index[save.usage_kf_bnd_ik_target_amount] = ds_list_find_index(timeline.keyframe_list, id)
+				save.usage_kf_bnd_ik_target_amount++
 			}
 		}
 		

@@ -1299,13 +1299,14 @@ function list_init(name)
 			menu_add_item("performance", text_get("projectrendersettingsperformance"), null)
 			menu_add_item("balanced", text_get("projectrendersettingsbalanced"), null)
 			menu_add_item("extreme", text_get("projectrendersettingsextreme"), null)
+			menu_add_item("devchoice", text_get("projectrendersettingsdevchoice"), null)
 			
 			var file = file_find_first(render_directory + "*.mirender", 0);
 			
 			while (file != "")
 			{
 				// Add all files but defaults
-				if (file != "performance.mirender" && file != "balanced.mirender" && file != "extreme.mirender")
+				if (file != "performance.mirender" && file != "balanced.mirender" && file != "extreme.mirender" && file != "devchoice.mirender")
 					menu_add_item(filename_change_ext(file, ""), filename_change_ext(file, ""), null)
 				
 				file = file_find_next()
@@ -1319,6 +1320,25 @@ function list_init(name)
 		{
 			for (var i = 0; i < ds_list_size(blend_mode_list); i++)
 				menu_add_item(blend_mode_list[|i], text_get("timelineeditorblendmode" + blend_mode_list[|i]))
+			
+			break
+		}
+		
+		// Light gobo texture
+		case "frameeditorlightgobotexture":
+		{
+			menu_add_item(null, text_get("listdefault", text_get("listnone")))
+			
+			// Import from file
+			menu_add_item(e_option.BROWSE, text_get("listbrowse"), null, icons.FOLDER, action_tl_frame_light_gobo_tex_browse)
+			
+			// Add existing resources
+			for (var i = 0; i < ds_list_size(res_list.display_list); i++)
+			{
+				var res = res_list.display_list[|i];
+				if (res.texture)
+					menu_add_item(res, res.display_name, res.texture)
+			}
 			
 			break
 		}
