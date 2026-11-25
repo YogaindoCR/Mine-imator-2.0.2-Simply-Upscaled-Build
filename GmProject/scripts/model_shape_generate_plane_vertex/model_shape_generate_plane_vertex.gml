@@ -58,10 +58,11 @@ function model_shape_generate_plane_vertex(bend)
 	
 	// Start position and bounds
 	var detail = 2;
-	var sharpbend, bendsize, bendstart, bendend, bendsegsize, invangle;
+	var sharpbend, bendsize, bendstart, bendend, bendsegsize, invangle, segextent;
 	sharpbend = app.project_bend_style = "blocky" && bend_size = null && ((bend_axis[X] && !bend_axis[Y] && !bend_axis[Z]) || (!bend_axis[X] && bend_axis[Y] && !bend_axis[Z]) || (!bend_axis[X] && !bend_axis[Y] && bend_axis[Z]))
 	bendsize = (bend_size = null ? (app.project_bend_style = "realistic" ? 4 : 1) : bend_size)
 	detail = (sharpbend ? 2 : real(max(bendsize, 2)))
+	segextent = size[segaxis]
 	
 	if ((bend_size != null && bend_size >= 1) && scale[segaxis] > .5)
 		detail /= scale[segaxis]
@@ -69,9 +70,7 @@ function model_shape_generate_plane_vertex(bend)
 	bendsegsize = bendsize / detail;
 	invangle = (bend_part = e_part.LOWER || bend_part = e_part.BACK || bend_part = e_part.LEFT)
 	
-	var p1, p2, n1, n2;
-	var texp1;
-	
+	var p1, p2, n1, n2, texp1;
 	if (segaxis = X)
 	{
 		bendstart = (bend_offset - (position[X] + x1)) - bendsize / 2
@@ -88,6 +87,25 @@ function model_shape_generate_plane_vertex(bend)
 		p2 = point3D(x2, y1, z1)
 		texp1 = tex3[Y]
 	}
+	
+	var offset1, offset2, delta1, delta2;
+	if (segaxis = X)
+	{
+		offset1 = point3D_copy(vertex_offsets[2])
+		offset2 = point3D_copy(vertex_offsets[0])
+		delta1 = vec3_sub(vertex_offsets[3], offset1)
+		delta2 = vec3_sub(vertex_offsets[1], offset2)
+	}
+	else
+	{
+		offset1 = point3D_copy(vertex_offsets[0])
+		offset2 = point3D_copy(vertex_offsets[1])
+		delta1 = vec3_sub(vertex_offsets[2], offset1)
+		delta2 = vec3_sub(vertex_offsets[3], offset2)
+	}
+	
+	p1 = vec3_add(p1, offset1)
+	p2 = vec3_add(p2, offset2)
 	
 	// Apply transform
 	var mat;
@@ -171,6 +189,18 @@ function model_shape_generate_plane_vertex(bend)
 			var toff = (segpos / size[Z]) * texsize[Z];
 			ntexp1 = tex3[Y] - toff
 		}
+		
+		var offsetamount = segpos / segextent;
+		np1 = vec3(
+			np1[X] + (offset1[X] + delta1[X] * offsetamount),
+			np1[Y] + (offset1[Y] + delta1[Y] * offsetamount),
+			np1[Z] + (offset1[Z] + delta1[Z] * offsetamount)
+		)
+		np2 = vec3(
+			np2[X] + (offset2[X] + delta2[X] * offsetamount),
+			np2[Y] + (offset2[Y] + delta2[Y] * offsetamount),
+			np2[Z] + (offset2[Z] + delta2[Z] * offsetamount)
+		)
 		
 		// Apply transform
 		if (isbent) // Apply segment bend

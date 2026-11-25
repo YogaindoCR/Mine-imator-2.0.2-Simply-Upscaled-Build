@@ -46,7 +46,9 @@ function temp_update_model_timeline_tree(hobj = null)
 			hobj.usage_tl_copy_pos_target_amount = 0
 			hobj.usage_tl_copy_scale_target_amount = 0
 			hobj.usage_tl_look_at_target_amount = 0
+			hobj.usage_tl_bnd_ik_target_amount = 0
 			
+			hobj.usage_kf_bnd_ik_target_amount = 0
 			hobj.usage_kf_ik_target_amount = 0
 			hobj.usage_kf_ik_target_angle_amount = 0
 			hobj.usage_kf_attractor_amount = 0

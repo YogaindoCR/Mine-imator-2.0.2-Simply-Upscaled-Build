@@ -2866,6 +2866,8 @@
     {"resourceType":"GMIncludedFile","resourceVersion":"1.0","name":"26.2.midata","CopyToMask":-1,"filePath":"datafiles/Data/Minecraft",},
     {"resourceType":"GMIncludedFile","resourceVersion":"1.0","name":"devchoice.mirender","CopyToMask":-1,"filePath":"datafiles/Data/Render",},
     {"resourceType":"GMIncludedFile","resourceVersion":"1.0","name":"Mysu-1.png","CopyToMask":-1,"filePath":"datafiles/Data/Splashes",},
+    {"resourceType":"GMIncludedFile","resourceVersion":"1.0","name":"Mysu-2.png","CopyToMask":-1,"filePath":"datafiles/Data/Splashes",},
+    {"resourceType":"GMIncludedFile","resourceVersion":"1.0","name":"Mysu-3.png","CopyToMask":-1,"filePath":"datafiles/Data/Splashes",},
   ],
   "MetaData": {
     "IDEVersion": "2022.0.3.85",

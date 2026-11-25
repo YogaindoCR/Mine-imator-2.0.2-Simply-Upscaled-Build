@@ -59,6 +59,8 @@ function history_save_tl(tl)
 		usage_tl_look_at_target_amount = 0
 		usage_tl_copy_pos_target_amount = 0
 		usage_tl_copy_scale_target_amount = 0
+		usage_tl_bnd_ik_target_amount = 0
+		
 		with (obj_timeline)
 		{
 			if (value[e_value.TEXTURE_OBJ] = tl)
@@ -126,11 +128,13 @@ function history_save_tl(tl)
 		usage_kf_path_amount = 0
 		usage_kf_ik_target_amount = 0
 		usage_kf_ik_target_angle_amount = 0
+		usage_kf_bnd_ik_target_amount = 0
 		usage_kf_look_at_target_amount = 0
 		usage_kf_copy_rot_target_amount = 0
 		usage_kf_copy_pos_target_amount = 0
 		usage_kf_copy_scale_target_amount = 0
 		usage_kf_attractor_amount = 0
+		
 		with (obj_keyframe)
 		{
 			if (value[e_value.TEXTURE_OBJ] = tl)

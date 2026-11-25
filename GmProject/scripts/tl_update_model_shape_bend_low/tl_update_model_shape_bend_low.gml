@@ -14,6 +14,13 @@ function tl_update_model_shape_bend_low()
 	// Invalid part, no bending or no shapes
 	if (model_part = null || model_part.bend_part = null || model_part.shape_list = null)
 		return 0
+			
+	// Create map if unavailable
+	if (model_shape_vbuffer_map = null)
+	{
+	    model_shape_vbuffer_map = ds_map_create();
+	    model_shape_vbuffer_map_cache = ds_map_create();
+	}
 	
 	if (ds_map_size(model_shape_vbuffer_map_cache) > 1000)
 	{
@@ -28,13 +35,6 @@ function tl_update_model_shape_bend_low()
 			key = ds_map_find_next(model_shape_vbuffer_map_cache, key)
 			ds_map_delete(model_shape_vbuffer_map_cache, keyprev)
 		}
-	}
-			
-	// Create map if unavailable
-	if (model_shape_vbuffer_map = null)
-	{
-	    model_shape_vbuffer_map = ds_map_create();
-	    model_shape_vbuffer_map_cache = ds_map_create();
 	}
 
 	bend_rot_last = bend;
